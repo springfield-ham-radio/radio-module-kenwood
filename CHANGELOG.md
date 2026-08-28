@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.0.0...v1.1.0) (2026-08-28)
+
+### Features
+
+* add Kenwood TM-D710A clone-mode radio ([2ac13a2](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/2ac13a26b4745c14e4b2f3416b8e96e9bad493ed))
+
 ## 1.0.0 (2026-08-28)
 
 ### Features
