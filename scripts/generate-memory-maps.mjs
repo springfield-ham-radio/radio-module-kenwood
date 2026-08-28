@@ -312,6 +312,120 @@ const thf6Map = {
   },
 };
 
+const tmd710Steps = ['5', '6.25', '8.33', '10', '12.5', '15', '20', '25', '30', '50', '100'];
+
+const tmd710Map = {
+  version: '1.0.0',
+  description: 'Kenwood TM-D710A clone image: 1000 × 16-byte memories, parallel skip/band flags, 8-character names',
+  structs: [
+    {
+      id: 'flags',
+      seek: '0x0e00',
+      count: 1000,
+      stride: 2,
+      emptyWhen: { equals: 255 },
+      clearEmpty: true,
+      fields: [
+        {
+          id: 'band',
+          type: 'u8',
+          value: { kind: 'integer', min: 0, max: 9 },
+          ...ui('channel', 'Band code', 'integer'),
+        },
+        {
+          id: 'lockout',
+          type: 'u8',
+          value: { kind: 'boolean' },
+          ...ui('channel', 'Scan skip', 'switch'),
+        },
+      ],
+    },
+    {
+      id: 'channels',
+      seek: '0x1700',
+      count: 1000,
+      stride: 16,
+      emptyWhen: { equals: 255 },
+      clearEmpty: true,
+      fields: [
+        { id: 'freq', type: 'u32', value: { kind: 'integer' } },
+        {
+          id: 'tuning_step',
+          type: 'u8',
+          value: { kind: 'enum', values: tmd710Steps },
+          ...ui('channel', 'Tuning step (kHz)', 'select'),
+        },
+        {
+          id: 'mode',
+          type: 'u8',
+          value: { kind: 'enum', values: ['FM', 'NFM', 'AM'] },
+          ...ui('channel', 'Mode', 'select'),
+        },
+        { id: '_tmode_hi', type: 'bits', width: 1, reserved: true },
+        { id: 'tone_mode', type: 'bits', width: 1, value: { kind: 'boolean' } },
+        { id: 'ctcss_mode', type: 'bits', width: 1, value: { kind: 'boolean' } },
+        { id: 'dtcs_mode', type: 'bits', width: 1, value: { kind: 'boolean' } },
+        {
+          id: 'duplex',
+          type: 'bits',
+          width: 4,
+          value: { kind: 'enum', values: ['', '+', '-', '', 'split'] },
+          ...ui('channel', 'Duplex', 'select'),
+        },
+        { id: 'rtone', type: 'u8', value: { kind: 'ctcss-index', values: kenwoodTonesTenths } },
+        { id: 'ctone', type: 'u8', value: { kind: 'ctcss-index', values: kenwoodTonesTenths } },
+        { id: 'dtcs_code', type: 'u8', value: { kind: 'dcs-index', values: dtcsCodes } },
+        { id: 'offset', type: 'u32', value: { kind: 'integer' } },
+        {
+          id: 'split_tuning_step',
+          type: 'u8',
+          value: { kind: 'enum', values: tmd710Steps },
+          ...ui('channel', 'Split TX step (kHz)', 'select'),
+        },
+        { id: '_cross', type: 'u8', reserved: true },
+      ],
+    },
+    {
+      id: 'names',
+      seek: '0x5800',
+      count: 1000,
+      stride: 8,
+      emptyWhen: { equals: 255 },
+      clearEmpty: true,
+      fields: [
+        {
+          id: 'name',
+          type: 'u8',
+          value: { kind: 'ascii', length: 8, pad: 255 },
+        },
+      ],
+    },
+    {
+      id: 'powerOn',
+      seek: '0x02e0',
+      fields: [
+        {
+          id: 'pwron',
+          type: 'u8',
+          value: { kind: 'ascii', length: 8, pad: 255 },
+          ...ui('display', 'Power-on message', 'text'),
+        },
+      ],
+    },
+  ],
+  channelBindings: {
+    records: 'channels',
+    names: 'names',
+    nameField: 'name',
+    extras: 'flags',
+    receiveFrequency: 'freq',
+    transmitFrequency: 'offset',
+    receiveTone: 'ctone',
+    transmitTone: 'rtone',
+  },
+};
+
 writeFileSync(join(rootDirectory, 'src/shared/memory-maps/th-d74-settings.json'), `${JSON.stringify(thd74Map, null, 2)}\n`);
 writeFileSync(join(rootDirectory, 'src/shared/memory-maps/th-f6-settings.json'), `${JSON.stringify(thf6Map, null, 2)}\n`);
+writeFileSync(join(rootDirectory, 'src/shared/memory-maps/tm-d710a-settings.json'), `${JSON.stringify(tmd710Map, null, 2)}\n`);
 console.log('wrote Kenwood memory maps');

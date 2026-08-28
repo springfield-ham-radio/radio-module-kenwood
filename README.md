@@ -1,6 +1,6 @@
 # radio-module-kenwood
 
-A radio module for Kenwood TH-F6 and TH-D74 ham radios, compatible with the Springfield Ham Radio Registry.
+A radio module for Kenwood TH-F6, TH-D74, and TM-D710A ham radios, compatible with the Springfield Ham Radio Registry.
 
 Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone behavior (the same information CHIRP documents) and re-expressed as JSON. This package does not include CHIRP source.
 
@@ -10,12 +10,15 @@ Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone
 | --- | --- | --- |
 | **TH-F6** / TH-F6A | Live CAT (`MR` / `MW` / `MNA`) | `configs/kenwood-th-f6.json` |
 | **TH-D74** | Clone mode (`0M PROGRAM`, 256-byte `R`/`W` blocks at 57600 baud) | `configs/kenwood-th-d74.json` |
+| **TM-D710A** | Clone mode (`0M PROGRAM`, 256-byte `R`/`W` blocks at 9600 baud) | `configs/kenwood-tm-d710a.json` |
 
 ## Features
 
 - **TH-D74 clone I/O**: enter programming mode, switch to 57600 baud, read/write 256-byte blocks, skip the last two blocks on write
 - **TH-D74 memory map**: 1000 channels in 6-per-256-byte groups, parallel flags (skip/group), 16-character names, D-STAR fields
 - **TH-F6 logical image**: 400 × 32-byte channel records plus radio-wide settings for codec round-trips
+- **TM-D710A clone I/O**: identify as `D710`, enter programming, read/write 256-byte blocks (skip radio block `0x7F`), plus 16- and 144-byte tail packets
+- **TM-D710A memory map**: 1000 channels as 16-byte records, parallel band/skip flags, 8-character names
 - **TH-F6 live CAT**: documented in [docs/th-f6-live.md](docs/th-f6-live.md). Handshake steps are in the config; per-memory `MR`/`MW` is live I/O rather than a clone dump
 
 ## Installation
@@ -40,15 +43,18 @@ Update the official `radio-module-catalog` with the printed `sha256:…` integri
 radio-module-kenwood/
 ├── configs/
 │   ├── kenwood-th-d74.json
-│   └── kenwood-th-f6.json
+│   ├── kenwood-th-f6.json
+│   └── kenwood-tm-d710a.json
 ├── src/shared/
 │   ├── schemas/
 │   └── memory-maps/
 │       ├── th-d74-settings.json
-│       └── th-f6-settings.json
+│       ├── th-f6-settings.json
+│       └── tm-d710a-settings.json
 └── docs/
     ├── th-d74-clone.md
-    └── th-f6-live.md
+    ├── th-f6-live.md
+    └── tm-d710a-clone.md
 ```
 
 Encode/decode uses `MemoryMapRadioCodec` from `@springfield/ham-radio-utils`. This package ships **JSON only**.
@@ -67,6 +73,17 @@ Encode/decode uses `MemoryMapRadioCodec` from `@springfield/ham-radio-utils`. Th
 - End with `E`
 
 `$block` is `floor(byteAddress / 256)`, not the byte address.
+
+### TM-D710A
+
+- 9600 8N1 on the **body PC port** (not the head). No baud switch. Hardware flow control **off**
+- `ID\r` → `ID D710\r`
+- `0M PROGRAM\r` → `0M\r`
+- Each block: `R`/`W` + 16-bit big-endian **byte address** + 1-byte size (`0` means 256)
+- Skip radio block `0x7F`. Tail packets at `0xFEF0` (16 bytes) and `0xFF00` (144 bytes)
+- End with `E`
+
+Details: [docs/tm-d710a-clone.md](docs/tm-d710a-clone.md). This is not the TM-D710G image.
 
 ### TH-F6
 

@@ -25,6 +25,11 @@ describe('Kenwood DSL module', () => {
       mapPath: 'src/shared/memory-maps/th-f6-settings.json',
       model: 'kenwood-th-f6',
     },
+    {
+      configPath: 'configs/kenwood-tm-d710a.json',
+      mapPath: 'src/shared/memory-maps/tm-d710a-settings.json',
+      model: 'kenwood-tm-d710a',
+    },
   ]) {
     it(`declares a memoryMap codec for ${fixture.model}`, () => {
       const config = readJson(fixture.configPath) as {

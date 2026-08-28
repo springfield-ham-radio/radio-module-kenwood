@@ -1,0 +1,121 @@
+{
+  "$schema": "https://springfield-ham-radio.com/schemas/radio-config-v1.json",
+  "id": {
+    "model": "kenwood-tm-d710a",
+    "name": "Kenwood TM-D710A",
+    "manufacturer": "Kenwood"
+  },
+  "version": "1.0.0",
+  "description": "TM-D710A clone-mode programming (256-byte R/W blocks after 0M PROGRAM; skips radio block 0x7F)",
+  "capabilities": {
+    "memoryRead": true,
+    "memoryWrite": true,
+    "channelProgramming": true,
+    "settingsProgramming": true
+  },
+  "metadata": {
+    "author": "Springfield Ham Radio",
+    "license": "MIT",
+    "homepage": "https://springfield-ham-radio.com",
+    "repository": "https://github.com/springfield-ham-radio/radio-module-kenwood"
+  },
+  "settingsSchema": {
+    "model": "kenwood-tm-d710a",
+    "settingsSchema": {
+      "$ref": "../src/shared/schemas/settings-schema.json"
+    },
+    "channelSchema": {
+      "$ref": "../src/shared/schemas/channel-schema.json"
+    }
+  },
+  "memoryMap": {
+    "$ref": "../src/shared/memory-maps/tm-d710a-settings.json"
+  },
+  "codec": {
+    "type": "memoryMap"
+  },
+  "serialConfig": {
+    "baudRate": 9600,
+    "dataBits": 8,
+    "stopBits": 1,
+    "parity": "none",
+    "rtscts": false
+  },
+  "memoryConfig": {
+    "chunkSize": 256,
+    "addressSize": 2,
+    "addressEndianness": "big",
+    "segments": {
+      "image_lo": {
+        "startAddress": 0,
+        "endAddress": 32511
+      },
+      "image_hi": {
+        "startAddress": 32768,
+        "endAddress": 39935
+      },
+      "block_fe": {
+        "startAddress": 65264,
+        "endAddress": 65279
+      },
+      "block_ff": {
+        "startAddress": 65280,
+        "endAddress": 65423
+      }
+    }
+  },
+  "readMemory": [
+    {
+      "description": "Identify radio (ID D710)",
+      "send": ["I", "D", "0x0D"],
+      "expect": ["I", "D", " ", "D", "7", "1", "0", "0x0D"]
+    },
+    {
+      "description": "Enter programming mode",
+      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
+      "expect": ["0", "M", "0x0D"]
+    },
+    {
+      "description": "Read clone blocks",
+      "read": {
+        "segments": ["image_lo", "image_hi", "block_fe", "block_ff"],
+        "send": ["R", "$address", "$chunkSize"],
+        "expect": ["W", "$address", "$chunkSize", "$data"],
+        "timeout": 2000,
+        "ack": {
+          "send": ["0x06"],
+          "expect": "0x06"
+        }
+      }
+    },
+    {
+      "description": "Leave programming mode",
+      "send": ["E"]
+    }
+  ],
+  "writeMemory": [
+    {
+      "description": "Identify radio (ID D710)",
+      "send": ["I", "D", "0x0D"],
+      "expect": ["I", "D", " ", "D", "7", "1", "0", "0x0D"]
+    },
+    {
+      "description": "Enter programming mode",
+      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
+      "expect": ["0", "M", "0x0D"]
+    },
+    {
+      "description": "Write clone blocks",
+      "write": {
+        "segments": ["image_lo", "image_hi", "block_fe", "block_ff"],
+        "send": ["W", "$address", "$chunkSize", "$data"],
+        "expect": "0x06",
+        "timeout": 2000
+      }
+    },
+    {
+      "description": "Leave programming mode",
+      "send": ["E"]
+    }
+  ]
+}

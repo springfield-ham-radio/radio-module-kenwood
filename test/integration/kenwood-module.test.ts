@@ -149,3 +149,78 @@ describe('Kenwood TH-F6 module', () => {
     }
   });
 });
+
+describe('Kenwood TM-D710A module', () => {
+  const { memoryMap, memoryConfig, modelId } = loadRadio('configs/kenwood-tm-d710a.json', 'src/shared/memory-maps/tm-d710a-settings.json');
+
+  it('encodes and decodes 16-byte memories and 8-character names', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+
+    const originalProgram: RadioProgram = {
+      channels: [
+        {
+          channelNumber: 0,
+          radioChannel: {
+            name: 'LOCAL',
+            receiveFrequency: Frequency(146_520_000),
+            receiveTone: { tone: 0, type: RadioToneType.CTCSS },
+            transmitFrequency: Frequency(146_520_000),
+            transmitTone: { tone: 885, type: RadioToneType.CTCSS },
+          },
+          settings: {
+            mode: 'FM',
+            tuning_step: '5',
+            duplex: '',
+          },
+        },
+        {
+          channelNumber: 1,
+          radioChannel: {
+            name: 'RPT',
+            receiveFrequency: Frequency(146_940_000),
+            receiveTone: { tone: 0, type: RadioToneType.CTCSS },
+            transmitFrequency: Frequency(146_340_000),
+            transmitTone: { tone: 0, type: RadioToneType.CTCSS },
+          },
+          settings: {
+            mode: 'NFM',
+            duplex: '-',
+          },
+        },
+      ],
+      settings: {},
+    };
+
+    const mockMemory = { contents: new Uint8Array(bufferSize(memoryConfig)).fill(0xff), radioModel: modelId };
+    const encodedMemory = codec.encode(originalProgram, mockMemory);
+    const decodedProgram = codec.decode(encodedMemory);
+
+    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).to.deep.equal([0, 1]);
+
+    const channel0 = decodedProgram.channels[0].radioChannel;
+    if (typeof channel0 === 'object' && channel0 !== undefined) {
+      expect(channel0.name).to.equal('LOCAL');
+      expect(channel0.receiveFrequency).to.equal(146_520_000);
+      expect(channel0.transmitFrequency).to.equal(146_520_000);
+      expect(channel0.transmitTone).to.deep.equal({ tone: 885, type: RadioToneType.CTCSS });
+    }
+
+    const channel1 = decodedProgram.channels[1].radioChannel;
+    if (typeof channel1 === 'object' && channel1 !== undefined) {
+      expect(channel1.name).to.equal('RPT');
+      expect(channel1.receiveFrequency).to.equal(146_940_000);
+      expect(channel1.transmitFrequency).to.equal(146_340_000);
+    }
+
+    expect(decodedProgram.channels[1].settings?.mode).to.equal('NFM');
+    expect(decodedProgram.channels[1].settings?.duplex).to.equal('-');
+    expect(encodedMemory.contents[0x1700]).to.not.equal(0xff);
+    expect(encodedMemory.contents[0x1710]).to.not.equal(0xff);
+    expect(encodedMemory.contents[0x5800]).to.equal('L'.charCodeAt(0));
+  });
+});

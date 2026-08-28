@@ -1,7 +1,7 @@
 {
   "name": "@springfield/radio-module-kenwood",
   "version": "1.0.0",
-  "description": "Radio module for Kenwood TH-F6 and TH-D74 ham radios (DSL JSON configs)",
+  "description": "Radio module for Kenwood TH-F6, TH-D74, and TM-D710A ham radios (DSL JSON configs)",
   "author": "Bryan Hunt",
   "license": "MIT",
   "readme": "README.md",
@@ -44,7 +44,8 @@
     "sharedPath": "src/shared",
     "supportedRadios": [
       "th-f6",
-      "th-d74"
+      "th-d74",
+      "tm-d710a"
     ],
     "capabilities": {
       "dslProtocols": true,
@@ -63,7 +64,7 @@
     "@semantic-release/github": "12.0.9",
     "@semantic-release/npm": "13.1.5",
     "@springfield/ham-radio-api": "^17.4.0",
-    "@springfield/ham-radio-utils": "^4.7.0",
+    "@springfield/ham-radio-utils": "^4.8.0",
     "@types/chai": "5.2.3",
     "@types/node": "26.2.0",
     "chai": "6.2.2",

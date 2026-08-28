@@ -1408,9 +1408,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@springfield/ham-radio-utils@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "@springfield/ham-radio-utils@npm:4.7.0"
+"@springfield/ham-radio-utils@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@springfield/ham-radio-utils@npm:4.8.0"
   dependencies:
     "@springfield/ham-radio-api": "npm:^17.4.0"
     ajv: "npm:^8.20.0"
@@ -1418,7 +1418,7 @@ __metadata:
     fishery: "npm:^2.4.0"
     loglayer: "npm:^9.4.0"
     sprintf-js: "npm:^1.1.3"
-  checksum: 10c0/9daea463fad6751e1bf11190b105701ecc5f3d80d124c1819391ea97440aa19502600fff0299f13df0b39dd4d5ae1ae0e602a3841b8186ffdef7c771f11731ff
+  checksum: 10c0/ecd34aa7d2c19177cf0901a0e0ac4555779d402a8eb9aa05a0b9d8d5490808c88a5daad8a40c9d88cc37a86f5d4b993ca2d59af973a9bd6def1aec658c73fe10
   languageName: node
   linkType: hard
 
@@ -1434,7 +1434,7 @@ __metadata:
     "@semantic-release/github": "npm:12.0.9"
     "@semantic-release/npm": "npm:13.1.5"
     "@springfield/ham-radio-api": "npm:^17.4.0"
-    "@springfield/ham-radio-utils": "npm:^4.7.0"
+    "@springfield/ham-radio-utils": "npm:^4.8.0"
     "@types/chai": "npm:5.2.3"
     "@types/node": "npm:26.2.0"
     chai: "npm:6.2.2"
