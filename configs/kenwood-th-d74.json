@@ -1,0 +1,109 @@
+{
+  "$schema": "https://springfield-ham-radio.com/schemas/radio-config-v1.json",
+  "id": {
+    "model": "kenwood-th-d74",
+    "name": "Kenwood TH-D74",
+    "manufacturer": "Kenwood"
+  },
+  "version": "1.0.0",
+  "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
+  "capabilities": {
+    "memoryRead": true,
+    "memoryWrite": true,
+    "channelProgramming": true,
+    "settingsProgramming": true
+  },
+  "metadata": {
+    "author": "Springfield Ham Radio",
+    "license": "MIT",
+    "homepage": "https://springfield-ham-radio.com",
+    "repository": "https://github.com/springfield-ham-radio/radio-module-kenwood"
+  },
+  "settingsSchema": {
+    "model": "kenwood-th-d74",
+    "settingsSchema": {
+      "$ref": "../src/shared/schemas/settings-schema.json"
+    },
+    "channelSchema": {
+      "$ref": "../src/shared/schemas/channel-schema.json"
+    }
+  },
+  "memoryMap": {
+    "$ref": "../src/shared/memory-maps/th-d74-settings.json"
+  },
+  "codec": {
+    "type": "memoryMap"
+  },
+  "serialConfig": {
+    "baudRate": 9600,
+    "dataBits": 8,
+    "stopBits": 1,
+    "parity": "none",
+    "rtscts": true
+  },
+  "memoryConfig": {
+    "chunkSize": 256,
+    "addressSize": 2,
+    "addressEndianness": "big",
+    "segments": {
+      "image": {
+        "startAddress": 0,
+        "endAddress": 500991
+      }
+    }
+  },
+  "readMemory": [
+    {
+      "description": "Enter programming mode",
+      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
+      "expect": ["0", "M", "0x0D"]
+    },
+    {
+      "description": "Switch to clone baud and discard sync byte",
+      "setBaudRate": 57600,
+      "expect": { "bytes": 1 }
+    },
+    {
+      "description": "Read clone blocks",
+      "read": {
+        "segments": ["image"],
+        "send": ["R", "$block", "0x00", "0x00"],
+        "expect": ["W", "$block", "0x00", "0x00", "$data"],
+        "ack": {
+          "send": ["0x06"],
+          "expect": "0x06"
+        }
+      }
+    },
+    {
+      "description": "Leave programming mode",
+      "send": ["E"]
+    }
+  ],
+  "writeMemory": [
+    {
+      "description": "Enter programming mode",
+      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
+      "expect": ["0", "M", "0x0D"]
+    },
+    {
+      "description": "Switch to clone baud and discard sync byte",
+      "setBaudRate": 57600,
+      "expect": { "bytes": 1 }
+    },
+    {
+      "description": "Write clone blocks",
+      "write": {
+        "segments": ["image"],
+        "chunkSize": 256,
+        "skip": [{ "startAddress": 499968, "endAddress": 500991 }],
+        "send": ["W", "$block", "0x00", "0x00", "$data"],
+        "expect": "0x06"
+      }
+    },
+    {
+      "description": "Leave programming mode",
+      "send": ["E"]
+    }
+  ]
+}

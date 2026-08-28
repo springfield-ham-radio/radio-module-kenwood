@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "Decoded Kenwood radio-wide settings (nested by memory-map struct id)",
+  "additionalProperties": true
+}

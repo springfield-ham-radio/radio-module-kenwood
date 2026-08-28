@@ -1,0 +1,551 @@
+{
+  "version": "1.0.0",
+  "description": "Kenwood TH-F6 logical channel image (32-byte records). Radio I/O is live CAT, not this image.",
+  "structs": [
+    {
+      "id": "channels",
+      "seek": 0,
+      "count": 400,
+      "stride": 32,
+      "emptyWhen": {
+        "equals": 255
+      },
+      "clearEmpty": true,
+      "fields": [
+        {
+          "id": "freq",
+          "type": "u32",
+          "value": {
+            "kind": "integer"
+          }
+        },
+        {
+          "id": "offset",
+          "type": "u32",
+          "value": {
+            "kind": "integer"
+          }
+        },
+        {
+          "id": "tuning_step",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "5",
+              "6.25",
+              "8.33",
+              "9",
+              "10",
+              "12.5",
+              "15",
+              "20",
+              "25",
+              "30",
+              "50",
+              "100"
+            ]
+          },
+          "ui": {
+            "group": "channel",
+            "label": "Tuning step (kHz)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "duplex",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "",
+              "+",
+              "-",
+              "split"
+            ]
+          },
+          "ui": {
+            "group": "channel",
+            "label": "Duplex",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "tone_mode",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "ctcss_mode",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "dtcs_mode",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "rtone",
+          "type": "u8",
+          "value": {
+            "kind": "ctcss-index",
+            "values": [
+              670,
+              693,
+              719,
+              744,
+              770,
+              797,
+              825,
+              854,
+              885,
+              915,
+              948,
+              974,
+              1000,
+              1035,
+              1072,
+              1109,
+              1148,
+              1188,
+              1230,
+              1273,
+              1318,
+              1365,
+              1413,
+              1462,
+              1514,
+              1567,
+              1622,
+              1679,
+              1738,
+              1799,
+              1862,
+              1928,
+              2035,
+              2065,
+              2107,
+              2181,
+              2257,
+              2291,
+              2336,
+              2418,
+              2503,
+              2541
+            ]
+          }
+        },
+        {
+          "id": "ctone",
+          "type": "u8",
+          "value": {
+            "kind": "ctcss-index",
+            "values": [
+              670,
+              693,
+              719,
+              744,
+              770,
+              797,
+              825,
+              854,
+              885,
+              915,
+              948,
+              974,
+              1000,
+              1035,
+              1072,
+              1109,
+              1148,
+              1188,
+              1230,
+              1273,
+              1318,
+              1365,
+              1413,
+              1462,
+              1514,
+              1567,
+              1622,
+              1679,
+              1738,
+              1799,
+              1862,
+              1928,
+              2035,
+              2065,
+              2107,
+              2181,
+              2257,
+              2291,
+              2336,
+              2418,
+              2503,
+              2541
+            ]
+          }
+        },
+        {
+          "id": "dtcs_code",
+          "type": "u8",
+          "value": {
+            "kind": "dcs-index",
+            "values": [
+              23,
+              25,
+              26,
+              31,
+              32,
+              36,
+              43,
+              47,
+              51,
+              53,
+              54,
+              65,
+              71,
+              72,
+              73,
+              74,
+              114,
+              115,
+              116,
+              122,
+              125,
+              131,
+              132,
+              134,
+              143,
+              145,
+              152,
+              155,
+              156,
+              162,
+              165,
+              172,
+              174,
+              205,
+              212,
+              223,
+              225,
+              226,
+              243,
+              244,
+              245,
+              246,
+              251,
+              252,
+              255,
+              261,
+              263,
+              265,
+              266,
+              271,
+              274,
+              306,
+              311,
+              315,
+              325,
+              331,
+              332,
+              343,
+              346,
+              351,
+              356,
+              364,
+              365,
+              371,
+              411,
+              412,
+              413,
+              423,
+              431,
+              432,
+              445,
+              446,
+              452,
+              454,
+              455,
+              462,
+              464,
+              465,
+              466,
+              503,
+              506,
+              516,
+              523,
+              526,
+              532,
+              546,
+              565,
+              606,
+              612,
+              624,
+              627,
+              631,
+              632,
+              654,
+              662,
+              664,
+              703,
+              712,
+              723,
+              731,
+              732,
+              734,
+              743,
+              754
+            ]
+          }
+        },
+        {
+          "id": "mode",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "FM",
+              "WFM",
+              "AM",
+              "LSB",
+              "USB",
+              "CW"
+            ]
+          },
+          "ui": {
+            "group": "channel",
+            "label": "Mode",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "skip",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "split",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "_pad",
+          "type": "u8",
+          "reserved": true,
+          "value": {
+            "kind": "ascii",
+            "length": 5
+          }
+        },
+        {
+          "id": "name",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "seek": 12800,
+      "fields": [
+        {
+          "id": "apo",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "30min",
+              "60min"
+            ]
+          },
+          "ui": {
+            "group": "save",
+            "label": "Automatic Power Off",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "bat",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Lithium",
+              "Alkaline"
+            ]
+          },
+          "ui": {
+            "group": "save",
+            "label": "Battery Type",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "sv",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "0.2s",
+              "0.4s",
+              "0.6s",
+              "0.8s",
+              "1.0s",
+              "2s",
+              "3s",
+              "4s",
+              "5s"
+            ]
+          },
+          "ui": {
+            "group": "save",
+            "label": "Battery Save",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "bal",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "100%:0%",
+              "75%:25%",
+              "50%:50%",
+              "25%:75%",
+              "0%:100%"
+            ]
+          },
+          "ui": {
+            "group": "main",
+            "label": "Balance",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "mnf",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Name",
+              "Frequency"
+            ]
+          },
+          "ui": {
+            "group": "main",
+            "label": "Memory Display Mode",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "scr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Time",
+              "Carrier",
+              "Seek"
+            ]
+          },
+          "ui": {
+            "group": "main",
+            "label": "Scan Resume",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "att",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "main",
+            "label": "Attenuator",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "aro",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "main",
+            "label": "Automatic Repeater Offset",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "vox",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "label": "VOX Enable",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "cnt",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 1,
+            "max": 16
+          },
+          "ui": {
+            "group": "display",
+            "label": "Contrast",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "mes",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 0
+          },
+          "ui": {
+            "group": "display",
+            "label": "Power-on Message",
+            "widget": "text"
+          }
+        }
+      ]
+    }
+  ],
+  "channelBindings": {
+    "records": "channels",
+    "nameField": "name",
+    "receiveFrequency": "freq",
+    "transmitFrequency": "offset",
+    "receiveTone": "ctone",
+    "transmitTone": "rtone"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "name": "@springfield/radio-module-kenwood",
+  "version": "1.0.0",
+  "description": "Radio module for Kenwood TH-F6 and TH-D74 ham radios (DSL JSON configs)",
+  "author": "Bryan Hunt",
+  "license": "MIT",
+  "readme": "README.md",
+  "files": [
+    "configs/",
+    "src/shared/schemas/",
+    "src/shared/memory-maps/"
+  ],
+  "type": "module",
+  "exports": {
+    "./configs/*": "./configs/*",
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "ham-radio",
+    "radio-module",
+    "kenwood"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/springfield-ham-radio/radio-module-kenwood.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node -e \"console.log('json-only radio module; nothing to build')\"",
+    "pack:release": "node scripts/pack-release-zip.mjs",
+    "commitlint": "commitlint --edit",
+    "format": "oxfmt",
+    "lint": "oxlint test",
+    "lint:fix": "oxlint --fix --fix-suggestions test",
+    "release": "semantic-release",
+    "prepare": "husky",
+    "test": "yarn test:unit",
+    "test:unit": "tsx --test test/unit/**/*.test.ts",
+    "test:integration": "tsx --test test/integration/**/*.test.ts"
+  },
+  "springfield": {
+    "pluginType": "radio-module",
+    "manufacturer": "Kenwood",
+    "configPath": "configs",
+    "sharedPath": "src/shared",
+    "supportedRadios": [
+      "th-f6",
+      "th-d74"
+    ],
+    "capabilities": {
+      "dslProtocols": true,
+      "memoryRead": true,
+      "memoryWrite": true,
+      "channelProgramming": true,
+      "settingsProgramming": true
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.2",
+    "@commitlint/config-conventional": "21.2.2",
+    "@semantic-release/changelog": "7.0.0",
+    "@semantic-release/exec": "7.1.0",
+    "@semantic-release/git": "11.0.1",
+    "@semantic-release/github": "12.0.9",
+    "@semantic-release/npm": "13.1.5",
+    "@springfield/ham-radio-api": "^17.4.0",
+    "@springfield/ham-radio-utils": "^4.7.0",
+    "@types/chai": "5.2.3",
+    "@types/node": "26.2.0",
+    "chai": "6.2.2",
+    "husky": "9.1.7",
+    "loglayer": "^9.4.0",
+    "oxfmt": "^0.64.0",
+    "oxlint": "1.79.0",
+    "semantic-release": "25.0.9",
+    "tsx": "4.23.12",
+    "typescript": "7.0.2"
+  },
+  "resolutions": {
+    "conventional-changelog-conventionalcommits": "9.3.1",
+    "loglayer": "9.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "release": {
+    "branches": [
+      "main",
+      {
+        "name": "beta",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "node scripts/pack-release-zip.mjs ${nextRelease.version}"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "dist-release/radio-module-kenwood-*.zip",
+              "label": "Radio module JSON package (zip)"
+            }
+          ]
+        }
+      ],
+      "@semantic-release/git"
+    ]
+  },
+  "packageManager": "yarn@4.18.0"
+}

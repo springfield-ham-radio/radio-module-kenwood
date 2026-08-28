@@ -1,0 +1,79 @@
+{
+  "$schema": "https://springfield-ham-radio.com/schemas/radio-config-v1.json",
+  "id": {
+    "model": "kenwood-th-f6",
+    "name": "Kenwood TH-F6",
+    "manufacturer": "Kenwood"
+  },
+  "version": "1.0.0",
+  "description": "TH-F6 live CAT programming. Memory map is a logical 32-byte channel image; serial I/O uses Kenwood MR/MW/MNA commands (see docs/th-f6-live.md).",
+  "capabilities": {
+    "memoryRead": true,
+    "memoryWrite": true,
+    "channelProgramming": true,
+    "settingsProgramming": true
+  },
+  "metadata": {
+    "author": "Springfield Ham Radio",
+    "license": "MIT",
+    "homepage": "https://springfield-ham-radio.com",
+    "repository": "https://github.com/springfield-ham-radio/radio-module-kenwood"
+  },
+  "settingsSchema": {
+    "model": "kenwood-th-f6",
+    "settingsSchema": {
+      "$ref": "../src/shared/schemas/settings-schema.json"
+    },
+    "channelSchema": {
+      "$ref": "../src/shared/schemas/channel-schema.json"
+    }
+  },
+  "memoryMap": {
+    "$ref": "../src/shared/memory-maps/th-f6-settings.json"
+  },
+  "codec": {
+    "type": "memoryMap"
+  },
+  "serialConfig": {
+    "baudRate": 9600,
+    "dataBits": 8,
+    "stopBits": 1,
+    "parity": "none",
+    "rtscts": false
+  },
+  "memoryConfig": {
+    "chunkSize": 32,
+    "addressSize": 2,
+    "addressEndianness": "big",
+    "segments": {
+      "channels": {
+        "startAddress": 0,
+        "endAddress": 12799
+      },
+      "settings": {
+        "startAddress": 12800,
+        "endAddress": 12927
+      }
+    }
+  },
+  "readMemory": [
+    {
+      "description": "Wake the CAT port",
+      "send": ["0x0D"]
+    },
+    {
+      "description": "Disable auto-info (AI 0)",
+      "send": ["A", "I", " ", "0", "0x0D"]
+    }
+  ],
+  "writeMemory": [
+    {
+      "description": "Wake the CAT port",
+      "send": ["0x0D"]
+    },
+    {
+      "description": "Disable auto-info (AI 0)",
+      "send": ["A", "I", " ", "0", "0x0D"]
+    }
+  ]
+}
