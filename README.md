@@ -22,19 +22,17 @@ Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone
 
 ### Desktop app
 
-Install from **Preferences → Radios** once this module is listed in the official catalog.
-
-### npm (developers)
-
-```bash
-yarn add @springfield/radio-module-kenwood
-```
+Install from **Preferences → Radios** once this module is listed in the official catalog. The app downloads the JSON-only zip from GitHub Releases.
 
 ### Release zip
+
+Each GitHub Release attaches `radio-module-kenwood-<version>.zip` (configs + shared schemas/memory maps). Build it locally with:
 
 ```bash
 yarn pack:release
 ```
+
+Update the official `radio-module-catalog` with the printed `sha256:…` integrity after release.
 
 ## Module structure
 
