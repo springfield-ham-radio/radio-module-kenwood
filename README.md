@@ -1,6 +1,6 @@
 # radio-module-kenwood
 
-A radio module for Kenwood TH-F6, TH-D74, and TM-D710A ham radios, compatible with the Springfield Ham Radio Registry.
+A radio module for Kenwood TH-F6, TH-D74, and TM-D710A ham radios, compatible with the HamBench registry.
 
 Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone behavior (the same information CHIRP documents) and re-expressed as JSON. This package does not include CHIRP source.
 
