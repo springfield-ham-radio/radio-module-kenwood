@@ -2,7 +2,7 @@
 
 Re-expressed from observed Kenwood MCP-2A / clone-mode behavior. Not a copy of CHIRP source.
 
-The TM-D710G uses a different clone image and channel record. This module is the **TM-D710 / TM-D710A** (ID `D710`), not the G.
+The TM-D710G uses a different clone image and channel record. This module is the **TM-D710 / TM-D710A** (CAT ID `TM-D710`), not the G.
 
 ## Serial
 
@@ -13,7 +13,7 @@ The TM-D710G uses a different clone image and channel record. This module is the
 
 ## Session
 
-1. `ID\r` → `ID D710\r`
+1. `ID\r` → `ID TM-D710\r`
 2. `0M PROGRAM\r` → `0M\r`
 3. For each 256-byte radio address `A` in `0x0000–0x7EFF` and `0x8000–0x9BFF` (skip **block `0x7F`**):
    - Read: `R` + `u16be(A)` + `u8(size)` → `W` + `u16be(A)` + `u8(size)` + payload → send `0x06`, expect `0x06`

@@ -66,9 +66,9 @@
   },
   "readMemory": [
     {
-      "description": "Identify radio (ID D710)",
+      "description": "Identify radio (ID TM-D710)",
       "send": ["I", "D", "0x0D"],
-      "expect": ["I", "D", " ", "D", "7", "1", "0", "0x0D"]
+      "expect": ["I", "D", " ", "T", "M", "-", "D", "7", "1", "0", "0x0D"]
     },
     {
       "description": "Enter programming mode",
@@ -95,9 +95,9 @@
   ],
   "writeMemory": [
     {
-      "description": "Identify radio (ID D710)",
+      "description": "Identify radio (ID TM-D710)",
       "send": ["I", "D", "0x0D"],
-      "expect": ["I", "D", " ", "D", "7", "1", "0", "0x0D"]
+      "expect": ["I", "D", " ", "T", "M", "-", "D", "7", "1", "0", "0x0D"]
     },
     {
       "description": "Enter programming mode",

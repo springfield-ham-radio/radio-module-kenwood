@@ -17,7 +17,7 @@ Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone
 - **TH-D74 clone I/O**: enter programming mode, switch to 57600 baud, read/write 256-byte blocks, skip the last two blocks on write
 - **TH-D74 memory map**: 1000 channels in 6-per-256-byte groups, parallel flags (skip/group), 16-character names, D-STAR fields
 - **TH-F6 logical image**: 400 × 32-byte channel records plus radio-wide settings for codec round-trips
-- **TM-D710A clone I/O**: identify as `D710`, enter programming, read/write 256-byte blocks (skip radio block `0x7F`), plus 16- and 144-byte tail packets
+- **TM-D710A clone I/O**: identify as `TM-D710`, enter programming, read/write 256-byte blocks (skip radio block `0x7F`), plus 16- and 144-byte tail packets
 - **TM-D710A memory map**: 1000 channels as 16-byte records, parallel band/skip flags, 8-character names
 - **TH-F6 live CAT**: documented in [docs/th-f6-live.md](docs/th-f6-live.md). Handshake steps are in the config; per-memory `MR`/`MW` is live I/O rather than a clone dump
 
@@ -77,7 +77,7 @@ Encode/decode uses `MemoryMapRadioCodec` from `@springfield/ham-radio-utils`. Th
 ### TM-D710A
 
 - 9600 8N1 on the **body PC port** (not the head). No baud switch. Hardware flow control **off**
-- `ID\r` → `ID D710\r`
+- `ID\r` → `ID TM-D710\r`
 - `0M PROGRAM\r` → `0M\r`
 - Each block: `R`/`W` + 16-bit big-endian **byte address** + 1-byte size (`0` means 256)
 - Skip radio block `0x7F`. Tail packets at `0xFEF0` (16 bytes) and `0xFF00` (144 bytes)
