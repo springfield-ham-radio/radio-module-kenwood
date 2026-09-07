@@ -54,4 +54,15 @@ describe('Kenwood DSL module', () => {
       expect(codec.encode).to.be.a('function');
     });
   }
+
+  it('uses live CAT memory steps for the TH-F6', () => {
+    const config = readJson('configs/kenwood-th-f6.json') as {
+      readMemory: Array<Record<string, unknown>>;
+      writeMemory: Array<Record<string, unknown>>;
+    };
+
+    expect(config.readMemory.some((step) => 'catRead' in step)).to.equal(true);
+    expect(config.writeMemory.some((step) => 'catWrite' in step)).to.equal(true);
+    expect(config.readMemory.some((step) => JSON.stringify(step.send) === JSON.stringify(['0x0D']))).to.equal(false);
+  });
 });

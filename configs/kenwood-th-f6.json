@@ -39,7 +39,9 @@
     "dataBits": 8,
     "stopBits": 1,
     "parity": "none",
-    "rtscts": false
+    "rtscts": false,
+    "rts": false,
+    "dtr": true
   },
   "memoryConfig": {
     "chunkSize": 32,
@@ -58,22 +60,62 @@
   },
   "readMemory": [
     {
-      "description": "Wake the CAT port",
-      "send": ["0x0D"]
+      "description": "Wake CAT",
+      "send": ["0x0D"],
+      "delay": 150
+    },
+    {
+      "description": "Identify radio",
+      "send": ["I", "D", "0x0D"],
+      "expect": { "until": "0x0D" },
+      "timeout": 3000
     },
     {
       "description": "Disable auto-info (AI 0)",
-      "send": ["A", "I", " ", "0", "0x0D"]
+      "send": ["A", "I", " ", "0", "0x0D"],
+      "expect": { "until": "0x0D" },
+      "timeout": 3000
+    },
+    {
+      "description": "Read memories via live CAT",
+      "catRead": {
+        "segment": "channels",
+        "count": 400,
+        "recordSize": 32,
+        "pack": "kenwood-th-f6",
+        "timeout": 2000,
+        "interCommandDelayMs": 20
+      }
     }
   ],
   "writeMemory": [
     {
-      "description": "Wake the CAT port",
-      "send": ["0x0D"]
+      "description": "Wake CAT",
+      "send": ["0x0D"],
+      "delay": 150
+    },
+    {
+      "description": "Identify radio",
+      "send": ["I", "D", "0x0D"],
+      "expect": { "until": "0x0D" },
+      "timeout": 3000
     },
     {
       "description": "Disable auto-info (AI 0)",
-      "send": ["A", "I", " ", "0", "0x0D"]
+      "send": ["A", "I", " ", "0", "0x0D"],
+      "expect": { "until": "0x0D" },
+      "timeout": 3000
+    },
+    {
+      "description": "Write memories via live CAT",
+      "catWrite": {
+        "segment": "channels",
+        "count": 400,
+        "recordSize": 32,
+        "pack": "kenwood-th-f6",
+        "timeout": 2000,
+        "interCommandDelayMs": 20
+      }
     }
   ]
 }

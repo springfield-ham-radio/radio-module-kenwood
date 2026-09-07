@@ -102,6 +102,17 @@ describe('Kenwood TH-D74 module', () => {
 describe('Kenwood TH-F6 module', () => {
   const { memoryMap, memoryConfig, modelId } = loadRadio('configs/kenwood-th-f6.json', 'src/shared/memory-maps/th-f6-settings.json');
 
+  it('declares live CAT memory steps', () => {
+    const radioConfig = JSON.parse(readFileSync(join(rootDirectory, 'configs/kenwood-th-f6.json'), 'utf8')) as {
+      readMemory: Array<Record<string, unknown>>;
+      writeMemory: Array<Record<string, unknown>>;
+    };
+
+    expect(radioConfig.readMemory.some((step) => 'catRead' in step)).to.equal(true);
+    expect(radioConfig.writeMemory.some((step) => 'catWrite' in step)).to.equal(true);
+    expect(radioConfig.readMemory.some((step) => JSON.stringify(step.send) === JSON.stringify(['0x0D']))).to.equal(false);
+  });
+
   it('encodes and decodes a logical live-mode channel image', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,

@@ -19,7 +19,7 @@ Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone
 - **TH-F6 logical image**: 400 × 32-byte channel records plus radio-wide settings for codec round-trips
 - **TM-D710A clone I/O**: identify as `TM-D710`, enter programming, read/write 256-byte blocks (skip radio block `0x7F`), plus 16- and 144-byte tail packets
 - **TM-D710A memory map**: 1000 channels as 16-byte records, parallel band/skip flags, 8-character names
-- **TH-F6 live CAT**: documented in [docs/th-f6-live.md](docs/th-f6-live.md). Handshake steps are in the config; per-memory `MR`/`MW` is live I/O rather than a clone dump
+- **TH-F6 live CAT**: documented in [docs/th-f6-live.md](docs/th-f6-live.md). Handshake is `ID` then `AI 0`; memories are read and written with `catRead` / `catWrite` (`MR` / `MW` / `MNA`) rather than a clone dump
 
 ## Installation
 
@@ -87,7 +87,7 @@ Details: [docs/tm-d710a-clone.md](docs/tm-d710a-clone.md). This is not the TM-D7
 
 ### TH-F6
 
-Live radios do not dump EEPROM. The memory map is a logical image the codec uses for channel editing. CAT commands are in [docs/th-f6-live.md](docs/th-f6-live.md). Hardware flow control is **off**.
+Live radios do not dump EEPROM. The memory map is a logical image the codec uses for channel editing. Import/export issues `ID`, `AI 0`, then per-memory `MR`/`MW`/`MNA` via `catRead`/`catWrite`. Details: [docs/th-f6-live.md](docs/th-f6-live.md). Hardware flow control is **off**.
 
 ## Development
 

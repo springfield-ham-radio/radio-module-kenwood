@@ -9,7 +9,9 @@ The TH-F6 does **not** clone EEPROM. Springfield’s memory map is a **logical**
 - 9600 8N1 (try 4800–115200 if `ID` fails)
 - Hardware flow control **off**
 - Commands are ASCII ended with `\r`
-- After connect: `ID\r` then `AI 0\r`
+- After connect: wake CR, then `ID\r`, then `AI 0\r`. RTS is off (`serialConfig.rts: false`). Empty CR echoes are ignored.
+- Replies are read until CR (`expect.until: 0x0D`). Line feeds are ignored.
+- `readMemory` / `writeMemory` then run a `catRead` / `catWrite` loop over 400 channel indexes (`pack: kenwood-th-f6`). Each occupied memory is packed into the logical 32-byte record; empty replies (`N` / `?`) become `0xFF` slots.
 
 ## Memory commands
 
