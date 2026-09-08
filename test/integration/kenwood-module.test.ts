@@ -110,7 +110,8 @@ describe('Kenwood TH-F6 module', () => {
 
     expect(radioConfig.readMemory.some((step) => 'catRead' in step)).to.equal(true);
     expect(radioConfig.writeMemory.some((step) => 'catWrite' in step)).to.equal(true);
-    expect(radioConfig.readMemory.some((step) => JSON.stringify(step.send) === JSON.stringify(['0x0D']))).to.equal(false);
+    expect(radioConfig.readMemory.some((step) => 'read' in step)).to.equal(false);
+    expect(radioConfig.writeMemory.some((step) => 'write' in step)).to.equal(false);
   });
 
   it('encodes and decodes a logical live-mode channel image', () => {
