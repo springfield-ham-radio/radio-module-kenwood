@@ -1,3 +1,14 @@
+## [1.2.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.1.0...v1.2.0) (2026-09-08)
+
+### Features
+
+* import and export TH-F6 memories over live CAT ([e93e4cf](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/e93e4cf6629026832f4425547e0a3c0676e24476))
+
+### Bug Fixes
+
+* assert TH-F6 CAT memory steps and bump API/utils ([a4a51ce](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/a4a51ce08f2046ee7ec425ce3867b0720af6cb60))
+* stop treating TH-F6 CAT wake CR as clone protocol ([2e5e5ba](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/2e5e5ba99499d7d85386464cefd3482b5dd3e777))
+
 ## [1.1.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.0.0...v1.1.0) (2026-08-28)
 
 ### Features
