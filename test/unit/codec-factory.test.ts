@@ -63,6 +63,7 @@ describe('Kenwood DSL module', () => {
 
     expect(config.readMemory.some((step) => 'catRead' in step)).to.equal(true);
     expect(config.writeMemory.some((step) => 'catWrite' in step)).to.equal(true);
-    expect(config.readMemory.some((step) => JSON.stringify(step.send) === JSON.stringify(['0x0D']))).to.equal(false);
+    expect(config.readMemory.some((step) => 'read' in step)).to.equal(false);
+    expect(config.writeMemory.some((step) => 'write' in step)).to.equal(false);
   });
 });
