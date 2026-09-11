@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "description": "Kenwood TM-D710A clone image: 1000 × 16-byte memories, parallel skip/band flags, 8-character names",
+  "description": "Kenwood TM-D710A clone image: 1032 memories, radio-wide / PM0–PM5 settings, VFOs, APRS, and tail PM names",
   "structs": [
     {
       "id": "flags",
       "seek": "0x0e00",
-      "count": 1000,
+      "count": 1032,
       "stride": 2,
       "emptyWhen": {
         "equals": 255
@@ -43,7 +43,7 @@
     {
       "id": "channels",
       "seek": "0x1700",
-      "count": 1000,
+      "count": 1032,
       "stride": 16,
       "emptyWhen": {
         "equals": 255
@@ -406,7 +406,7 @@
     {
       "id": "names",
       "seek": "0x5800",
-      "count": 1000,
+      "count": 1032,
       "stride": 8,
       "emptyWhen": {
         "equals": 255
@@ -425,8 +425,466 @@
       ]
     },
     {
+      "id": "block1",
+      "seek": "0x0015",
+      "fields": [
+        {
+          "id": "ansbck",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Remote control answerback",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "pmrecall",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 5
+          },
+          "ui": {
+            "group": "basic",
+            "label": "Current PM select",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "pnlklk",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Panel lock",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "dspmemch",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "label": "Display memory channel number",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "m10mz",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "label": "10 MHz mode",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "micsens",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "High",
+              "Medium",
+              "Low"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "Microphone sensitivity",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "_opband",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "_unk01c",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "rptrmode",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Cross Band",
+              "TX:A-Band / RX:B-Band",
+              "RX:A-Band / TX:B-Band"
+            ]
+          },
+          "ui": {
+            "group": "repeater",
+            "label": "Repeater mode",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "rptrhold",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "repeater",
+            "label": "Repeater transmit hold",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "rptridx",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "Morse",
+              "Voice"
+            ]
+          },
+          "ui": {
+            "group": "repeater",
+            "label": "Repeater ID transmit",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "_unk020",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "pcbaud",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "9600",
+              "19200",
+              "38400",
+              "57600"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "PC port baud rate",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "_unk022",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "pwdon",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "basic",
+            "label": "Password enabled",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "_unk024",
+          "type": "u8",
+          "reserved": true,
+          "value": {
+            "kind": "ascii",
+            "length": 6
+          }
+        },
+        {
+          "id": "pswd",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 6,
+            "pad": 255
+          },
+          "ui": {
+            "group": "basic",
+            "label": "Password",
+            "widget": "text",
+            "description": "Numerals 1–5 when password is enabled"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pm0A",
+      "seek": "0x0201",
+      "count": 6,
+      "stride": 512,
+      "fields": [
+        {
+          "id": "a_mr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "VFO",
+              "Mem Recall",
+              "Call",
+              "WX"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "label": "A: Left side VFO/MR",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "_unk0202",
+          "type": "u8",
+          "reserved": true,
+          "value": {
+            "kind": "ascii",
+            "length": 5
+          }
+        },
+        {
+          "id": "a_pwr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "High (50W)",
+              "Medium (10W)",
+              "Low (5W)"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "A-band transmit power",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "wxalerta",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "WX alert A-band",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "asmsql",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "A-band S-meter SQL",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "a_chn",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 255
+          },
+          "ui": {
+            "group": "display",
+            "label": "A: Left side MR channel",
+            "widget": "integer",
+            "description": "Stored as one byte (0–255)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pm0B",
+      "seek": "0x020d",
+      "count": 6,
+      "stride": 512,
+      "fields": [
+        {
+          "id": "b_mr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "VFO",
+              "Mem Recall",
+              "Call",
+              "WX"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "label": "B: Right side VFO/MR",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "_unk020e",
+          "type": "u8",
+          "reserved": true,
+          "value": {
+            "kind": "ascii",
+            "length": 5
+          }
+        },
+        {
+          "id": "b_pwr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "High (50W)",
+              "Medium (10W)",
+              "Low (5W)"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "B-band transmit power",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "wxalertb",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "WX alert B-band",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bsmsql",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "B-band S-meter SQL",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "b_chn",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 255
+          },
+          "ui": {
+            "group": "display",
+            "label": "B: Right side MR channel",
+            "widget": "integer",
+            "description": "Stored as one byte (0–255)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pm0Control",
+      "seek": "0x0232",
+      "count": 6,
+      "stride": 512,
+      "fields": [
+        {
+          "id": "sqclogic",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Low",
+              "High"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "SQC logic",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "txband",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "A: Left",
+              "B: Right"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "TX side (PTT)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "single",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "display",
+            "label": "Single band display",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "_unk0235",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "mute",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Mute",
+            "widget": "switch"
+          }
+        }
+      ]
+    },
+    {
       "id": "powerOn",
       "seek": "0x02e0",
+      "count": 6,
+      "stride": 512,
       "fields": [
         {
           "id": "pwron",
@@ -438,8 +896,1837 @@
           },
           "ui": {
             "group": "display",
-            "label": "Power-on message",
+            "label": "PM power-on message",
+            "widget": "text",
+            "description": "1 is PM0 (current profile), 2–6 are PM 1–5"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pm0Memory",
+      "seek": "0x02f0",
+      "count": 6,
+      "stride": 512,
+      "fields": [
+        {
+          "id": "memgrplk",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 10,
+            "pad": 255
+          },
+          "ui": {
+            "group": "memory",
+            "label": "Group link",
             "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pm0",
+      "seek": "0x0350",
+      "count": 6,
+      "stride": 512,
+      "fields": [
+        {
+          "id": "beepon",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Beep on",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "beepvol",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7"
+            ]
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Beep volume",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "extspkr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Mode1",
+              "Mode2"
+            ]
+          },
+          "ui": {
+            "group": "audio",
+            "label": "External speaker",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "ance",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "Auto",
+              "Manual"
+            ]
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Announce mode",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "lang",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "English",
+              "Japanese"
+            ]
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Announce language",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "vcvol",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7"
+            ]
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Voice volume",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "vcspd",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 4
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Voice speed",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "pbkrpt",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "label": "VGS playback repeat",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "pbkint",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 60
+          },
+          "ui": {
+            "group": "audio",
+            "label": "VGS playback interval (s)",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "cntrec",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "label": "Continuous recording",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "vhfaip",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "VHF band AIP",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "uhfaip",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "UHF band AIP",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "ssqlhu",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "125",
+              "250",
+              "500"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "S-meter SQL hang time (ms)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "mutehu",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "125",
+              "250",
+              "500",
+              "750",
+              "1000"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "RX mute hang time (ms)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "beatshft",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "Beat shift",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "tot",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "3",
+              "5",
+              "10"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "Time-out timer (min)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "recall",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "All Bands",
+              "Current Band"
+            ]
+          },
+          "ui": {
+            "group": "memory",
+            "label": "Memory recall method",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "eclnkspd",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Fast",
+              "Slow"
+            ]
+          },
+          "ui": {
+            "group": "memory",
+            "label": "EchoLink speed",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "dtmfhld",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "dtmf",
+            "label": "DTMF hold",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "dtmfspd",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Fast",
+              "Slow"
+            ]
+          },
+          "ui": {
+            "group": "dtmf",
+            "label": "DTMF speed",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "dtmfpau",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "100",
+              "250",
+              "500",
+              "750",
+              "1000",
+              "1500",
+              "2000"
+            ]
+          },
+          "ui": {
+            "group": "dtmf",
+            "label": "DTMF pause (ms)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "dtmflck",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "dtmf",
+            "label": "DTMF lock",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "rptrofst",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "repeater",
+            "label": "Auto repeater offset",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "rptr1750",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "repeater",
+            "label": "1750 Hz transmit hold",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bright",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 8
+          },
+          "ui": {
+            "group": "display",
+            "label": "Brightness",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "autobri",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "display",
+            "label": "Auto brightness",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bkltclr",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Amber",
+              "Green"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "label": "Backlight color",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "pf1key",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "WX CH",
+              "FRQ.BAND",
+              "CTRL",
+              "MONITOR",
+              "VGS",
+              "VOICE",
+              "GROUP UP",
+              "MENU",
+              "MUTE",
+              "SHIFT",
+              "DUAL",
+              "M>V",
+              "1750 Tone"
+            ]
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Front panel PF1",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "pf2key",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "WX CH",
+              "FRQ.BAND",
+              "CTRL",
+              "MONITOR",
+              "VGS",
+              "VOICE",
+              "GROUP UP",
+              "MENU",
+              "MUTE",
+              "SHIFT",
+              "DUAL",
+              "M>V",
+              "1750 Tone"
+            ]
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Front panel PF2",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "micpf1",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "WX CH",
+              "FRQ.BAND",
+              "CTRL",
+              "MONITOR",
+              "VGS",
+              "VOICE",
+              "GROUP UP",
+              "MENU",
+              "MUTE",
+              "SHIFT",
+              "DUAL",
+              "M>V",
+              "VFO",
+              "MR",
+              "CALL",
+              "MHz",
+              "TONE",
+              "REV",
+              "LOW",
+              "LOCK",
+              "A/B",
+              "ENTER",
+              "1750 Tone",
+              "M.LIST",
+              "S.LIST",
+              "MSG.NEW",
+              "REPLY",
+              "POS",
+              "P.MONI",
+              "BEACON",
+              "DX",
+              "WX"
+            ]
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Microphone PF1",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "micpf2",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "WX CH",
+              "FRQ.BAND",
+              "CTRL",
+              "MONITOR",
+              "VGS",
+              "VOICE",
+              "GROUP UP",
+              "MENU",
+              "MUTE",
+              "SHIFT",
+              "DUAL",
+              "M>V",
+              "VFO",
+              "MR",
+              "CALL",
+              "MHz",
+              "TONE",
+              "REV",
+              "LOW",
+              "LOCK",
+              "A/B",
+              "ENTER",
+              "1750 Tone",
+              "M.LIST",
+              "S.LIST",
+              "MSG.NEW",
+              "REPLY",
+              "POS",
+              "P.MONI",
+              "BEACON",
+              "DX",
+              "WX"
+            ]
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Microphone PF2",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "micpf3",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "WX CH",
+              "FRQ.BAND",
+              "CTRL",
+              "MONITOR",
+              "VGS",
+              "VOICE",
+              "GROUP UP",
+              "MENU",
+              "MUTE",
+              "SHIFT",
+              "DUAL",
+              "M>V",
+              "VFO",
+              "MR",
+              "CALL",
+              "MHz",
+              "TONE",
+              "REV",
+              "LOW",
+              "LOCK",
+              "A/B",
+              "ENTER",
+              "1750 Tone",
+              "M.LIST",
+              "S.LIST",
+              "MSG.NEW",
+              "REPLY",
+              "POS",
+              "P.MONI",
+              "BEACON",
+              "DX",
+              "WX"
+            ]
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Microphone PF3",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "micpf4",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "WX CH",
+              "FRQ.BAND",
+              "CTRL",
+              "MONITOR",
+              "VGS",
+              "VOICE",
+              "GROUP UP",
+              "MENU",
+              "MUTE",
+              "SHIFT",
+              "DUAL",
+              "M>V",
+              "VFO",
+              "MR",
+              "CALL",
+              "MHz",
+              "TONE",
+              "REV",
+              "LOW",
+              "LOCK",
+              "A/B",
+              "ENTER",
+              "1750 Tone",
+              "M.LIST",
+              "S.LIST",
+              "MSG.NEW",
+              "REPLY",
+              "POS",
+              "P.MONI",
+              "BEACON",
+              "DX",
+              "WX"
+            ]
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Microphone PF4",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "miclck",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "keys",
+            "label": "Microphone key lock",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "_unk0372",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "scnrsm",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Time (TO)",
+              "Carrier (CO)",
+              "Seek"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Scan resume",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "apo",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "30",
+              "60",
+              "90",
+              "120",
+              "180"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Auto power off (min)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "extband",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "A-Band",
+              "B-Band",
+              "TX-A / RX-B",
+              "RX-A / TX-B"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "External TNC band",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "extbaud",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1200",
+              "9600"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "External TNC baud",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "sqcsrc",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "BUSY",
+              "SQL",
+              "TX",
+              "BUSY/TX",
+              "SQL/TX"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "SQC output source",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "autopm",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "display",
+            "label": "Auto PM store",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "dispbar",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "display",
+            "label": "Display partition bar",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "_unk037a",
+          "type": "u8",
+          "reserved": true
+        },
+        {
+          "id": "bkltcont",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "label": "Contrast",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "dsprev",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Positive",
+              "Negative"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "label": "Color mode",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "vsmode",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Mode 1: 1ch",
+              "Mode 2: 61ch",
+              "Mode 3: 91ch",
+              "Mode 4: 181ch"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Visual scan",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "intband",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "A-Band",
+              "B-Band",
+              "TX-A / RX-B",
+              "RX-A / TX-B"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Internal TNC band",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "wxscntm",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "15",
+              "30",
+              "60"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "label": "WX alert scan time (min)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "scntot",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "10"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Scan TO delay (s)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "scncot",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "10"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "label": "Scan CO delay (s)",
+            "widget": "select"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pm0Bands",
+      "seek": "0x0390",
+      "count": 6,
+      "stride": 512,
+      "fields": [
+        {
+          "id": "abnd118",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "A/Left: 118 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "abnd144",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "A/Left: 144 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "abnd220",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "A/Left: 220 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "abnd300",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "A/Left: 300 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "abnd430",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "A/Left: 430 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bbnd144",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "B/Right: 144 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bbnd220",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "B/Right: 220 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bbnd300",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "B/Right: 300 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bbnd430",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "B/Right: 430 MHz",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "bbnd800",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "bands",
+            "label": "B/Right: 800 MHz",
+            "widget": "switch"
+          }
+        }
+      ]
+    },
+    {
+      "id": "vfos",
+      "seek": "0x0240",
+      "count": 10,
+      "stride": 16,
+      "fields": [
+        {
+          "id": "freq",
+          "type": "u32",
+          "value": {
+            "kind": "integer"
+          },
+          "ui": {
+            "group": "vfo",
+            "label": "VFO frequency (Hz)",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "tuning_step",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "5",
+              "6.25",
+              "8.33",
+              "10",
+              "12.5",
+              "15",
+              "20",
+              "25",
+              "30",
+              "50",
+              "100"
+            ]
+          },
+          "ui": {
+            "group": "vfo",
+            "label": "VFO tuning step (kHz)",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "mode",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "FM",
+              "NFM",
+              "AM"
+            ]
+          },
+          "ui": {
+            "group": "vfo",
+            "label": "VFO mode",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "_tmode_hi",
+          "type": "bits",
+          "width": 1,
+          "reserved": true
+        },
+        {
+          "id": "tone_mode",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "ctcss_mode",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "dtcs_mode",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "id": "duplex",
+          "type": "bits",
+          "width": 4,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "",
+              "+",
+              "-",
+              "",
+              "split"
+            ]
+          },
+          "ui": {
+            "group": "vfo",
+            "label": "VFO duplex",
+            "widget": "select"
+          }
+        },
+        {
+          "id": "rtone",
+          "type": "u8",
+          "value": {
+            "kind": "ctcss-index",
+            "values": [
+              670,
+              693,
+              719,
+              744,
+              770,
+              797,
+              825,
+              854,
+              885,
+              915,
+              948,
+              974,
+              1000,
+              1035,
+              1072,
+              1109,
+              1148,
+              1188,
+              1230,
+              1273,
+              1318,
+              1365,
+              1413,
+              1462,
+              1514,
+              1567,
+              1622,
+              1679,
+              1738,
+              1799,
+              1862,
+              1928,
+              2035,
+              2065,
+              2107,
+              2181,
+              2257,
+              2291,
+              2336,
+              2418,
+              2503,
+              2541
+            ]
+          }
+        },
+        {
+          "id": "ctone",
+          "type": "u8",
+          "value": {
+            "kind": "ctcss-index",
+            "values": [
+              670,
+              693,
+              719,
+              744,
+              770,
+              797,
+              825,
+              854,
+              885,
+              915,
+              948,
+              974,
+              1000,
+              1035,
+              1072,
+              1109,
+              1148,
+              1188,
+              1230,
+              1273,
+              1318,
+              1365,
+              1413,
+              1462,
+              1514,
+              1567,
+              1622,
+              1679,
+              1738,
+              1799,
+              1862,
+              1928,
+              2035,
+              2065,
+              2107,
+              2181,
+              2257,
+              2291,
+              2336,
+              2418,
+              2503,
+              2541
+            ]
+          }
+        },
+        {
+          "id": "dtcs_code",
+          "type": "u8",
+          "value": {
+            "kind": "dcs-index",
+            "values": [
+              23,
+              25,
+              26,
+              31,
+              32,
+              36,
+              43,
+              47,
+              51,
+              53,
+              54,
+              65,
+              71,
+              72,
+              73,
+              74,
+              114,
+              115,
+              116,
+              122,
+              125,
+              131,
+              132,
+              134,
+              143,
+              145,
+              152,
+              155,
+              156,
+              162,
+              165,
+              172,
+              174,
+              205,
+              212,
+              223,
+              225,
+              226,
+              243,
+              244,
+              245,
+              246,
+              251,
+              252,
+              255,
+              261,
+              263,
+              265,
+              266,
+              271,
+              274,
+              306,
+              311,
+              315,
+              325,
+              331,
+              332,
+              343,
+              346,
+              351,
+              356,
+              364,
+              365,
+              371,
+              411,
+              412,
+              413,
+              423,
+              431,
+              432,
+              445,
+              446,
+              452,
+              454,
+              455,
+              462,
+              464,
+              465,
+              466,
+              503,
+              506,
+              516,
+              523,
+              526,
+              532,
+              546,
+              565,
+              606,
+              612,
+              624,
+              627,
+              631,
+              632,
+              654,
+              662,
+              664,
+              703,
+              712,
+              723,
+              731,
+              732,
+              734,
+              743,
+              754
+            ]
+          }
+        },
+        {
+          "id": "offset",
+          "type": "u32",
+          "value": {
+            "kind": "integer"
+          }
+        },
+        {
+          "id": "split_tuning_step",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "5",
+              "6.25",
+              "8.33",
+              "10",
+              "12.5",
+              "15",
+              "20",
+              "25",
+              "30",
+              "50",
+              "100"
+            ]
+          }
+        },
+        {
+          "id": "_cross",
+          "type": "u8",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "id": "progvfo",
+      "seek": "0x0300",
+      "count": 10,
+      "stride": 8,
+      "fields": [
+        {
+          "id": "blow",
+          "type": "u32",
+          "value": {
+            "kind": "integer"
+          },
+          "ui": {
+            "group": "vfo",
+            "label": "VFO low limit (Hz)",
+            "widget": "integer"
+          }
+        },
+        {
+          "id": "bhigh",
+          "type": "u32",
+          "value": {
+            "kind": "integer"
+          },
+          "ui": {
+            "group": "vfo",
+            "label": "VFO high limit (Hz)",
+            "widget": "integer"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfCodes",
+      "seek": "0x0030",
+      "count": 10,
+      "stride": 16,
+      "fields": [
+        {
+          "id": "code",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 16,
+            "pad": 255
+          },
+          "ui": {
+            "group": "dtmf",
+            "label": "DTMF code",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfNames",
+      "seek": "0x00d0",
+      "count": 10,
+      "stride": 8,
+      "fields": [
+        {
+          "id": "name",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 255
+          },
+          "ui": {
+            "group": "dtmf",
+            "label": "DTMF name",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "repeaterId",
+      "seek": "0x0170",
+      "fields": [
+        {
+          "id": "rptrid",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 12,
+            "pad": 255
+          },
+          "ui": {
+            "group": "repeater",
+            "label": "Repeater ID",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pmNames",
+      "seek": "0x7da0",
+      "count": 5,
+      "stride": 16,
+      "fields": [
+        {
+          "id": "pmname",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 16,
+            "pad": 255
+          },
+          "ui": {
+            "group": "basic",
+            "label": "PM group name",
+            "widget": "text",
+            "description": "MCP names at 0x7DA0 (PM 1–5)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pmListNames",
+      "seek": "0xff00",
+      "count": 5,
+      "stride": 16,
+      "fields": [
+        {
+          "id": "name",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 16,
+            "pad": 0
+          },
+          "ui": {
+            "group": "basic",
+            "label": "PM list name",
+            "widget": "text",
+            "description": "Names stored in the clone tail (PM 1–5)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcpComment",
+      "seek": "0x7df0",
+      "fields": [
+        {
+          "id": "comment",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 32,
+            "pad": 255
+          },
+          "ui": {
+            "group": "basic",
+            "label": "Comment",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprs",
+      "seek": "0x8100",
+      "fields": [
+        {
+          "id": "mycall",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 9,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "label": "My callsign",
+            "widget": "text"
+          }
+        },
+        {
+          "id": "_unk8109",
+          "type": "u8",
+          "reserved": true,
+          "value": {
+            "kind": "ascii",
+            "length": 6
+          }
+        },
+        {
+          "id": "ssid",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "None",
+              "-1",
+              "-2",
+              "-3",
+              "-4",
+              "-5",
+              "-6",
+              "-7",
+              "-8",
+              "-9",
+              "-10",
+              "-11",
+              "-12",
+              "-13",
+              "-14",
+              "-15"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "label": "My SSID",
+            "widget": "select"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsStatus",
+      "seek": "0x8314",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "label": "Status text enabled",
+            "widget": "switch"
+          }
+        },
+        {
+          "id": "text",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 42,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "label": "Status text",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsMsgGroup",
+      "seek": "0x83f6",
+      "fields": [
+        {
+          "id": "groups",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 32,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "label": "Message group",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsComment",
+      "seek": "0x8540",
+      "fields": [
+        {
+          "id": "comment",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "label": "APRS comment",
+            "widget": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "skyCommand",
+      "seek": "0x8660",
+      "fields": [
+        {
+          "id": "cmdr",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 10,
+            "pad": 0
+          },
+          "ui": {
+            "group": "sky",
+            "label": "Commander call sign",
+            "widget": "text"
+          }
+        },
+        {
+          "id": "tptr",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 10,
+            "pad": 0
+          },
+          "ui": {
+            "group": "sky",
+            "label": "Transporter call sign",
+            "widget": "text"
+          }
+        },
+        {
+          "id": "skytone",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "67.0",
+              "69.3",
+              "71.9",
+              "74.4",
+              "77.0",
+              "79.7",
+              "82.5",
+              "85.4",
+              "88.5",
+              "91.5",
+              "94.8",
+              "97.4",
+              "100.0",
+              "103.5",
+              "107.2",
+              "110.9",
+              "114.8",
+              "118.8",
+              "123.0",
+              "127.3",
+              "131.8",
+              "136.5",
+              "141.3",
+              "146.2",
+              "151.4",
+              "156.7",
+              "162.2",
+              "167.9",
+              "173.8",
+              "179.9",
+              "186.2",
+              "192.8",
+              "203.5",
+              "206.5",
+              "210.7",
+              "218.1",
+              "225.7",
+              "229.1",
+              "233.6",
+              "241.8",
+              "250.3",
+              "254.1"
+            ]
+          },
+          "ui": {
+            "group": "sky",
+            "label": "Sky Command tone (Hz)",
+            "widget": "select"
           }
         }
       ]

@@ -28,15 +28,23 @@ The TM-D710G uses a different clone image and channel record. This module is the
 
 | Region | Address | Notes |
 | --- | --- | --- |
-| Channel flags | `0x0E00` | 1030 × 2 bytes (`band`, `skip`); this module maps 0–999 |
-| Memories | `0x1700` | 1030 × 16-byte records (0–999 + scan/WX); call channels follow at `0x5760` |
-| Names | `0x5800` | 1020 × 8 ASCII, pad `0xFF` |
-| Power-on message | `0x02E0` | 8 ASCII in PM group 0 |
+| Channel flags | `0x0E00` | 1032 × 2 bytes (`band`, `skip`) for MR, scan/WX, and call |
+| Memories | `0x1700` | 1032 × 16-byte records: 0–999 MR, 1000–1019 scan edges, 1020–1029 WX, 1030–1031 call (`0x5760`) |
+| Names | `0x5800` | 1032 × 8 ASCII, pad `0xFF` (WX names start at `0x77E0`) |
+| Radio-wide (`block1`) | `0x0015` | Answerback, current PM, panel lock, 10 MHz mode, mic gain, repeater mode/hold/ID, PC baud, password |
+| DTMF memories | `0x0030` / `0x00D0` | 10 × 16-character codes and 10 × 8-character names |
+| Repeater ID | `0x0170` | 12 ASCII |
+| PM groups 0–5 | `0x0200` | Six × 512-byte profiles. Settings tab shows all six (label `1` = PM0). VFOs at `0x0240`, programmable limits at `0x0300`, power-on at `0x02E0` |
+| PM names | `0x7DA0` | 5 × 16 ASCII (PM 1–5, MCP) |
+| PM list names | `0xFF00` | 5 × 16 ASCII in the tail packet (`PM 1`–`PM 5` on a stock radio) |
+| MCP comment | `0x7DF0` | 32 ASCII |
+| APRS | `0x8100` | My callsign / SSID, status text, message group, comment |
+| Sky Command | `0x8660` | Commander / transporter call signs and CTCSS |
 | Hole | `0x7F00–0x7FFF` | Not cloned |
-| Tail | `0xFEF0`, `0xFF00` | MCP comment / trailing image |
+| Tail | `0xFEF0`, `0xFF00` | Trailing image |
 
 Empty memory: first frequency byte `0xFF` (`ul32` `0xFFFFFFFF`). Occupied `band` codes: `0` (118 MHz), `5` (144), `6` (200), `7` (300), `8` (400), `9` (800). Scan skip is a boolean in the flags byte.
 
 Tone flags live in the high nibble of the duplex byte: bit 2 = encode CTCSS, bit 1 = TSQL, bit 0 = DTCS. Kenwood CTCSS list omits 159.8, 165.5, 171.3, 177.3, 183.5, 189.9, 196.6, and 199.5 Hz.
 
-This module maps regular memories **0–999**.
+This module maps memories **0–1031** (regular 0–999, scan 1000–1019, weather 1020–1029, call 1030–1031). Radio-wide settings, **PM0–PM5**, PM0 VFOs and band limits, APRS callsign/status/message-group, and tail PM names appear on the Settings tab. Unmapped remainder is padding, unknown flags, and APRS list buffers.
