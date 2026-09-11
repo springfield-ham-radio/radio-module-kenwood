@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.3.0...v1.4.0) (2026-09-11)
+
+### Features
+
+* advertise supported programming baud rates ([e641c19](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/e641c198fc3e232abcf2ed89e062280a2a94f26b))
+
 ## [1.3.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.2.0...v1.3.0) (2026-09-11)
 
 ### Features
