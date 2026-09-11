@@ -7,7 +7,7 @@ The TM-D710G uses a different clone image and channel record. This module is the
 ## Serial
 
 - PC port on the **TX/RX body**, not the head Com port
-- 9600 8N1 (menu PC baud). No mid-session baud switch
+- 9600 8N1 (menu PC baud; 9600, 19200, 38400, or 57600). No mid-session baud switch
 - Hardware flow control **off**
 - Clone block timeout should be at least 1 s at 9600 baud
 

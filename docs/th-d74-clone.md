@@ -4,7 +4,7 @@ Re-expressed from observed Kenwood MCP-D74 / clone-mode behavior. Not a copy of 
 
 ## Serial
 
-- Default menu baud 9600 8N1
+- Default menu baud 9600 8N1 (9600, 19200, 38400, or 57600)
 - Hardware RTS/CTS on macOS USB CDC
 - After `0M PROGRAM`, both sides switch to **57600** for the dump
 

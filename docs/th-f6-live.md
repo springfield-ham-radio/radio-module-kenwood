@@ -6,7 +6,7 @@ The TH-F6 does **not** clone EEPROM. Springfield’s memory map is a **logical**
 
 ## Serial
 
-- 9600 8N1 (try 4800–115200 if `ID` fails)
+- 9600 8N1 (4800, 9600, 19200, 38400, 57600, or 115200 if `ID` fails)
 - Hardware flow control **off**
 - Commands are ASCII ended with `\r`
 - After connect: wake CR, then `ID\r`, then `AI 0\r`. RTS is off (`serialConfig.rts: false`). Empty CR echoes are ignored.

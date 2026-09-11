@@ -63,7 +63,7 @@ Encode/decode uses `MemoryMapRadioCodec` from `@springfield/ham-radio-utils`. Th
 
 ### TH-D74
 
-- Start at 9600 8N1 with RTS/CTS (`rtscts: true`; required on macOS)
+- Start at 9600 8N1 with RTS/CTS (`rtscts: true`; required on macOS). Menu COM baud may be 9600, 19200, 38400, or 57600
 - `0M PROGRAM\r` → `0M\r`
 - Switch to 57600 baud, discard one sync byte
 - Each 256-byte block: `R` + 16-bit big-endian **block index** + `0x0000`
@@ -76,7 +76,7 @@ Encode/decode uses `MemoryMapRadioCodec` from `@springfield/ham-radio-utils`. Th
 
 ### TM-D710A
 
-- 9600 8N1 on the **body PC port** (not the head). No baud switch. Hardware flow control **off**
+- 9600 8N1 on the **body PC port** (not the head). Menu PC baud may be 9600, 19200, 38400, or 57600. No baud switch. Hardware flow control **off**
 - `ID\r` → `ID TM-D710\r`
 - `0M PROGRAM\r` → `0M\r`
 - Each block: `R`/`W` + 16-bit big-endian **byte address** + 1-byte size (`0` means 256)
@@ -87,7 +87,7 @@ Details: [docs/tm-d710a-clone.md](docs/tm-d710a-clone.md). This is not the TM-D7
 
 ### TH-F6
 
-Live radios do not dump EEPROM. The memory map is a logical image the codec uses for channel editing. Import/export issues `ID`, `AI 0`, then per-memory `MR`/`MW`/`MNA` via `catRead`/`catWrite`. Details: [docs/th-f6-live.md](docs/th-f6-live.md). Hardware flow control is **off**.
+Live radios do not dump EEPROM. The memory map is a logical image the codec uses for channel editing. Import/export issues `ID`, `AI 0`, then per-memory `MR`/`MW`/`MNA` via `catRead`/`catWrite`. Details: [docs/th-f6-live.md](docs/th-f6-live.md). Default 9600 8N1 (4800–115200). Hardware flow control is **off**.
 
 ## Development
 
