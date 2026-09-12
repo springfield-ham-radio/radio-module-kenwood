@@ -1,3 +1,9 @@
+## [1.7.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.6.0...v1.7.0) (2026-09-12)
+
+### Features
+
+* stamp radio JSON version from the module release ([bb5e38b](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/bb5e38bc01a35902c9225878719de58925439ec2))
+
 ## [1.6.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.5.0...v1.6.0) (2026-09-12)
 
 ### Features
