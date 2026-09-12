@@ -1,3 +1,9 @@
+## [1.6.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.5.0...v1.6.0) (2026-09-12)
+
+### Features
+
+* declare Kenwood CAT session profiles in radio JSON ([55cd270](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/55cd2703490af6b345e193fab0a907a773813828))
+
 ## [1.5.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.4.0...v1.5.0) (2026-09-12)
 
 ### Features
