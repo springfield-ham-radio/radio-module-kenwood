@@ -2,7 +2,7 @@
 
 Re-expressed from Kenwood handheld CAT behavior (TH-F6A). Not a copy of CHIRP source.
 
-The TH-F6 does **not** clone EEPROM. Springfield’s memory map is a **logical** 32-byte × 400 channel image plus a small settings block so the generic memory-map codec can edit channels. Filling that image from the radio means issuing per-memory CAT commands.
+The TH-F6 does **not** clone EEPROM. Springfield’s memory map is a **logical** 32-byte × 400 channel image plus a small settings block so the generic memory-map codec can edit channels. Filling that image from the radio means issuing per-memory CAT commands. The config sets `capabilities.liveControl` and `cat.protocol: kenwood` (`dialect: th-f6`) for the HamBench CAT page as well.
 
 ## Serial
 

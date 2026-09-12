@@ -11,7 +11,12 @@
     "memoryRead": true,
     "memoryWrite": true,
     "channelProgramming": true,
-    "settingsProgramming": true
+    "settingsProgramming": true,
+    "liveControl": true
+  },
+  "cat": {
+    "protocol": "kenwood",
+    "dialect": "fm-mobile"
   },
   "metadata": {
     "author": "Springfield Ham Radio",

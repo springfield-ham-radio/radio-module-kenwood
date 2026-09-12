@@ -2,6 +2,8 @@
 
 Re-expressed from observed Kenwood MCP-D74 / clone-mode behavior. Not a copy of CHIRP source.
 
+Outside clone mode, the PC port speaks Kenwood CAT. The config sets `capabilities.liveControl` and `cat.protocol: kenwood` (`dialect: fm-mobile`).
+
 ## Serial
 
 - Default menu baud 9600 8N1 (9600, 19200, 38400, or 57600)
