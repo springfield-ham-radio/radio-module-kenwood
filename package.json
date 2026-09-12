@@ -1,6 +1,6 @@
 {
   "name": "@springfield/radio-module-kenwood",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Radio module for Kenwood TH-F6, TH-D74, and TM-D710A ham radios (DSL JSON configs)",
   "author": "Bryan Hunt",
   "license": "MIT",

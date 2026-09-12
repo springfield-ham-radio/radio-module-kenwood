@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.4.0...v1.5.0) (2026-09-12)
+
+### Features
+
+* declare Kenwood live CAT on the PC port ([fcb2adf](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/fcb2adfe8a38b6ea2a40660480fdc2ab53b571d8))
+
 ## [1.4.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.3.0...v1.4.0) (2026-09-11)
 
 ### Features
