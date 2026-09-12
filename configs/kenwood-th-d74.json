@@ -16,7 +16,14 @@
   },
   "cat": {
     "protocol": "kenwood",
-    "dialect": "fm-mobile"
+    "vfoCount": 2,
+    "frequencyCommands": ["FQ", "FO"],
+    "frequencyWidth": 11,
+    "modes": ["FM", "NFM", "AM", "DV"],
+    "powers": ["High", "Medium", "Low"],
+    "modeCommand": "MD",
+    "bandControl": true,
+    "powerBandIndex": true
   },
   "metadata": {
     "author": "Springfield Ham Radio",

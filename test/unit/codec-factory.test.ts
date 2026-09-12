@@ -19,19 +19,22 @@ describe('Kenwood DSL module', () => {
       configPath: 'configs/kenwood-th-d74.json',
       mapPath: 'src/shared/memory-maps/th-d74-settings.json',
       model: 'kenwood-th-d74',
-      dialect: 'fm-mobile',
+      vfoCount: 2,
+      vfoChannel: false,
     },
     {
       configPath: 'configs/kenwood-th-f6.json',
       mapPath: 'src/shared/memory-maps/th-f6-settings.json',
       model: 'kenwood-th-f6',
-      dialect: 'th-f6',
+      vfoCount: 1,
+      vfoChannel: false,
     },
     {
       configPath: 'configs/kenwood-tm-d710a.json',
       mapPath: 'src/shared/memory-maps/tm-d710a-settings.json',
       model: 'kenwood-tm-d710a',
-      dialect: 'fm-mobile',
+      vfoCount: 2,
+      vfoChannel: true,
     },
   ]) {
     it(`declares a memoryMap codec for ${fixture.model}`, () => {
@@ -60,12 +63,19 @@ describe('Kenwood DSL module', () => {
     it(`declares Kenwood live control for ${fixture.model}`, () => {
       const config = readJson(fixture.configPath) as {
         capabilities: { liveControl?: boolean };
-        cat?: { protocol?: string; dialect?: string };
+        cat?: {
+          protocol?: string;
+          vfoCount?: number;
+          vfoChannel?: boolean;
+          powers?: string[];
+        };
       };
 
       expect(config.capabilities.liveControl).to.equal(true);
       expect(config.cat?.protocol).to.equal('kenwood');
-      expect(config.cat?.dialect).to.equal(fixture.dialect);
+      expect(config.cat?.vfoCount).to.equal(fixture.vfoCount);
+      expect(Boolean(config.cat?.vfoChannel)).to.equal(fixture.vfoChannel);
+      expect(config.cat?.powers).to.deep.equal(['High', 'Medium', 'Low']);
     });
   }
 

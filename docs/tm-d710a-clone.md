@@ -4,7 +4,7 @@ Re-expressed from observed Kenwood MCP-2A / clone-mode behavior. Not a copy of C
 
 The TM-D710G uses a different clone image and channel record. This module is the **TM-D710 / TM-D710A** (CAT ID `TM-D710`), not the G.
 
-Outside clone mode, the same body **PC** port speaks Kenwood CAT (`ID`, `FQ`, `MD`, `PC`, `TX`/`RX`). The config sets `capabilities.liveControl` and `cat.protocol: kenwood` (`dialect: fm-mobile`) so HamBench lists this radio on the CAT page.
+Outside clone mode, the same body **PC** port speaks Kenwood CAT. The config sets `capabilities.liveControl` and a `cat` block (`protocol: kenwood`, `vfoChannel`, `FO`, High/Medium/Low) so HamBench can drive VFOs without model-specific code.
 
 ## Serial
 

@@ -8,9 +8,9 @@ Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone
 
 | Model | Programming style | Live control | Config |
 | --- | --- | --- | --- |
-| **TH-F6** / TH-F6A | Live CAT (`MR` / `MW` / `MNA`) | Kenwood CAT (`th-f6`) | `configs/kenwood-th-f6.json` |
-| **TH-D74** | Clone mode (`0M PROGRAM`, 256-byte `R`/`W` blocks at 57600 baud) | Kenwood CAT (`fm-mobile`) | `configs/kenwood-th-d74.json` |
-| **TM-D710A** | Clone mode (`0M PROGRAM`, 256-byte `R`/`W` blocks at 9600 baud) | Kenwood CAT (`fm-mobile`) | `configs/kenwood-tm-d710a.json` |
+| **TH-F6** / TH-F6A | Live CAT (`MR` / `MW` / `MNA`) | Kenwood CAT (`wakeCr`, `FQ`/`FO`) | `configs/kenwood-th-f6.json` |
+| **TH-D74** | Clone mode (`0M PROGRAM`, 256-byte `R`/`W` blocks at 57600 baud) | Kenwood CAT (`FQ`/`FO`, two VFOs) | `configs/kenwood-th-d74.json` |
+| **TM-D710A** | Clone mode (`0M PROGRAM`, 256-byte `R`/`W` blocks at 9600 baud) | Kenwood CAT (`FO` VFO channel, High/Medium/Low) | `configs/kenwood-tm-d710a.json` |
 
 ## Features
 
@@ -20,7 +20,7 @@ Layouts and wire protocols were reverse-engineered from public Kenwood CAT/clone
 - **TM-D710A clone I/O**: identify as `TM-D710`, enter programming, read/write 256-byte blocks (skip radio block `0x7F`), plus 16- and 144-byte tail packets
 - **TM-D710A memory map**: 1032 × 16-byte records (MR 0–999, scan, WX, call), parallel band/skip flags, 8-character names, PM0–PM5 settings, VFOs, APRS, and tail PM names
 - **TH-F6 live CAT**: documented in [docs/th-f6-live.md](docs/th-f6-live.md). Handshake is `ID` then `AI 0`; memories are read and written with `catRead` / `catWrite` (`MR` / `MW` / `MNA`) rather than a clone dump
-- **Live control**: every model sets `capabilities.liveControl` and `cat.protocol: kenwood` so HamBench can QSY on the PC port even when memory uses clone blocks
+- **Live control**: every model sets `capabilities.liveControl` and a Kenwood `cat` profile (commands, VFO count, mode and power names) so HamBench can QSY without hard-coding the radio
 
 ## Installation
 
