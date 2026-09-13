@@ -5,7 +5,7 @@
     "name": "Kenwood TH-F6",
     "manufacturer": "Kenwood"
   },
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "TH-F6 live CAT programming. Memory map is a logical 32-byte channel image; serial I/O uses Kenwood MR/MW/MNA commands (see docs/th-f6-live.md).",
   "capabilities": {
     "memoryRead": true,

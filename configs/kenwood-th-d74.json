@@ -5,7 +5,7 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "capabilities": {
     "memoryRead": true,

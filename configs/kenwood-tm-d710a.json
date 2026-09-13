@@ -5,7 +5,7 @@
     "name": "Kenwood TM-D710A",
     "manufacturer": "Kenwood"
   },
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "TM-D710A clone-mode programming (256-byte R/W blocks after 0M PROGRAM; skips radio block 0x7F)",
   "capabilities": {
     "memoryRead": true,

@@ -1,3 +1,9 @@
+## [1.9.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.8.0...v1.9.0) (2026-09-13)
+
+### Features
+
+* generate catalog-module.json from configs ([6fc20d6](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/6fc20d67f12a5df5060905ff7433244b23d4bb37))
+
 ## [1.8.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.7.0...v1.8.0) (2026-09-13)
 
 ### Features
