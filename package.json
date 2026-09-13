@@ -43,9 +43,9 @@
     "configPath": "configs",
     "sharedPath": "src/shared",
     "supportedRadios": [
-      "th-f6",
-      "th-d74",
-      "tm-d710a"
+      "kenwood-th-d74",
+      "kenwood-th-f6",
+      "kenwood-tm-d710a"
     ],
     "capabilities": {
       "dslProtocols": true,
