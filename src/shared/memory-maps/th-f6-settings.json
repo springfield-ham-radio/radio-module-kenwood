@@ -1,6 +1,28 @@
 {
   "version": "1.0.0",
   "description": "Kenwood TH-F6 logical channel image (32-byte records). Radio I/O is live CAT, not this image.",
+  "groups": [
+    {
+      "id": "display",
+      "label": "Display",
+      "icon": "i-lucide-monitor"
+    },
+    {
+      "id": "aux",
+      "label": "Auxiliary",
+      "icon": "i-lucide-unplug"
+    },
+    {
+      "id": "save",
+      "label": "Power Save",
+      "icon": "i-lucide-battery-medium"
+    },
+    {
+      "id": "main",
+      "label": "Main",
+      "icon": "i-lucide-layout-dashboard"
+    }
+  ],
   "structs": [
     {
       "id": "channels",

@@ -1,6 +1,13 @@
 {
   "version": "1.0.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, and names",
+  "groups": [
+    {
+      "id": "groups",
+      "label": "Memory Groups",
+      "icon": "i-lucide-folder"
+    }
+  ],
   "structs": [
     {
       "id": "flags",

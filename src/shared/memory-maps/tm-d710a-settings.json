@@ -1,6 +1,213 @@
 {
   "version": "1.0.0",
   "description": "Kenwood TM-D710A clone image: 1032 memories, radio-wide / PM0–PM5 settings, VFOs, APRS, and tail PM names",
+  "groups": [
+    {
+      "id": "basic",
+      "label": "Basic Settings",
+      "icon": "i-lucide-sliders-horizontal",
+      "groups": [
+        {
+          "id": "password",
+          "label": "Password"
+        },
+        {
+          "id": "profiles",
+          "label": "Programmable Memories"
+        }
+      ]
+    },
+    {
+      "id": "display",
+      "label": "Display",
+      "icon": "i-lucide-monitor",
+      "groups": [
+        {
+          "id": "bands",
+          "label": "Band Display"
+        },
+        {
+          "id": "backlight",
+          "label": "Backlight"
+        },
+        {
+          "id": "power-on",
+          "label": "Power On"
+        }
+      ]
+    },
+    {
+      "id": "audio",
+      "label": "Audio",
+      "icon": "i-lucide-volume-2",
+      "groups": [
+        {
+          "id": "beep",
+          "label": "Beep"
+        },
+        {
+          "id": "voice",
+          "label": "Voice"
+        },
+        {
+          "id": "vgs",
+          "label": "VGS"
+        }
+      ]
+    },
+    {
+      "id": "aux",
+      "label": "Auxiliary",
+      "icon": "i-lucide-unplug",
+      "groups": [
+        {
+          "id": "serial",
+          "label": "Serial / Remote"
+        },
+        {
+          "id": "scan",
+          "label": "Scan"
+        },
+        {
+          "id": "tnc",
+          "label": "TNC"
+        }
+      ]
+    },
+    {
+      "id": "transmit",
+      "label": "Transmit / Receive",
+      "icon": "i-lucide-radio-tower",
+      "groups": [
+        {
+          "id": "power",
+          "label": "Power"
+        },
+        {
+          "id": "squelch",
+          "label": "Squelch"
+        },
+        {
+          "id": "weather",
+          "label": "Weather"
+        },
+        {
+          "id": "other",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "id": "dtmf",
+      "label": "DTMF Settings",
+      "icon": "i-lucide-hash",
+      "groups": [
+        {
+          "id": "options",
+          "label": "Options"
+        },
+        {
+          "id": "memories",
+          "label": "Memories"
+        }
+      ]
+    },
+    {
+      "id": "memory",
+      "label": "Memory",
+      "icon": "i-lucide-database",
+      "groups": [
+        {
+          "id": "display",
+          "label": "Display"
+        },
+        {
+          "id": "recall",
+          "label": "Recall"
+        }
+      ]
+    },
+    {
+      "id": "repeater",
+      "label": "Repeater",
+      "icon": "i-lucide-repeat-2",
+      "groups": [
+        {
+          "id": "operation",
+          "label": "Operation"
+        },
+        {
+          "id": "identity",
+          "label": "Identity"
+        }
+      ]
+    },
+    {
+      "id": "keys",
+      "label": "PF Keys",
+      "icon": "i-lucide-keyboard",
+      "groups": [
+        {
+          "id": "panel",
+          "label": "Front Panel"
+        },
+        {
+          "id": "microphone",
+          "label": "Microphone"
+        }
+      ]
+    },
+    {
+      "id": "bands",
+      "label": "Band Masks",
+      "icon": "i-lucide-layers",
+      "groups": [
+        {
+          "id": "a",
+          "label": "A / Left"
+        },
+        {
+          "id": "b",
+          "label": "B / Right"
+        }
+      ]
+    },
+    {
+      "id": "vfo",
+      "label": "VFO",
+      "icon": "i-lucide-gauge",
+      "groups": [
+        {
+          "id": "channel",
+          "label": "Channel"
+        },
+        {
+          "id": "limits",
+          "label": "Limits"
+        }
+      ]
+    },
+    {
+      "id": "aprs",
+      "label": "APRS",
+      "icon": "i-lucide-map-pinned",
+      "groups": [
+        {
+          "id": "identity",
+          "label": "Identity"
+        },
+        {
+          "id": "status",
+          "label": "Status"
+        }
+      ]
+    },
+    {
+      "id": "sky",
+      "label": "Sky Command",
+      "icon": "i-lucide-cloud"
+    }
+  ],
   "structs": [
     {
       "id": "flags",
@@ -437,7 +644,8 @@
           "ui": {
             "group": "aux",
             "label": "Remote control answerback",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "serial"
           }
         },
         {
@@ -451,7 +659,8 @@
           "ui": {
             "group": "basic",
             "label": "Current PM select",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "profiles"
           }
         },
         {
@@ -463,7 +672,8 @@
           "ui": {
             "group": "keys",
             "label": "Panel lock",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "panel"
           }
         },
         {
@@ -475,7 +685,8 @@
           "ui": {
             "group": "memory",
             "label": "Display memory channel number",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "display"
           }
         },
         {
@@ -487,7 +698,8 @@
           "ui": {
             "group": "aux",
             "label": "10 MHz mode",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "scan"
           }
         },
         {
@@ -504,7 +716,8 @@
           "ui": {
             "group": "transmit",
             "label": "Microphone sensitivity",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "other"
           }
         },
         {
@@ -531,7 +744,8 @@
           "ui": {
             "group": "repeater",
             "label": "Repeater mode",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "operation"
           }
         },
         {
@@ -543,7 +757,8 @@
           "ui": {
             "group": "repeater",
             "label": "Repeater transmit hold",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "operation"
           }
         },
         {
@@ -560,7 +775,8 @@
           "ui": {
             "group": "repeater",
             "label": "Repeater ID transmit",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "operation"
           }
         },
         {
@@ -583,7 +799,8 @@
           "ui": {
             "group": "aux",
             "label": "PC port baud rate",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "serial"
           }
         },
         {
@@ -600,7 +817,8 @@
           "ui": {
             "group": "basic",
             "label": "Password enabled",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "password"
           }
         },
         {
@@ -624,7 +842,8 @@
             "group": "basic",
             "label": "Password",
             "widget": "text",
-            "description": "Numerals 1–5 when password is enabled"
+            "description": "Numerals 1–5 when password is enabled",
+            "subgroup": "password"
           }
         }
       ]
@@ -650,7 +869,8 @@
           "ui": {
             "group": "display",
             "label": "A: Left side VFO/MR",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "bands"
           }
         },
         {
@@ -676,7 +896,8 @@
           "ui": {
             "group": "transmit",
             "label": "A-band transmit power",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "power"
           }
         },
         {
@@ -688,7 +909,8 @@
           "ui": {
             "group": "transmit",
             "label": "WX alert A-band",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "weather"
           }
         },
         {
@@ -700,7 +922,8 @@
           "ui": {
             "group": "transmit",
             "label": "A-band S-meter SQL",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "squelch"
           }
         },
         {
@@ -715,7 +938,8 @@
             "group": "display",
             "label": "A: Left side MR channel",
             "widget": "integer",
-            "description": "Stored as one byte (0–255)"
+            "description": "Stored as one byte (0–255)",
+            "subgroup": "bands"
           }
         }
       ]
@@ -741,7 +965,8 @@
           "ui": {
             "group": "display",
             "label": "B: Right side VFO/MR",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "bands"
           }
         },
         {
@@ -767,7 +992,8 @@
           "ui": {
             "group": "transmit",
             "label": "B-band transmit power",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "power"
           }
         },
         {
@@ -779,7 +1005,8 @@
           "ui": {
             "group": "transmit",
             "label": "WX alert B-band",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "weather"
           }
         },
         {
@@ -791,7 +1018,8 @@
           "ui": {
             "group": "transmit",
             "label": "B-band S-meter SQL",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "squelch"
           }
         },
         {
@@ -806,7 +1034,8 @@
             "group": "display",
             "label": "B: Right side MR channel",
             "widget": "integer",
-            "description": "Stored as one byte (0–255)"
+            "description": "Stored as one byte (0–255)",
+            "subgroup": "bands"
           }
         }
       ]
@@ -830,7 +1059,8 @@
           "ui": {
             "group": "aux",
             "label": "SQC logic",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "serial"
           }
         },
         {
@@ -846,7 +1076,8 @@
           "ui": {
             "group": "transmit",
             "label": "TX side (PTT)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "power"
           }
         },
         {
@@ -858,7 +1089,8 @@
           "ui": {
             "group": "display",
             "label": "Single band display",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "bands"
           }
         },
         {
@@ -875,7 +1107,8 @@
           "ui": {
             "group": "audio",
             "label": "Mute",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "beep"
           }
         }
       ]
@@ -898,7 +1131,8 @@
             "group": "display",
             "label": "PM power-on message",
             "widget": "text",
-            "description": "1 is PM0 (current profile), 2–6 are PM 1–5"
+            "description": "1 is PM0 (current profile), 2–6 are PM 1–5",
+            "subgroup": "power-on"
           }
         }
       ]
@@ -920,7 +1154,8 @@
           "ui": {
             "group": "memory",
             "label": "Group link",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "display"
           }
         }
       ]
@@ -940,7 +1175,8 @@
           "ui": {
             "group": "audio",
             "label": "Beep on",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "beep"
           }
         },
         {
@@ -961,7 +1197,8 @@
           "ui": {
             "group": "audio",
             "label": "Beep volume",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "beep"
           }
         },
         {
@@ -977,7 +1214,8 @@
           "ui": {
             "group": "audio",
             "label": "External speaker",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "beep"
           }
         },
         {
@@ -994,7 +1232,8 @@
           "ui": {
             "group": "audio",
             "label": "Announce mode",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "voice"
           }
         },
         {
@@ -1010,7 +1249,8 @@
           "ui": {
             "group": "audio",
             "label": "Announce language",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "voice"
           }
         },
         {
@@ -1031,7 +1271,8 @@
           "ui": {
             "group": "audio",
             "label": "Voice volume",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "voice"
           }
         },
         {
@@ -1045,7 +1286,8 @@
           "ui": {
             "group": "audio",
             "label": "Voice speed",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "voice"
           }
         },
         {
@@ -1057,7 +1299,8 @@
           "ui": {
             "group": "audio",
             "label": "VGS playback repeat",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "vgs"
           }
         },
         {
@@ -1071,7 +1314,8 @@
           "ui": {
             "group": "audio",
             "label": "VGS playback interval (s)",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "vgs"
           }
         },
         {
@@ -1083,7 +1327,8 @@
           "ui": {
             "group": "audio",
             "label": "Continuous recording",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "vgs"
           }
         },
         {
@@ -1095,7 +1340,8 @@
           "ui": {
             "group": "transmit",
             "label": "VHF band AIP",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "other"
           }
         },
         {
@@ -1107,7 +1353,8 @@
           "ui": {
             "group": "transmit",
             "label": "UHF band AIP",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "other"
           }
         },
         {
@@ -1125,7 +1372,8 @@
           "ui": {
             "group": "transmit",
             "label": "S-meter SQL hang time (ms)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "squelch"
           }
         },
         {
@@ -1145,7 +1393,8 @@
           "ui": {
             "group": "transmit",
             "label": "RX mute hang time (ms)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "squelch"
           }
         },
         {
@@ -1157,7 +1406,8 @@
           "ui": {
             "group": "transmit",
             "label": "Beat shift",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "other"
           }
         },
         {
@@ -1174,7 +1424,8 @@
           "ui": {
             "group": "transmit",
             "label": "Time-out timer (min)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "other"
           }
         },
         {
@@ -1190,7 +1441,8 @@
           "ui": {
             "group": "memory",
             "label": "Memory recall method",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "recall"
           }
         },
         {
@@ -1206,7 +1458,8 @@
           "ui": {
             "group": "memory",
             "label": "EchoLink speed",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "recall"
           }
         },
         {
@@ -1218,7 +1471,8 @@
           "ui": {
             "group": "dtmf",
             "label": "DTMF hold",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "options"
           }
         },
         {
@@ -1234,7 +1488,8 @@
           "ui": {
             "group": "dtmf",
             "label": "DTMF speed",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "options"
           }
         },
         {
@@ -1255,7 +1510,8 @@
           "ui": {
             "group": "dtmf",
             "label": "DTMF pause (ms)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "options"
           }
         },
         {
@@ -1267,7 +1523,8 @@
           "ui": {
             "group": "dtmf",
             "label": "DTMF lock",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "options"
           }
         },
         {
@@ -1279,7 +1536,8 @@
           "ui": {
             "group": "repeater",
             "label": "Auto repeater offset",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "operation"
           }
         },
         {
@@ -1291,7 +1549,8 @@
           "ui": {
             "group": "repeater",
             "label": "1750 Hz transmit hold",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "operation"
           }
         },
         {
@@ -1305,7 +1564,8 @@
           "ui": {
             "group": "display",
             "label": "Brightness",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "backlight"
           }
         },
         {
@@ -1317,7 +1577,8 @@
           "ui": {
             "group": "display",
             "label": "Auto brightness",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "backlight"
           }
         },
         {
@@ -1333,7 +1594,8 @@
           "ui": {
             "group": "display",
             "label": "Backlight color",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "backlight"
           }
         },
         {
@@ -1360,7 +1622,8 @@
           "ui": {
             "group": "keys",
             "label": "Front panel PF1",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "panel"
           }
         },
         {
@@ -1387,7 +1650,8 @@
           "ui": {
             "group": "keys",
             "label": "Front panel PF2",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "panel"
           }
         },
         {
@@ -1433,7 +1697,8 @@
           "ui": {
             "group": "keys",
             "label": "Microphone PF1",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "microphone"
           }
         },
         {
@@ -1479,7 +1744,8 @@
           "ui": {
             "group": "keys",
             "label": "Microphone PF2",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "microphone"
           }
         },
         {
@@ -1525,7 +1791,8 @@
           "ui": {
             "group": "keys",
             "label": "Microphone PF3",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "microphone"
           }
         },
         {
@@ -1571,7 +1838,8 @@
           "ui": {
             "group": "keys",
             "label": "Microphone PF4",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "microphone"
           }
         },
         {
@@ -1583,7 +1851,8 @@
           "ui": {
             "group": "keys",
             "label": "Microphone key lock",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "microphone"
           }
         },
         {
@@ -1605,7 +1874,8 @@
           "ui": {
             "group": "aux",
             "label": "Scan resume",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "scan"
           }
         },
         {
@@ -1625,7 +1895,8 @@
           "ui": {
             "group": "aux",
             "label": "Auto power off (min)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "scan"
           }
         },
         {
@@ -1643,7 +1914,8 @@
           "ui": {
             "group": "aux",
             "label": "External TNC band",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "tnc"
           }
         },
         {
@@ -1659,7 +1931,8 @@
           "ui": {
             "group": "aux",
             "label": "External TNC baud",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "tnc"
           }
         },
         {
@@ -1679,7 +1952,8 @@
           "ui": {
             "group": "aux",
             "label": "SQC output source",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "serial"
           }
         },
         {
@@ -1691,7 +1965,8 @@
           "ui": {
             "group": "display",
             "label": "Auto PM store",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "power-on"
           }
         },
         {
@@ -1703,7 +1978,8 @@
           "ui": {
             "group": "display",
             "label": "Display partition bar",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "backlight"
           }
         },
         {
@@ -1738,7 +2014,8 @@
           "ui": {
             "group": "display",
             "label": "Contrast",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "backlight"
           }
         },
         {
@@ -1754,7 +2031,8 @@
           "ui": {
             "group": "display",
             "label": "Color mode",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "backlight"
           }
         },
         {
@@ -1772,7 +2050,8 @@
           "ui": {
             "group": "aux",
             "label": "Visual scan",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "scan"
           }
         },
         {
@@ -1790,7 +2069,8 @@
           "ui": {
             "group": "aux",
             "label": "Internal TNC band",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "tnc"
           }
         },
         {
@@ -1808,7 +2088,8 @@
           "ui": {
             "group": "transmit",
             "label": "WX alert scan time (min)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "weather"
           }
         },
         {
@@ -1832,7 +2113,8 @@
           "ui": {
             "group": "aux",
             "label": "Scan TO delay (s)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "scan"
           }
         },
         {
@@ -1856,7 +2138,8 @@
           "ui": {
             "group": "aux",
             "label": "Scan CO delay (s)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "scan"
           }
         }
       ]
@@ -1876,7 +2159,8 @@
           "ui": {
             "group": "bands",
             "label": "A/Left: 118 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "a"
           }
         },
         {
@@ -1888,7 +2172,8 @@
           "ui": {
             "group": "bands",
             "label": "A/Left: 144 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "a"
           }
         },
         {
@@ -1900,7 +2185,8 @@
           "ui": {
             "group": "bands",
             "label": "A/Left: 220 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "a"
           }
         },
         {
@@ -1912,7 +2198,8 @@
           "ui": {
             "group": "bands",
             "label": "A/Left: 300 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "a"
           }
         },
         {
@@ -1924,7 +2211,8 @@
           "ui": {
             "group": "bands",
             "label": "A/Left: 430 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "a"
           }
         },
         {
@@ -1936,7 +2224,8 @@
           "ui": {
             "group": "bands",
             "label": "B/Right: 144 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "b"
           }
         },
         {
@@ -1948,7 +2237,8 @@
           "ui": {
             "group": "bands",
             "label": "B/Right: 220 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "b"
           }
         },
         {
@@ -1960,7 +2250,8 @@
           "ui": {
             "group": "bands",
             "label": "B/Right: 300 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "b"
           }
         },
         {
@@ -1972,7 +2263,8 @@
           "ui": {
             "group": "bands",
             "label": "B/Right: 430 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "b"
           }
         },
         {
@@ -1984,7 +2276,8 @@
           "ui": {
             "group": "bands",
             "label": "B/Right: 800 MHz",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "b"
           }
         }
       ]
@@ -2004,7 +2297,8 @@
           "ui": {
             "group": "vfo",
             "label": "VFO frequency (Hz)",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "channel"
           }
         },
         {
@@ -2029,7 +2323,8 @@
           "ui": {
             "group": "vfo",
             "label": "VFO tuning step (kHz)",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "channel"
           }
         },
         {
@@ -2046,7 +2341,8 @@
           "ui": {
             "group": "vfo",
             "label": "VFO mode",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "channel"
           }
         },
         {
@@ -2096,7 +2392,8 @@
           "ui": {
             "group": "vfo",
             "label": "VFO duplex",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "channel"
           }
         },
         {
@@ -2363,7 +2660,8 @@
           "ui": {
             "group": "vfo",
             "label": "VFO low limit (Hz)",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "limits"
           }
         },
         {
@@ -2375,7 +2673,8 @@
           "ui": {
             "group": "vfo",
             "label": "VFO high limit (Hz)",
-            "widget": "integer"
+            "widget": "integer",
+            "subgroup": "limits"
           }
         }
       ]
@@ -2397,7 +2696,8 @@
           "ui": {
             "group": "dtmf",
             "label": "DTMF code",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "memories"
           }
         }
       ]
@@ -2419,7 +2719,8 @@
           "ui": {
             "group": "dtmf",
             "label": "DTMF name",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "memories"
           }
         }
       ]
@@ -2439,7 +2740,8 @@
           "ui": {
             "group": "repeater",
             "label": "Repeater ID",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "identity"
           }
         }
       ]
@@ -2462,7 +2764,8 @@
             "group": "basic",
             "label": "PM group name",
             "widget": "text",
-            "description": "MCP names at 0x7DA0 (PM 1–5)"
+            "description": "MCP names at 0x7DA0 (PM 1–5)",
+            "subgroup": "profiles"
           }
         }
       ]
@@ -2485,7 +2788,8 @@
             "group": "basic",
             "label": "PM list name",
             "widget": "text",
-            "description": "Names stored in the clone tail (PM 1–5)"
+            "description": "Names stored in the clone tail (PM 1–5)",
+            "subgroup": "profiles"
           }
         }
       ]
@@ -2505,7 +2809,8 @@
           "ui": {
             "group": "basic",
             "label": "Comment",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "profiles"
           }
         }
       ]
@@ -2525,7 +2830,8 @@
           "ui": {
             "group": "aprs",
             "label": "My callsign",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "identity"
           }
         },
         {
@@ -2564,7 +2870,8 @@
           "ui": {
             "group": "aprs",
             "label": "My SSID",
-            "widget": "select"
+            "widget": "select",
+            "subgroup": "identity"
           }
         }
       ]
@@ -2582,7 +2889,8 @@
           "ui": {
             "group": "aprs",
             "label": "Status text enabled",
-            "widget": "switch"
+            "widget": "switch",
+            "subgroup": "status"
           }
         },
         {
@@ -2596,7 +2904,8 @@
           "ui": {
             "group": "aprs",
             "label": "Status text",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "status"
           }
         }
       ]
@@ -2616,7 +2925,8 @@
           "ui": {
             "group": "aprs",
             "label": "Message group",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "status"
           }
         }
       ]
@@ -2636,7 +2946,8 @@
           "ui": {
             "group": "aprs",
             "label": "APRS comment",
-            "widget": "text"
+            "widget": "text",
+            "subgroup": "status"
           }
         }
       ]
