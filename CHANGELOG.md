@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.7.0...v1.8.0) (2026-09-13)
+
+### Features
+
+* declare settings groups and sub-groups in memory maps ([1c60eee](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/1c60eee4397be525500c6d6b456c8c756c2b84f4))
+
 ## [1.7.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.6.0...v1.7.0) (2026-09-12)
 
 ### Features
