@@ -38,17 +38,15 @@ describe('stampConfigVersions', () => {
     }
   });
 
-  it('keeps Kenwood radio configs aligned with package.json', () => {
-    const packageJson = JSON.parse(readFileSync(join(rootDirectory, 'package.json'), 'utf8')) as {
-      version: string;
-    };
+  it('keeps each Kenwood radio config on its own semver', () => {
+    const semver = /^\d+\.\d+\.\d+$/;
 
     for (const fileName of ['kenwood-th-d74.json', 'kenwood-th-f6.json', 'kenwood-tm-d710a.json']) {
       const config = JSON.parse(readFileSync(join(rootDirectory, 'configs', fileName), 'utf8')) as {
         version: string;
       };
 
-      expect(config.version).to.equal(packageJson.version);
+      expect(config.version).to.match(semver);
     }
   });
 

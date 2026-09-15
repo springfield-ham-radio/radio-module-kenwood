@@ -5,7 +5,7 @@
     "name": "Kenwood TM-D710A",
     "manufacturer": "Kenwood"
   },
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "TM-D710A clone-mode programming (256-byte R/W blocks after 0M PROGRAM; skips radio block 0x7F)",
   "capabilities": {
     "memoryRead": true,
@@ -95,6 +95,7 @@
         "send": ["R", "$address", "$chunkSize"],
         "expect": ["W", "$address", "$chunkSize", "$data"],
         "timeout": 2000,
+        "delay": 50,
         "ack": {
           "send": ["0x06"],
           "expect": "0x06"
@@ -123,7 +124,8 @@
         "segments": ["image_lo", "image_hi", "block_fe", "block_ff"],
         "send": ["W", "$address", "$chunkSize", "$data"],
         "expect": "0x06",
-        "timeout": 2000
+        "timeout": 2000,
+        "delay": 50
       }
     },
     {
