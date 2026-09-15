@@ -1,3 +1,9 @@
+## [1.9.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.9.0...v1.9.1) (2026-09-15)
+
+### Bug Fixes
+
+* pause 50ms between TM-D710A clone blocks ([000b160](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/000b1601f948ed8bbe6652f3bcc996036b5dd996))
+
 ## [1.9.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.8.0...v1.9.0) (2026-09-13)
 
 ### Features
