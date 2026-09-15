@@ -12,7 +12,7 @@ Outside clone mode, the same body **PC** port speaks Kenwood CAT. The config set
 - 9600 8N1 (menu PC baud; 9600, 19200, 38400, or 57600). No mid-session baud switch
 - Hardware flow control **off**
 - Clone block timeout should be at least 1 s at 9600 baud
-- After each accepted clone block, wait **50 ms** before the next `R`/`W`. At 57600 the PC otherwise issues the next command immediately and the radio can stop answering in `image_hi` (`0x8000+`). 9600 hides that by spending ~270 ms on the wire per 256-byte payload.
+- After each accepted clone block, wait **100 ms** before the next `R`/`W`. At 57600 a 50 ms pause still dies in `image_hi` (`0x8000+`); 100 ms is enough. 9600 hides the race by spending ~270 ms on the wire per 256-byte payload.
 
 ## Session
 
