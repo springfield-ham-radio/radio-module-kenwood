@@ -44,7 +44,8 @@
           "ui": {
             "group": "channel",
             "label": "Scan skip",
-            "widget": "switch"
+            "widget": "switch",
+            "description": "Skips this memory during scan. The channel stays in memory and can still be selected directly."
           }
         },
         {
@@ -58,7 +59,8 @@
           "ui": {
             "group": "channel",
             "label": "Memory group",
-            "widget": "integer"
+            "widget": "integer",
+            "description": "Memory group this channel belongs to. Group scan and group link use this number."
           }
         },
         {
@@ -118,7 +120,8 @@
           "ui": {
             "group": "channel",
             "label": "Tuning step (kHz)",
-            "widget": "select"
+            "widget": "select",
+            "description": "How far the frequency moves for each click of the tuning control, in kHz."
           }
         },
         {
@@ -171,7 +174,8 @@
           "ui": {
             "group": "channel",
             "label": "Mode",
-            "widget": "select"
+            "widget": "select",
+            "description": "Modulation for this memory. FM and DV are the usual voice modes. AM, SSB, and CW are for the bands that support them."
           }
         },
         {
@@ -265,7 +269,8 @@
           "ui": {
             "group": "channel",
             "label": "Duplex",
-            "widget": "select"
+            "widget": "select",
+            "description": "Repeater shift. Blank transmits on the receive frequency. + transmits above it and − transmits below it."
           }
         },
         {
@@ -554,7 +559,8 @@
           "ui": {
             "group": "channel",
             "label": "D-STAR squelch",
-            "widget": "select"
+            "widget": "select",
+            "description": "D-STAR digital squelch. Blank hears every digital signal. Code opens only for a matching digital code. Callsign opens only for a matching callsign."
           }
         },
         {
@@ -568,7 +574,8 @@
           "ui": {
             "group": "channel",
             "label": "URCALL",
-            "widget": "text"
+            "widget": "text",
+            "description": "D-STAR Your Call (URCALL). CQCQCQ calls anyone. A station callsign calls that station. A repeater gateway callsign routes the transmission."
           }
         },
         {
@@ -582,7 +589,8 @@
           "ui": {
             "group": "channel",
             "label": "RPT1",
-            "widget": "text"
+            "widget": "text",
+            "description": "D-STAR repeater 1 callsign, usually the local repeater you transmit to, with its module letter in the eighth position."
           }
         },
         {
@@ -596,7 +604,8 @@
           "ui": {
             "group": "channel",
             "label": "RPT2",
-            "widget": "text"
+            "widget": "text",
+            "description": "D-STAR repeater 2 callsign, usually the gateway or the distant repeater, with its module letter in the eighth position."
           }
         },
         {
@@ -617,7 +626,8 @@
           "ui": {
             "group": "channel",
             "label": "D-STAR code",
-            "widget": "integer"
+            "widget": "integer",
+            "description": "Digital code squelch number used when D-STAR squelch is set to Code. Both stations must use the same code."
           }
         }
       ]
@@ -656,7 +666,8 @@
           "ui": {
             "group": "groups",
             "label": "Group name",
-            "widget": "text"
+            "widget": "text",
+            "description": "Name shown for this memory group."
           }
         }
       ]

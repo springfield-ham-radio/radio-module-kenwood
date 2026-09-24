@@ -71,7 +71,8 @@
           "ui": {
             "group": "channel",
             "label": "Tuning step (kHz)",
-            "widget": "select"
+            "widget": "select",
+            "description": "How far the frequency moves for each click of the tuning control, in kHz."
           }
         },
         {
@@ -89,7 +90,8 @@
           "ui": {
             "group": "channel",
             "label": "Duplex",
-            "widget": "select"
+            "widget": "select",
+            "description": "Repeater shift for this memory. Blank transmits on the receive frequency. + transmits above it, − transmits below it, and split uses a separate transmit frequency."
           }
         },
         {
@@ -345,7 +347,8 @@
           "ui": {
             "group": "channel",
             "label": "Mode",
-            "widget": "select"
+            "widget": "select",
+            "description": "Modulation for this memory. FM and AM are the usual voice modes. WFM is broadcast FM. LSB, USB, and CW are for the bands that support them."
           }
         },
         {
@@ -400,7 +403,12 @@
           "ui": {
             "group": "save",
             "label": "Automatic Power Off",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 18,
+              "code": "APO"
+            },
+            "description": "Turns the radio off after this long with no keypress or tuning. Off disables it."
           }
         },
         {
@@ -416,7 +424,12 @@
           "ui": {
             "group": "save",
             "label": "Battery Type",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 30,
+              "code": "BAT"
+            },
+            "description": "Battery chemistry used for the remaining-charge indicator. Lithium and alkaline packs read differently."
           }
         },
         {
@@ -440,7 +453,12 @@
           "ui": {
             "group": "save",
             "label": "Battery Save",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 17,
+              "code": "SAVE"
+            },
+            "description": "How long the receiver sleeps between checks while you are listening. Off keeps it awake. Longer times save more battery and can miss the start of a short call."
           }
         },
         {
@@ -459,7 +477,8 @@
           "ui": {
             "group": "main",
             "label": "Balance",
-            "widget": "select"
+            "widget": "select",
+            "description": "Speaker volume split between the A and B bands. 100%:0% is all A. This is not a numbered menu item."
           }
         },
         {
@@ -475,7 +494,8 @@
           "ui": {
             "group": "main",
             "label": "Memory Display Mode",
-            "widget": "select"
+            "widget": "select",
+            "description": "What a memory channel shows: the stored name, or the frequency. This is not a numbered menu item."
           }
         },
         {
@@ -492,7 +512,12 @@
           "ui": {
             "group": "main",
             "label": "Scan Resume",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 1,
+              "code": "SCR"
+            },
+            "description": "What scan does after it stops on a signal. Time resumes after a few seconds. Carrier resumes when the signal drops. Seek stops and stays."
           }
         },
         {
@@ -504,7 +529,8 @@
           "ui": {
             "group": "main",
             "label": "Attenuator",
-            "widget": "switch"
+            "widget": "switch",
+            "description": "Reduces front-end gain so a very strong nearby signal does not overload the receiver. This is not a numbered menu item."
           }
         },
         {
@@ -516,7 +542,12 @@
           "ui": {
             "group": "main",
             "label": "Automatic Repeater Offset",
-            "widget": "switch"
+            "widget": "switch",
+            "menu": {
+              "number": 5,
+              "code": "ARO"
+            },
+            "description": "Applies the standard repeater offset automatically when you tune into a repeater sub-band."
           }
         },
         {
@@ -528,7 +559,8 @@
           "ui": {
             "group": "aux",
             "label": "VOX Enable",
-            "widget": "switch"
+            "widget": "switch",
+            "description": "Transmits when the radio hears your voice. On the keypad, VOX on busy is menu 20, gain is menu 21, and delay is menu 22."
           }
         },
         {
@@ -542,7 +574,12 @@
           "ui": {
             "group": "display",
             "label": "Contrast",
-            "widget": "integer"
+            "widget": "integer",
+            "menu": {
+              "number": 16,
+              "code": "CNT"
+            },
+            "description": "Display contrast. Higher numbers make the characters darker."
           }
         },
         {
@@ -556,7 +593,12 @@
           "ui": {
             "group": "display",
             "label": "Power-on Message",
-            "widget": "text"
+            "widget": "text",
+            "menu": {
+              "number": 15,
+              "code": "MES"
+            },
+            "description": "Text shown when the radio is turned on."
           }
         }
       ]

@@ -230,7 +230,8 @@
           "ui": {
             "group": "channel",
             "label": "Band code",
-            "widget": "integer"
+            "widget": "integer",
+            "description": "Band identifier stored with this memory. The radio uses it to recall the channel on the correct side."
           }
         },
         {
@@ -242,7 +243,12 @@
           "ui": {
             "group": "channel",
             "label": "Scan skip",
-            "widget": "switch"
+            "widget": "switch",
+            "menu": {
+              "number": 202,
+              "code": "LOCKOUT"
+            },
+            "description": "Skips this memory during scan. The channel stays programmed and can still be selected directly."
           }
         }
       ]
@@ -286,7 +292,12 @@
           "ui": {
             "group": "channel",
             "label": "Tuning step (kHz)",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 101,
+              "code": "STEP"
+            },
+            "description": "How far the frequency moves for each click of the tuning control, in kHz."
           }
         },
         {
@@ -303,7 +314,12 @@
           "ui": {
             "group": "channel",
             "label": "Mode",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 102,
+              "code": "MODE"
+            },
+            "description": "FM is wide FM. NFM is narrow FM. AM is for air-band and other AM channels."
           }
         },
         {
@@ -353,7 +369,8 @@
           "ui": {
             "group": "channel",
             "label": "Duplex",
-            "widget": "select"
+            "widget": "select",
+            "description": "Repeater shift for this memory. Blank is simplex. + or − uses the offset. Split stores a separate transmit frequency."
           }
         },
         {
@@ -600,7 +617,12 @@
           "ui": {
             "group": "channel",
             "label": "Split TX step (kHz)",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 101,
+              "code": "STEP"
+            },
+            "description": "Tuning step used for the split transmit frequency, in kHz."
           }
         },
         {
@@ -645,7 +667,12 @@
             "group": "aux",
             "label": "Remote control answerback",
             "widget": "switch",
-            "subgroup": "serial"
+            "subgroup": "serial",
+            "menu": {
+              "number": 523,
+              "code": "ANSWER"
+            },
+            "description": "The radio replies on the PC port when a remote controller polls it."
           }
         },
         {
@@ -660,7 +687,8 @@
             "group": "basic",
             "label": "Current PM select",
             "widget": "integer",
-            "subgroup": "profiles"
+            "subgroup": "profiles",
+            "description": "Programmable memory (PM) recalled at power-on. 0 is PM0, the profile you are editing. 1 through 5 are the other stored profiles."
           }
         },
         {
@@ -673,7 +701,8 @@
             "group": "keys",
             "label": "Panel lock",
             "widget": "switch",
-            "subgroup": "panel"
+            "subgroup": "panel",
+            "description": "Locks the front-panel keys. The microphone PTT still works. This is the panel key-lock state, separate from microphone key lock (menu 513)."
           }
         },
         {
@@ -686,7 +715,8 @@
             "group": "memory",
             "label": "Display memory channel number",
             "widget": "switch",
-            "subgroup": "display"
+            "subgroup": "display",
+            "description": "Shows the memory channel number on the display while a memory is recalled."
           }
         },
         {
@@ -699,7 +729,8 @@
             "group": "aux",
             "label": "10 MHz mode",
             "widget": "switch",
-            "subgroup": "scan"
+            "subgroup": "scan",
+            "description": "Tunes in 10 MHz steps so you can jump across a band quickly."
           }
         },
         {
@@ -717,7 +748,8 @@
             "group": "transmit",
             "label": "Microphone sensitivity",
             "widget": "select",
-            "subgroup": "other"
+            "subgroup": "other",
+            "description": "Microphone gain. High is the most sensitive. Low keeps the transmitted audio from being too loud or picking up cabin noise."
           }
         },
         {
@@ -745,7 +777,12 @@
             "group": "repeater",
             "label": "Repeater mode",
             "widget": "select",
-            "subgroup": "operation"
+            "subgroup": "operation",
+            "menu": {
+              "number": 403,
+              "code": "RPT MODE"
+            },
+            "description": "Cross-band repeater direction. Cross Band repeats both ways. The locked choices transmit on one side and receive on the other."
           }
         },
         {
@@ -758,7 +795,12 @@
             "group": "repeater",
             "label": "Repeater transmit hold",
             "widget": "switch",
-            "subgroup": "operation"
+            "subgroup": "operation",
+            "menu": {
+              "number": 404,
+              "code": "RPT HOLD"
+            },
+            "description": "Keeps the cross-band repeater transmitting for a moment after the input signal drops."
           }
         },
         {
@@ -776,7 +818,12 @@
             "group": "repeater",
             "label": "Repeater ID transmit",
             "widget": "select",
-            "subgroup": "operation"
+            "subgroup": "operation",
+            "menu": {
+              "number": 406,
+              "code": "RPT ID"
+            },
+            "description": "Sends the repeater ID while cross-band repeat is on. Off sends nothing. Morse sends the ID as CW. Voice speaks it."
           }
         },
         {
@@ -800,7 +847,12 @@
             "group": "aux",
             "label": "PC port baud rate",
             "widget": "select",
-            "subgroup": "serial"
+            "subgroup": "serial",
+            "menu": {
+              "number": 519,
+              "code": "PC BAUD"
+            },
+            "description": "Baud rate of the PC port used for programming and control. The computer program must use the same speed."
           }
         },
         {
@@ -818,7 +870,12 @@
             "group": "basic",
             "label": "Password enabled",
             "widget": "switch",
-            "subgroup": "password"
+            "subgroup": "password",
+            "menu": {
+              "number": 998,
+              "code": "PASSWORD"
+            },
+            "description": "Requires the power-on password before the radio will operate."
           }
         },
         {
@@ -842,8 +899,12 @@
             "group": "basic",
             "label": "Password",
             "widget": "text",
-            "description": "Numerals 1–5 when password is enabled",
-            "subgroup": "password"
+            "description": "Power-on password. Used only when the password is enabled.",
+            "subgroup": "password",
+            "menu": {
+              "number": 998,
+              "code": "PASSWORD"
+            }
           }
         }
       ]
@@ -870,7 +931,8 @@
             "group": "display",
             "label": "A: Left side VFO/MR",
             "widget": "select",
-            "subgroup": "bands"
+            "subgroup": "bands",
+            "description": "What the left side is doing: VFO tuning, memory recall, the call channel, or weather."
           }
         },
         {
@@ -897,7 +959,8 @@
             "group": "transmit",
             "label": "A-band transmit power",
             "widget": "select",
-            "subgroup": "power"
+            "subgroup": "power",
+            "description": "Transmit power for the left side. High is 50 W, medium is about 10 W, and low is about 5 W."
           }
         },
         {
@@ -910,7 +973,12 @@
             "group": "transmit",
             "label": "WX alert A-band",
             "widget": "switch",
-            "subgroup": "weather"
+            "subgroup": "weather",
+            "menu": {
+              "number": 110,
+              "code": "WX ALT"
+            },
+            "description": "Opens the squelch on the left side when a weather-alert tone is received."
           }
         },
         {
@@ -923,7 +991,12 @@
             "group": "transmit",
             "label": "A-band S-meter SQL",
             "widget": "switch",
-            "subgroup": "squelch"
+            "subgroup": "squelch",
+            "menu": {
+              "number": 105,
+              "code": "S-SQL"
+            },
+            "description": "S-meter squelch for the left side. The speaker opens only when the signal is at least as strong as the S-meter setting."
           }
         },
         {
@@ -938,7 +1011,7 @@
             "group": "display",
             "label": "A: Left side MR channel",
             "widget": "integer",
-            "description": "Stored as one byte (0–255)",
+            "description": "Memory channel selected on the left side when that side is in memory recall.",
             "subgroup": "bands"
           }
         }
@@ -966,7 +1039,8 @@
             "group": "display",
             "label": "B: Right side VFO/MR",
             "widget": "select",
-            "subgroup": "bands"
+            "subgroup": "bands",
+            "description": "What the right side is doing: VFO tuning, memory recall, the call channel, or weather."
           }
         },
         {
@@ -993,7 +1067,8 @@
             "group": "transmit",
             "label": "B-band transmit power",
             "widget": "select",
-            "subgroup": "power"
+            "subgroup": "power",
+            "description": "Transmit power for the right side. High is 50 W, medium is about 10 W, and low is about 5 W."
           }
         },
         {
@@ -1006,7 +1081,12 @@
             "group": "transmit",
             "label": "WX alert B-band",
             "widget": "switch",
-            "subgroup": "weather"
+            "subgroup": "weather",
+            "menu": {
+              "number": 110,
+              "code": "WX ALT"
+            },
+            "description": "Opens the squelch on the right side when a weather-alert tone is received."
           }
         },
         {
@@ -1019,7 +1099,12 @@
             "group": "transmit",
             "label": "B-band S-meter SQL",
             "widget": "switch",
-            "subgroup": "squelch"
+            "subgroup": "squelch",
+            "menu": {
+              "number": 105,
+              "code": "S-SQL"
+            },
+            "description": "S-meter squelch for the right side. The speaker opens only when the signal is at least as strong as the S-meter setting."
           }
         },
         {
@@ -1034,7 +1119,7 @@
             "group": "display",
             "label": "B: Right side MR channel",
             "widget": "integer",
-            "description": "Stored as one byte (0–255)",
+            "description": "Memory channel selected on the right side when that side is in memory recall.",
             "subgroup": "bands"
           }
         }
@@ -1060,7 +1145,8 @@
             "group": "aux",
             "label": "SQC logic",
             "widget": "select",
-            "subgroup": "serial"
+            "subgroup": "serial",
+            "description": "Polarity of the squelch-control output on the data jack. Match this to the device listening for busy or squelch."
           }
         },
         {
@@ -1077,7 +1163,8 @@
             "group": "transmit",
             "label": "TX side (PTT)",
             "widget": "select",
-            "subgroup": "power"
+            "subgroup": "power",
+            "description": "Which side transmits when you press PTT. A is the left side. B is the right side."
           }
         },
         {
@@ -1090,7 +1177,8 @@
             "group": "display",
             "label": "Single band display",
             "widget": "switch",
-            "subgroup": "bands"
+            "subgroup": "bands",
+            "description": "Shows only one side on the display. Turn this off to see both A and B."
           }
         },
         {
@@ -1108,7 +1196,8 @@
             "group": "audio",
             "label": "Mute",
             "widget": "switch",
-            "subgroup": "beep"
+            "subgroup": "beep",
+            "description": "Mutes the speaker. The radio still receives."
           }
         }
       ]
@@ -1131,8 +1220,12 @@
             "group": "display",
             "label": "PM power-on message",
             "widget": "text",
-            "description": "1 is PM0 (current profile), 2–6 are PM 1–5",
-            "subgroup": "power-on"
+            "description": "Message shown at power-on. The stored value selects the profile text: 1 is the current profile, and 2 through 6 are PM 1 through PM 5.",
+            "subgroup": "power-on",
+            "menu": {
+              "number": 500,
+              "code": "PON MSG"
+            }
           }
         }
       ]
@@ -1155,7 +1248,12 @@
             "group": "memory",
             "label": "Group link",
             "widget": "text",
-            "subgroup": "display"
+            "subgroup": "display",
+            "menu": {
+              "number": 203,
+              "code": "GRP LINK"
+            },
+            "description": "Memory groups that scan together. Enter the group digits you want linked."
           }
         }
       ]
@@ -1176,7 +1274,12 @@
             "group": "audio",
             "label": "Beep on",
             "widget": "switch",
-            "subgroup": "beep"
+            "subgroup": "beep",
+            "menu": {
+              "number": 0,
+              "code": "BEEP"
+            },
+            "description": "Beeps when you press a key or turn a control."
           }
         },
         {
@@ -1198,7 +1301,12 @@
             "group": "audio",
             "label": "Beep volume",
             "widget": "select",
-            "subgroup": "beep"
+            "subgroup": "beep",
+            "menu": {
+              "number": 1,
+              "code": "BEEP VOL"
+            },
+            "description": "How loud the key beep is. 1 is quietest."
           }
         },
         {
@@ -1215,7 +1323,12 @@
             "group": "audio",
             "label": "External speaker",
             "widget": "select",
-            "subgroup": "beep"
+            "subgroup": "beep",
+            "menu": {
+              "number": 2,
+              "code": "EXT SP"
+            },
+            "description": "How the external speaker jack is used. Mode 1 and Mode 2 choose which band audio is sent to the external speaker."
           }
         },
         {
@@ -1233,7 +1346,12 @@
             "group": "audio",
             "label": "Announce mode",
             "widget": "select",
-            "subgroup": "voice"
+            "subgroup": "voice",
+            "menu": {
+              "number": 3,
+              "code": "ANNC"
+            },
+            "description": "Voice announcements. Off is silent. Auto speaks when you change frequency or memory. Manual speaks when you press the announce key."
           }
         },
         {
@@ -1250,7 +1368,12 @@
             "group": "audio",
             "label": "Announce language",
             "widget": "select",
-            "subgroup": "voice"
+            "subgroup": "voice",
+            "menu": {
+              "number": 4,
+              "code": "LANG"
+            },
+            "description": "Language used for voice announcements."
           }
         },
         {
@@ -1272,7 +1395,12 @@
             "group": "audio",
             "label": "Voice volume",
             "widget": "select",
-            "subgroup": "voice"
+            "subgroup": "voice",
+            "menu": {
+              "number": 5,
+              "code": "VC VOL"
+            },
+            "description": "How loud the voice announcements are. 1 is quietest."
           }
         },
         {
@@ -1287,7 +1415,12 @@
             "group": "audio",
             "label": "Voice speed",
             "widget": "integer",
-            "subgroup": "voice"
+            "subgroup": "voice",
+            "menu": {
+              "number": 6,
+              "code": "VC SPD"
+            },
+            "description": "How fast the voice announcements speak. 0 is slowest and 4 is fastest."
           }
         },
         {
@@ -1300,7 +1433,12 @@
             "group": "audio",
             "label": "VGS playback repeat",
             "widget": "switch",
-            "subgroup": "vgs"
+            "subgroup": "vgs",
+            "menu": {
+              "number": 7,
+              "code": "PB RPT"
+            },
+            "description": "Repeats VGS-1 voice-recorder playback instead of playing the clip once."
           }
         },
         {
@@ -1315,7 +1453,12 @@
             "group": "audio",
             "label": "VGS playback interval (s)",
             "widget": "integer",
-            "subgroup": "vgs"
+            "subgroup": "vgs",
+            "menu": {
+              "number": 8,
+              "code": "PB INT"
+            },
+            "description": "Seconds between repeated VGS-1 playbacks when playback repeat is on."
           }
         },
         {
@@ -1328,7 +1471,12 @@
             "group": "audio",
             "label": "Continuous recording",
             "widget": "switch",
-            "subgroup": "vgs"
+            "subgroup": "vgs",
+            "menu": {
+              "number": 9,
+              "code": "CONT REC"
+            },
+            "description": "The VGS-1 keeps recording receive audio so you can play back the last transmission."
           }
         },
         {
@@ -1341,7 +1489,12 @@
             "group": "transmit",
             "label": "VHF band AIP",
             "widget": "switch",
-            "subgroup": "other"
+            "subgroup": "other",
+            "menu": {
+              "number": 103,
+              "code": "VHF AIP"
+            },
+            "description": "Advanced Intercept Point on VHF. Turn this on when strong nearby signals overload the receiver. Sensitivity is slightly lower."
           }
         },
         {
@@ -1354,7 +1507,12 @@
             "group": "transmit",
             "label": "UHF band AIP",
             "widget": "switch",
-            "subgroup": "other"
+            "subgroup": "other",
+            "menu": {
+              "number": 104,
+              "code": "UHF AIP"
+            },
+            "description": "Advanced Intercept Point on UHF. Turn this on when strong nearby signals overload the receiver. Sensitivity is slightly lower."
           }
         },
         {
@@ -1373,7 +1531,12 @@
             "group": "transmit",
             "label": "S-meter SQL hang time (ms)",
             "widget": "select",
-            "subgroup": "squelch"
+            "subgroup": "squelch",
+            "menu": {
+              "number": 106,
+              "code": "SQL HANG"
+            },
+            "description": "How long S-meter squelch stays open after the signal drops below the threshold. Off closes immediately."
           }
         },
         {
@@ -1394,7 +1557,12 @@
             "group": "transmit",
             "label": "RX mute hang time (ms)",
             "widget": "select",
-            "subgroup": "squelch"
+            "subgroup": "squelch",
+            "menu": {
+              "number": 107,
+              "code": "MUTE HANG"
+            },
+            "description": "How long the speaker stays muted after the mute condition clears. Off releases the mute immediately."
           }
         },
         {
@@ -1407,7 +1575,12 @@
             "group": "transmit",
             "label": "Beat shift",
             "widget": "switch",
-            "subgroup": "other"
+            "subgroup": "other",
+            "menu": {
+              "number": 108,
+              "code": "BEAT"
+            },
+            "description": "Shifts an internal oscillator so a birdie moves off the frequency you want to hear."
           }
         },
         {
@@ -1425,7 +1598,12 @@
             "group": "transmit",
             "label": "Time-out timer (min)",
             "widget": "select",
-            "subgroup": "other"
+            "subgroup": "other",
+            "menu": {
+              "number": 109,
+              "code": "TOT"
+            },
+            "description": "Stops a transmission that runs longer than this, so a stuck microphone cannot hold the channel."
           }
         },
         {
@@ -1442,7 +1620,12 @@
             "group": "memory",
             "label": "Memory recall method",
             "widget": "select",
-            "subgroup": "recall"
+            "subgroup": "recall",
+            "menu": {
+              "number": 201,
+              "code": "RECALL"
+            },
+            "description": "Which memories the tuning control steps through. All Bands includes every memory. Current Band stays on the band you are using."
           }
         },
         {
@@ -1459,7 +1642,12 @@
             "group": "memory",
             "label": "EchoLink speed",
             "widget": "select",
-            "subgroup": "recall"
+            "subgroup": "recall",
+            "menu": {
+              "number": 205,
+              "code": "EL SPEED"
+            },
+            "description": "How fast EchoLink DTMF memory is sent. Fast is the usual setting. Slow gives the link more time between digits."
           }
         },
         {
@@ -1472,7 +1660,12 @@
             "group": "dtmf",
             "label": "DTMF hold",
             "widget": "switch",
-            "subgroup": "options"
+            "subgroup": "options",
+            "menu": {
+              "number": 300,
+              "code": "DTMF HLD"
+            },
+            "description": "Keeps the transmitter keyed for a moment after a DTMF memory finishes, so the last digit is not cut off."
           }
         },
         {
@@ -1489,7 +1682,12 @@
             "group": "dtmf",
             "label": "DTMF speed",
             "widget": "select",
-            "subgroup": "options"
+            "subgroup": "options",
+            "menu": {
+              "number": 302,
+              "code": "DTMF SPD"
+            },
+            "description": "How fast DTMF memory digits are sent."
           }
         },
         {
@@ -1511,7 +1709,12 @@
             "group": "dtmf",
             "label": "DTMF pause (ms)",
             "widget": "select",
-            "subgroup": "options"
+            "subgroup": "options",
+            "menu": {
+              "number": 303,
+              "code": "DTMF PAU"
+            },
+            "description": "Length of the pause inserted when a DTMF memory contains a pause."
           }
         },
         {
@@ -1524,7 +1727,12 @@
             "group": "dtmf",
             "label": "DTMF lock",
             "widget": "switch",
-            "subgroup": "options"
+            "subgroup": "options",
+            "menu": {
+              "number": 304,
+              "code": "DTMF LCK"
+            },
+            "description": "Locks the DTMF keypad so digits are not sent by accident."
           }
         },
         {
@@ -1537,7 +1745,12 @@
             "group": "repeater",
             "label": "Auto repeater offset",
             "widget": "switch",
-            "subgroup": "operation"
+            "subgroup": "operation",
+            "menu": {
+              "number": 401,
+              "code": "ARO"
+            },
+            "description": "Applies the standard repeater offset when you tune into a repeater sub-band."
           }
         },
         {
@@ -1550,7 +1763,12 @@
             "group": "repeater",
             "label": "1750 Hz transmit hold",
             "widget": "switch",
-            "subgroup": "operation"
+            "subgroup": "operation",
+            "menu": {
+              "number": 402,
+              "code": "1750"
+            },
+            "description": "Holds transmit while a 1750 Hz tone burst is sent, for repeaters that open on that tone."
           }
         },
         {
@@ -1565,7 +1783,12 @@
             "group": "display",
             "label": "Brightness",
             "widget": "integer",
-            "subgroup": "backlight"
+            "subgroup": "backlight",
+            "menu": {
+              "number": 501,
+              "code": "BRIGHT"
+            },
+            "description": "Display brightness. 0 turns the backlight off. 1 is the dimmest lit level and 8 is the brightest."
           }
         },
         {
@@ -1578,7 +1801,12 @@
             "group": "display",
             "label": "Auto brightness",
             "widget": "switch",
-            "subgroup": "backlight"
+            "subgroup": "backlight",
+            "menu": {
+              "number": 502,
+              "code": "AUTO BRI"
+            },
+            "description": "Dims the display automatically when the surroundings are dark."
           }
         },
         {
@@ -1595,7 +1823,12 @@
             "group": "display",
             "label": "Backlight color",
             "widget": "select",
-            "subgroup": "backlight"
+            "subgroup": "backlight",
+            "menu": {
+              "number": 503,
+              "code": "COLOR"
+            },
+            "description": "Backlight color, amber or green."
           }
         },
         {
@@ -1623,7 +1856,12 @@
             "group": "keys",
             "label": "Front panel PF1",
             "widget": "select",
-            "subgroup": "panel"
+            "subgroup": "panel",
+            "menu": {
+              "number": 507,
+              "code": "PF1"
+            },
+            "description": "Function assigned to the front-panel PF1 key."
           }
         },
         {
@@ -1651,7 +1889,12 @@
             "group": "keys",
             "label": "Front panel PF2",
             "widget": "select",
-            "subgroup": "panel"
+            "subgroup": "panel",
+            "menu": {
+              "number": 508,
+              "code": "PF2"
+            },
+            "description": "Function assigned to the front-panel PF2 key."
           }
         },
         {
@@ -1698,7 +1941,12 @@
             "group": "keys",
             "label": "Microphone PF1",
             "widget": "select",
-            "subgroup": "microphone"
+            "subgroup": "microphone",
+            "menu": {
+              "number": 509,
+              "code": "MIC PF1"
+            },
+            "description": "Function assigned to microphone PF1."
           }
         },
         {
@@ -1745,7 +1993,12 @@
             "group": "keys",
             "label": "Microphone PF2",
             "widget": "select",
-            "subgroup": "microphone"
+            "subgroup": "microphone",
+            "menu": {
+              "number": 510,
+              "code": "MIC PF2"
+            },
+            "description": "Function assigned to microphone PF2."
           }
         },
         {
@@ -1792,7 +2045,12 @@
             "group": "keys",
             "label": "Microphone PF3",
             "widget": "select",
-            "subgroup": "microphone"
+            "subgroup": "microphone",
+            "menu": {
+              "number": 511,
+              "code": "MIC PF3"
+            },
+            "description": "Function assigned to microphone PF3."
           }
         },
         {
@@ -1839,7 +2097,12 @@
             "group": "keys",
             "label": "Microphone PF4",
             "widget": "select",
-            "subgroup": "microphone"
+            "subgroup": "microphone",
+            "menu": {
+              "number": 512,
+              "code": "MIC PF4"
+            },
+            "description": "Function assigned to microphone PF4."
           }
         },
         {
@@ -1852,7 +2115,12 @@
             "group": "keys",
             "label": "Microphone key lock",
             "widget": "switch",
-            "subgroup": "microphone"
+            "subgroup": "microphone",
+            "menu": {
+              "number": 513,
+              "code": "MIC LOCK"
+            },
+            "description": "Locks the microphone keys so they are not pressed by accident. The front panel still works."
           }
         },
         {
@@ -1875,7 +2143,12 @@
             "group": "aux",
             "label": "Scan resume",
             "widget": "select",
-            "subgroup": "scan"
+            "subgroup": "scan",
+            "menu": {
+              "number": 514,
+              "code": "SCAN"
+            },
+            "description": "What scan does after it stops on a signal. Time resumes after a pause. Carrier resumes when the signal drops. Seek stops and stays."
           }
         },
         {
@@ -1896,7 +2169,12 @@
             "group": "aux",
             "label": "Auto power off (min)",
             "widget": "select",
-            "subgroup": "scan"
+            "subgroup": "scan",
+            "menu": {
+              "number": 516,
+              "code": "APO"
+            },
+            "description": "Turns the radio off after this many minutes with no operation. Off disables it."
           }
         },
         {
@@ -1915,7 +2193,12 @@
             "group": "aux",
             "label": "External TNC band",
             "widget": "select",
-            "subgroup": "tnc"
+            "subgroup": "tnc",
+            "menu": {
+              "number": 517,
+              "code": "EXT BAND"
+            },
+            "description": "Which side is connected to an external TNC on the data jack."
           }
         },
         {
@@ -1932,7 +2215,12 @@
             "group": "aux",
             "label": "External TNC baud",
             "widget": "select",
-            "subgroup": "tnc"
+            "subgroup": "tnc",
+            "menu": {
+              "number": 518,
+              "code": "EXT BAUD"
+            },
+            "description": "Packet speed for the external TNC, 1200 or 9600 baud."
           }
         },
         {
@@ -1953,7 +2241,12 @@
             "group": "aux",
             "label": "SQC output source",
             "widget": "select",
-            "subgroup": "serial"
+            "subgroup": "serial",
+            "menu": {
+              "number": 520,
+              "code": "SQC"
+            },
+            "description": "What the squelch-control pin reports: receiver busy, squelch open, transmit, or a combination."
           }
         },
         {
@@ -1966,7 +2259,12 @@
             "group": "display",
             "label": "Auto PM store",
             "widget": "switch",
-            "subgroup": "power-on"
+            "subgroup": "power-on",
+            "menu": {
+              "number": 521,
+              "code": "AUTO PM"
+            },
+            "description": "Stores the current settings into the programmable memory automatically."
           }
         },
         {
@@ -1979,7 +2277,12 @@
             "group": "display",
             "label": "Display partition bar",
             "widget": "switch",
-            "subgroup": "backlight"
+            "subgroup": "backlight",
+            "menu": {
+              "number": 527,
+              "code": "BAR"
+            },
+            "description": "Shows the partition bar between the left and right sides of the display."
           }
         },
         {
@@ -2015,7 +2318,12 @@
             "group": "display",
             "label": "Contrast",
             "widget": "select",
-            "subgroup": "backlight"
+            "subgroup": "backlight",
+            "menu": {
+              "number": 504,
+              "code": "CONTRAST"
+            },
+            "description": "Display contrast. Higher levels make the characters easier to see at an angle."
           }
         },
         {
@@ -2032,7 +2340,12 @@
             "group": "display",
             "label": "Color mode",
             "widget": "select",
-            "subgroup": "backlight"
+            "subgroup": "backlight",
+            "menu": {
+              "number": 505,
+              "code": "REVERSE"
+            },
+            "description": "Positive is dark characters on a light field. Negative reverses that."
           }
         },
         {
@@ -2051,7 +2364,12 @@
             "group": "aux",
             "label": "Visual scan",
             "widget": "select",
-            "subgroup": "scan"
+            "subgroup": "scan",
+            "menu": {
+              "number": 515,
+              "code": "VSCAN"
+            },
+            "description": "How many channels visual scan draws across the display. Wider modes cover more spectrum at once."
           }
         },
         {
@@ -2070,7 +2388,12 @@
             "group": "aux",
             "label": "Internal TNC band",
             "widget": "select",
-            "subgroup": "tnc"
+            "subgroup": "tnc",
+            "menu": {
+              "number": 529,
+              "code": "INT BAND"
+            },
+            "description": "Which side the built-in TNC uses for packet and APRS."
           }
         },
         {
@@ -2089,7 +2412,8 @@
             "group": "transmit",
             "label": "WX alert scan time (min)",
             "widget": "select",
-            "subgroup": "weather"
+            "subgroup": "weather",
+            "description": "How often weather-alert scan checks the weather channels, in minutes. Off disables the timed scan. The alert itself is menu 110."
           }
         },
         {
@@ -2114,7 +2438,8 @@
             "group": "aux",
             "label": "Scan TO delay (s)",
             "widget": "select",
-            "subgroup": "scan"
+            "subgroup": "scan",
+            "description": "Seconds scan pauses on a signal when scan resume is Time. Menu 514 selects the resume method."
           }
         },
         {
@@ -2139,7 +2464,8 @@
             "group": "aux",
             "label": "Scan CO delay (s)",
             "widget": "select",
-            "subgroup": "scan"
+            "subgroup": "scan",
+            "description": "Seconds scan waits after a carrier drops when scan resume is Carrier. Menu 514 selects the resume method."
           }
         }
       ]
@@ -2160,7 +2486,8 @@
             "group": "bands",
             "label": "A/Left: 118 MHz",
             "widget": "switch",
-            "subgroup": "a"
+            "subgroup": "a",
+            "description": "Allows the left side to tune the 118 MHz band."
           }
         },
         {
@@ -2173,7 +2500,8 @@
             "group": "bands",
             "label": "A/Left: 144 MHz",
             "widget": "switch",
-            "subgroup": "a"
+            "subgroup": "a",
+            "description": "Allows the left side to tune the 144 MHz band."
           }
         },
         {
@@ -2186,7 +2514,8 @@
             "group": "bands",
             "label": "A/Left: 220 MHz",
             "widget": "switch",
-            "subgroup": "a"
+            "subgroup": "a",
+            "description": "Allows the left side to tune the 220 MHz band."
           }
         },
         {
@@ -2199,7 +2528,8 @@
             "group": "bands",
             "label": "A/Left: 300 MHz",
             "widget": "switch",
-            "subgroup": "a"
+            "subgroup": "a",
+            "description": "Allows the left side to tune the 300 MHz band."
           }
         },
         {
@@ -2212,7 +2542,8 @@
             "group": "bands",
             "label": "A/Left: 430 MHz",
             "widget": "switch",
-            "subgroup": "a"
+            "subgroup": "a",
+            "description": "Allows the left side to tune the 430 MHz band."
           }
         },
         {
@@ -2225,7 +2556,8 @@
             "group": "bands",
             "label": "B/Right: 144 MHz",
             "widget": "switch",
-            "subgroup": "b"
+            "subgroup": "b",
+            "description": "Allows the right side to tune the 144 MHz band."
           }
         },
         {
@@ -2238,7 +2570,8 @@
             "group": "bands",
             "label": "B/Right: 220 MHz",
             "widget": "switch",
-            "subgroup": "b"
+            "subgroup": "b",
+            "description": "Allows the right side to tune the 220 MHz band."
           }
         },
         {
@@ -2251,7 +2584,8 @@
             "group": "bands",
             "label": "B/Right: 300 MHz",
             "widget": "switch",
-            "subgroup": "b"
+            "subgroup": "b",
+            "description": "Allows the right side to tune the 300 MHz band."
           }
         },
         {
@@ -2264,7 +2598,8 @@
             "group": "bands",
             "label": "B/Right: 430 MHz",
             "widget": "switch",
-            "subgroup": "b"
+            "subgroup": "b",
+            "description": "Allows the right side to tune the 430 MHz band."
           }
         },
         {
@@ -2277,7 +2612,8 @@
             "group": "bands",
             "label": "B/Right: 800 MHz",
             "widget": "switch",
-            "subgroup": "b"
+            "subgroup": "b",
+            "description": "Allows the right side to tune the 800 MHz band."
           }
         }
       ]
@@ -2298,7 +2634,8 @@
             "group": "vfo",
             "label": "VFO frequency (Hz)",
             "widget": "integer",
-            "subgroup": "channel"
+            "subgroup": "channel",
+            "description": "Frequency for this VFO, in Hz."
           }
         },
         {
@@ -2324,7 +2661,12 @@
             "group": "vfo",
             "label": "VFO tuning step (kHz)",
             "widget": "select",
-            "subgroup": "channel"
+            "subgroup": "channel",
+            "menu": {
+              "number": 101,
+              "code": "STEP"
+            },
+            "description": "Tuning step for this VFO, in kHz."
           }
         },
         {
@@ -2342,7 +2684,12 @@
             "group": "vfo",
             "label": "VFO mode",
             "widget": "select",
-            "subgroup": "channel"
+            "subgroup": "channel",
+            "menu": {
+              "number": 102,
+              "code": "MODE"
+            },
+            "description": "Modulation for this VFO. FM is wide FM, NFM is narrow FM, and AM is for air-band reception."
           }
         },
         {
@@ -2393,7 +2740,8 @@
             "group": "vfo",
             "label": "VFO duplex",
             "widget": "select",
-            "subgroup": "channel"
+            "subgroup": "channel",
+            "description": "Repeater shift for this VFO. Blank is simplex. + or − uses the offset. Split uses a separate transmit frequency."
           }
         },
         {
@@ -2661,7 +3009,12 @@
             "group": "vfo",
             "label": "VFO low limit (Hz)",
             "widget": "integer",
-            "subgroup": "limits"
+            "subgroup": "limits",
+            "menu": {
+              "number": 100,
+              "code": "PROG VFO"
+            },
+            "description": "Lowest frequency this programmable VFO will tune, in Hz."
           }
         },
         {
@@ -2674,7 +3027,12 @@
             "group": "vfo",
             "label": "VFO high limit (Hz)",
             "widget": "integer",
-            "subgroup": "limits"
+            "subgroup": "limits",
+            "menu": {
+              "number": 100,
+              "code": "PROG VFO"
+            },
+            "description": "Highest frequency this programmable VFO will tune, in Hz."
           }
         }
       ]
@@ -2697,7 +3055,12 @@
             "group": "dtmf",
             "label": "DTMF code",
             "widget": "text",
-            "subgroup": "memories"
+            "subgroup": "memories",
+            "menu": {
+              "number": 301,
+              "code": "DTMF MEM"
+            },
+            "description": "DTMF digits stored in this memory. The microphone can send the whole string."
           }
         }
       ]
@@ -2720,7 +3083,12 @@
             "group": "dtmf",
             "label": "DTMF name",
             "widget": "text",
-            "subgroup": "memories"
+            "subgroup": "memories",
+            "menu": {
+              "number": 301,
+              "code": "DTMF MEM"
+            },
+            "description": "Name shown for this DTMF memory."
           }
         }
       ]
@@ -2741,7 +3109,12 @@
             "group": "repeater",
             "label": "Repeater ID",
             "widget": "text",
-            "subgroup": "identity"
+            "subgroup": "identity",
+            "menu": {
+              "number": 405,
+              "code": "RPT ID"
+            },
+            "description": "Callsign sent as the cross-band repeater ID. Menu 406 chooses Morse, voice, or off."
           }
         }
       ]
@@ -2764,7 +3137,7 @@
             "group": "basic",
             "label": "PM group name",
             "widget": "text",
-            "description": "MCP names at 0x7DA0 (PM 1–5)",
+            "description": "Name of this programmable memory. PM 1 through PM 5 are the stored profiles.",
             "subgroup": "profiles"
           }
         }
@@ -2788,7 +3161,7 @@
             "group": "basic",
             "label": "PM list name",
             "widget": "text",
-            "description": "Names stored in the clone tail (PM 1–5)",
+            "description": "Name shown in the programmable-memory list for PM 1 through PM 5.",
             "subgroup": "profiles"
           }
         }
@@ -2810,7 +3183,8 @@
             "group": "basic",
             "label": "Comment",
             "widget": "text",
-            "subgroup": "profiles"
+            "subgroup": "profiles",
+            "description": "Note stored with this profile. It is for you; the radio does not transmit it."
           }
         }
       ]
@@ -2831,7 +3205,12 @@
             "group": "aprs",
             "label": "My callsign",
             "widget": "text",
-            "subgroup": "identity"
+            "subgroup": "identity",
+            "menu": {
+              "number": 600,
+              "code": "MY CALL"
+            },
+            "description": "Callsign used for APRS beacons and messages. This is menu 600 in the APRS basic settings."
           }
         },
         {
@@ -2871,7 +3250,12 @@
             "group": "aprs",
             "label": "My SSID",
             "widget": "select",
-            "subgroup": "identity"
+            "subgroup": "identity",
+            "menu": {
+              "number": 600,
+              "code": "MY CALL"
+            },
+            "description": "SSID added to the APRS callsign so this radio is distinct from your other stations. None sends the callsign alone."
           }
         }
       ]
@@ -2890,7 +3274,12 @@
             "group": "aprs",
             "label": "Status text enabled",
             "widget": "switch",
-            "subgroup": "status"
+            "subgroup": "status",
+            "menu": {
+              "number": 607,
+              "code": "STATUS"
+            },
+            "description": "Sends the APRS status text. Off beacons position without that text."
           }
         },
         {
@@ -2905,7 +3294,12 @@
             "group": "aprs",
             "label": "Status text",
             "widget": "text",
-            "subgroup": "status"
+            "subgroup": "status",
+            "menu": {
+              "number": 607,
+              "code": "STATUS"
+            },
+            "description": "Status text included with APRS beacons, such as a route or operating note."
           }
         }
       ]
@@ -2926,7 +3320,12 @@
             "group": "aprs",
             "label": "Message group",
             "widget": "text",
-            "subgroup": "status"
+            "subgroup": "status",
+            "menu": {
+              "number": 623,
+              "code": "MSG GRP"
+            },
+            "description": "Message groups this station accepts, such as ALL, QST, CQ, or a club group. Other groups are filtered out."
           }
         }
       ]
@@ -2947,7 +3346,12 @@
             "group": "aprs",
             "label": "APRS comment",
             "widget": "text",
-            "subgroup": "status"
+            "subgroup": "status",
+            "menu": {
+              "number": 607,
+              "code": "COMMENT"
+            },
+            "description": "Position comment sent with the APRS beacon, such as Off Duty or En Route."
           }
         }
       ]
@@ -2967,7 +3371,12 @@
           "ui": {
             "group": "sky",
             "label": "Commander call sign",
-            "widget": "text"
+            "widget": "text",
+            "menu": {
+              "number": 700,
+              "code": "CMD CALL"
+            },
+            "description": "Callsign of the Sky Command commander station."
           }
         },
         {
@@ -2981,7 +3390,12 @@
           "ui": {
             "group": "sky",
             "label": "Transporter call sign",
-            "widget": "text"
+            "widget": "text",
+            "menu": {
+              "number": 701,
+              "code": "TPT CALL"
+            },
+            "description": "Callsign of the Sky Command transporter station."
           }
         },
         {
@@ -3037,7 +3451,12 @@
           "ui": {
             "group": "sky",
             "label": "Sky Command tone (Hz)",
-            "widget": "select"
+            "widget": "select",
+            "menu": {
+              "number": 702,
+              "code": "TONE"
+            },
+            "description": "CTCSS tone the commander and transporter share so Sky Command audio is not heard by every receiver on the frequency."
           }
         }
       ]
