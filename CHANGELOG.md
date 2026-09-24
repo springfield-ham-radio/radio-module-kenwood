@@ -1,3 +1,9 @@
+## [1.10.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.9.2...v1.10.0) (2026-09-24)
+
+### Features
+
+* add Kenwood menu numbers and setting descriptions ([5511e01](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/5511e01238a0c4f757caac27ae0755d8e9573a69))
+
 ## [1.9.2](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.9.1...v1.9.2) (2026-09-15)
 
 ### Bug Fixes
