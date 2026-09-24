@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -45,8 +44,8 @@ describe('Kenwood DSL module', () => {
         id: { model: string };
       };
 
-      expect(config.codec.type).to.equal('memoryMap');
-      expect(config.memoryMap.$ref).to.equal(`../${fixture.mapPath}`);
+      expect(config.codec.type).toBe('memoryMap');
+      expect(config.memoryMap.$ref).toBe(`../${fixture.mapPath}`);
 
       const memoryMap = readJson(fixture.mapPath) as RadioMemoryMap;
       const codec = createMemoryMapCodec({
@@ -56,8 +55,8 @@ describe('Kenwood DSL module', () => {
         logger: new MockLogLayer(),
       });
 
-      expect(codec.decode).to.be.a('function');
-      expect(codec.encode).to.be.a('function');
+      expect(codec.decode).toBeTypeOf('function');
+      expect(codec.encode).toBeTypeOf('function');
     });
 
     it(`declares Kenwood live control for ${fixture.model}`, () => {
@@ -71,11 +70,11 @@ describe('Kenwood DSL module', () => {
         };
       };
 
-      expect(config.capabilities.liveControl).to.equal(true);
-      expect(config.cat?.protocol).to.equal('kenwood');
-      expect(config.cat?.vfoCount).to.equal(fixture.vfoCount);
-      expect(Boolean(config.cat?.vfoChannel)).to.equal(fixture.vfoChannel);
-      expect(config.cat?.powers).to.deep.equal(['High', 'Medium', 'Low']);
+      expect(config.capabilities.liveControl).toBe(true);
+      expect(config.cat?.protocol).toBe('kenwood');
+      expect(config.cat?.vfoCount).toBe(fixture.vfoCount);
+      expect(Boolean(config.cat?.vfoChannel)).toBe(fixture.vfoChannel);
+      expect(config.cat?.powers).toEqual(['High', 'Medium', 'Low']);
     });
   }
 
@@ -85,9 +84,9 @@ describe('Kenwood DSL module', () => {
       writeMemory: Array<Record<string, unknown>>;
     };
 
-    expect(config.readMemory.some((step) => 'catRead' in step)).to.equal(true);
-    expect(config.writeMemory.some((step) => 'catWrite' in step)).to.equal(true);
-    expect(config.readMemory.some((step) => 'read' in step)).to.equal(false);
-    expect(config.writeMemory.some((step) => 'write' in step)).to.equal(false);
+    expect(config.readMemory.some((step) => 'catRead' in step)).toBe(true);
+    expect(config.writeMemory.some((step) => 'catWrite' in step)).toBe(true);
+    expect(config.readMemory.some((step) => 'read' in step)).toBe(false);
+    expect(config.writeMemory.some((step) => 'write' in step)).toBe(false);
   });
 });

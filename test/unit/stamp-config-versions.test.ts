@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -30,9 +29,9 @@ describe('stampConfigVersions', () => {
       const updatedPaths = stampConfigVersions(workspace, '1.6.0');
       const stampedText = readFileSync(configPath, 'utf8');
 
-      expect(updatedPaths).to.deep.equal([configPath]);
-      expect(stampedText).to.equal(originalText.replace('1.0.0', '1.6.0'));
-      expect(stampedText).to.include('"frequencyCommands": ["FO"]');
+      expect(updatedPaths).toEqual([configPath]);
+      expect(stampedText).toBe(originalText.replace('1.0.0', '1.6.0'));
+      expect(stampedText).toContain('"frequencyCommands": ["FO"]');
     } finally {
       rmSync(workspace, { recursive: true, force: true });
     }
@@ -46,11 +45,11 @@ describe('stampConfigVersions', () => {
         version: string;
       };
 
-      expect(config.version).to.match(semver);
+      expect(config.version).toMatch(semver);
     }
   });
 
   it('rejects a version that is not semver', () => {
-    expect(() => stampConfigVersions(rootDirectory, 'not-a-version')).to.throw('Invalid radio config version');
+    expect(() => stampConfigVersions(rootDirectory, 'not-a-version')).toThrow('Invalid radio config version');
   });
 });

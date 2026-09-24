@@ -1,8 +1,7 @@
 import { Frequency, type RadioModelId, type RadioProgram, RadioToneType, type RadioMemoryConfig, type RadioMemoryMap } from '@springfield/ham-radio-api';
-import { describe, it } from 'node:test';
+import { describe, expect, it } from 'vitest';
 import { createMemoryMapCodec } from '@springfield/ham-radio-utils';
 import { MockLogLayer } from 'loglayer';
-import { expect } from 'chai';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -129,25 +128,25 @@ describe('Kenwood TH-D74 module', () => {
     const encodedMemory = codec.encode(originalProgram, mockMemory);
     const decodedProgram = codec.decode(encodedMemory);
 
-    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).to.deep.equal([0, 6]);
+    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).toEqual([0, 6]);
 
     const channel0 = decodedProgram.channels[0].radioChannel;
     if (typeof channel0 === 'object' && channel0 !== undefined) {
-      expect(channel0.name).to.equal('LOCAL');
-      expect(channel0.receiveFrequency).to.equal(146_520_000);
-      expect(channel0.transmitFrequency).to.equal(146_520_000);
-      expect(channel0.transmitTone).to.deep.equal({ tone: 885, type: RadioToneType.CTCSS });
+      expect(channel0.name).toBe('LOCAL');
+      expect(channel0.receiveFrequency).toBe(146_520_000);
+      expect(channel0.transmitFrequency).toBe(146_520_000);
+      expect(channel0.transmitTone).toEqual({ tone: 885, type: RadioToneType.CTCSS });
     }
 
     const channel6 = decodedProgram.channels[1].radioChannel;
     if (typeof channel6 === 'object' && channel6 !== undefined) {
-      expect(channel6.name).to.equal('RPT');
-      expect(channel6.receiveFrequency).to.equal(146_940_000);
-      expect(channel6.transmitFrequency).to.equal(146_340_000);
+      expect(channel6.name).toBe('RPT');
+      expect(channel6.receiveFrequency).toBe(146_940_000);
+      expect(channel6.transmitFrequency).toBe(146_340_000);
     }
 
-    expect(encodedMemory.contents[0x4000]).to.not.equal(0xff);
-    expect(encodedMemory.contents[0x4100]).to.not.equal(0xff);
+    expect(encodedMemory.contents[0x4000]).not.toBe(0xff);
+    expect(encodedMemory.contents[0x4100]).not.toBe(0xff);
   });
 });
 
@@ -160,10 +159,10 @@ describe('Kenwood TH-F6 module', () => {
       writeMemory: Array<Record<string, unknown>>;
     };
 
-    expect(radioConfig.readMemory.some((step) => 'catRead' in step)).to.equal(true);
-    expect(radioConfig.writeMemory.some((step) => 'catWrite' in step)).to.equal(true);
-    expect(radioConfig.readMemory.some((step) => 'read' in step)).to.equal(false);
-    expect(radioConfig.writeMemory.some((step) => 'write' in step)).to.equal(false);
+    expect(radioConfig.readMemory.some((step) => 'catRead' in step)).toBe(true);
+    expect(radioConfig.writeMemory.some((step) => 'catWrite' in step)).toBe(true);
+    expect(radioConfig.readMemory.some((step) => 'read' in step)).toBe(false);
+    expect(radioConfig.writeMemory.some((step) => 'write' in step)).toBe(false);
   });
 
   it('encodes and decodes a logical live-mode channel image', () => {
@@ -204,12 +203,12 @@ describe('Kenwood TH-F6 module', () => {
     const encodedMemory = codec.encode(originalProgram, mockMemory);
     const decodedProgram = codec.decode(encodedMemory);
 
-    expect(decodedProgram.channels).to.have.length(1);
+    expect(decodedProgram.channels).toHaveLength(1);
     const radioChannel = decodedProgram.channels[0].radioChannel;
     if (typeof radioChannel === 'object' && radioChannel !== undefined) {
-      expect(radioChannel.name).to.equal('CALL');
-      expect(radioChannel.receiveFrequency).to.equal(146_520_000);
-      expect(radioChannel.transmitTone).to.deep.equal({ tone: 885, type: RadioToneType.CTCSS });
+      expect(radioChannel.name).toBe('CALL');
+      expect(radioChannel.receiveFrequency).toBe(146_520_000);
+      expect(radioChannel.transmitTone).toEqual({ tone: 885, type: RadioToneType.CTCSS });
     }
   });
 });
@@ -264,28 +263,28 @@ describe('Kenwood TM-D710A module', () => {
     const encodedMemory = codec.encode(originalProgram, mockMemory);
     const decodedProgram = codec.decode(encodedMemory);
 
-    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).to.deep.equal([0, 1]);
+    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).toEqual([0, 1]);
 
     const channel0 = decodedProgram.channels[0].radioChannel;
     if (typeof channel0 === 'object' && channel0 !== undefined) {
-      expect(channel0.name).to.equal('LOCAL');
-      expect(channel0.receiveFrequency).to.equal(146_520_000);
-      expect(channel0.transmitFrequency).to.equal(146_520_000);
-      expect(channel0.transmitTone).to.deep.equal({ tone: 885, type: RadioToneType.CTCSS });
+      expect(channel0.name).toBe('LOCAL');
+      expect(channel0.receiveFrequency).toBe(146_520_000);
+      expect(channel0.transmitFrequency).toBe(146_520_000);
+      expect(channel0.transmitTone).toEqual({ tone: 885, type: RadioToneType.CTCSS });
     }
 
     const channel1 = decodedProgram.channels[1].radioChannel;
     if (typeof channel1 === 'object' && channel1 !== undefined) {
-      expect(channel1.name).to.equal('RPT');
-      expect(channel1.receiveFrequency).to.equal(146_940_000);
-      expect(channel1.transmitFrequency).to.equal(146_340_000);
+      expect(channel1.name).toBe('RPT');
+      expect(channel1.receiveFrequency).toBe(146_940_000);
+      expect(channel1.transmitFrequency).toBe(146_340_000);
     }
 
-    expect(decodedProgram.channels[1].settings?.mode).to.equal('NFM');
-    expect(decodedProgram.channels[1].settings?.duplex).to.equal('-');
-    expect(encodedMemory.contents[0x1700]).to.not.equal(0xff);
-    expect(encodedMemory.contents[0x1710]).to.not.equal(0xff);
-    expect(encodedMemory.contents[0x5800]).to.equal('L'.charCodeAt(0));
+    expect(decodedProgram.channels[1].settings?.mode).toBe('NFM');
+    expect(decodedProgram.channels[1].settings?.duplex).toBe('-');
+    expect(encodedMemory.contents[0x1700]).not.toBe(0xff);
+    expect(encodedMemory.contents[0x1710]).not.toBe(0xff);
+    expect(encodedMemory.contents[0x5800]).toBe('L'.charCodeAt(0));
   });
 
   it('decodes weather and call specials past memory 999', () => {
@@ -319,24 +318,24 @@ describe('Kenwood TM-D710A module', () => {
 
     const decodedProgram = codec.decode({ contents, radioModel: modelId });
 
-    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).to.deep.equal([1020, 1030, 1031]);
+    expect(decodedProgram.channels.map((channel) => channel.channelNumber)).toEqual([1020, 1030, 1031]);
 
     const wx = decodedProgram.channels[0].radioChannel;
     if (typeof wx === 'object' && wx !== undefined) {
-      expect(wx.name).to.equal('WX   1');
-      expect(wx.receiveFrequency).to.equal(162_550_000);
+      expect(wx.name).toBe('WX   1');
+      expect(wx.receiveFrequency).toBe(162_550_000);
     }
 
     const callVhf = decodedProgram.channels[1].radioChannel;
     if (typeof callVhf === 'object' && callVhf !== undefined) {
-      expect(callVhf.receiveFrequency).to.equal(144_000_000);
-      expect(callVhf.transmitFrequency).to.equal(144_000_000);
+      expect(callVhf.receiveFrequency).toBe(144_000_000);
+      expect(callVhf.transmitFrequency).toBe(144_000_000);
     }
 
     const callUhf = decodedProgram.channels[2].radioChannel;
     if (typeof callUhf === 'object' && callUhf !== undefined) {
-      expect(callUhf.receiveFrequency).to.equal(440_000_000);
-      expect(callUhf.transmitFrequency).to.equal(440_000_000);
+      expect(callUhf.receiveFrequency).toBe(440_000_000);
+      expect(callUhf.transmitFrequency).toBe(440_000_000);
     }
   });
 
@@ -389,42 +388,42 @@ describe('Kenwood TM-D710A module', () => {
     const decodedProgram = codec.decode({ contents, radioModel: modelId });
     const { settings } = decodedProgram;
 
-    expect(asRecord(settings.block1).pmrecall).to.equal(2);
-    expect(asRecord(settings.block1).pcbaud).to.equal('57600');
-    expect(asRecord(settings.block1).pwdon).to.equal(true);
-    expect(asRecord(settings.block1).pswd).to.equal('12345');
-    expect(pmEntry(settings, 'powerOn').pwron).to.equal('HELLO !!');
-    expect(pmEntry(settings, 'powerOn', 1).pwron).to.equal('PM ONE');
-    expect(pmEntry(settings, 'pm0A').a_mr).to.equal('Mem Recall');
-    expect(pmEntry(settings, 'pm0A').a_pwr).to.equal('Low (5W)');
-    expect(pmEntry(settings, 'pm0A').a_chn).to.equal(42);
-    expect(pmEntry(settings, 'pm0B').b_mr).to.equal('VFO');
-    expect(pmEntry(settings, 'pm0B').b_pwr).to.equal('High (50W)');
-    expect(pmEntry(settings, 'pm0Memory').memgrplk).to.equal('0123456789');
-    expect(pmEntry(settings, 'pm0').beepon).to.equal(true);
-    expect(pmEntry(settings, 'pm0').beepvol).to.equal('5');
-    expect(pmEntry(settings, 'pm0').apo).to.equal('60');
-    expect(pmEntry(settings, 'pm0', 1).beepon).to.equal(false);
-    expect(pmEntry(settings, 'pm0Bands').abnd118).to.equal(true);
-    expect(pmEntry(settings, 'pm0Bands').bbnd144).to.equal(false);
-    expect(asRecord(asList(settings.vfos)[0]).freq).to.equal(118_000_000);
-    expect(asRecord(asList(settings.vfos)[1]).freq).to.equal(144_000_000);
-    expect(asRecord(asList(settings.progvfo)[0]).blow).to.equal(118_000_000);
-    expect(asRecord(asList(settings.progvfo)[0]).bhigh).to.equal(136_000_000);
-    expect(asRecord(settings.repeaterId).rptrid).to.equal('W0ABC');
-    expect(asRecord(asList(settings.dtmfCodes)[0]).code).to.equal('146520*#');
-    expect(asRecord(asList(settings.dtmfNames)[0]).name).to.equal('HOME');
-    expect(asRecord(asList(settings.pmNames)[0]).pmname).to.equal('TRAVEL');
-    expect(asRecord(asList(settings.pmListNames)[0]).name).to.equal('PM 1');
-    expect(asRecord(settings.mcpComment).comment).to.equal('MCP comment');
-    expect(asRecord(settings.aprs).mycall).to.equal('NOCALL');
-    expect(asRecord(settings.aprs).ssid).to.equal('-2');
-    expect(asRecord(settings.aprsStatus).text).to.equal('TEMP');
-    expect(asRecord(settings.aprsMsgGroup).groups).to.equal('ALL,QST,CQ,KWD');
-    expect(asRecord(settings.aprsComment).comment).to.equal('HELLO !!');
-    expect(asRecord(settings.skyCommand).cmdr).to.equal('N0CMD');
-    expect(asRecord(settings.skyCommand).tptr).to.equal('N0TPT');
-    expect(asRecord(settings.skyCommand).skytone).to.equal('88.5');
+    expect(asRecord(settings.block1).pmrecall).toBe(2);
+    expect(asRecord(settings.block1).pcbaud).toBe('57600');
+    expect(asRecord(settings.block1).pwdon).toBe(true);
+    expect(asRecord(settings.block1).pswd).toBe('12345');
+    expect(pmEntry(settings, 'powerOn').pwron).toBe('HELLO !!');
+    expect(pmEntry(settings, 'powerOn', 1).pwron).toBe('PM ONE');
+    expect(pmEntry(settings, 'pm0A').a_mr).toBe('Mem Recall');
+    expect(pmEntry(settings, 'pm0A').a_pwr).toBe('Low (5W)');
+    expect(pmEntry(settings, 'pm0A').a_chn).toBe(42);
+    expect(pmEntry(settings, 'pm0B').b_mr).toBe('VFO');
+    expect(pmEntry(settings, 'pm0B').b_pwr).toBe('High (50W)');
+    expect(pmEntry(settings, 'pm0Memory').memgrplk).toBe('0123456789');
+    expect(pmEntry(settings, 'pm0').beepon).toBe(true);
+    expect(pmEntry(settings, 'pm0').beepvol).toBe('5');
+    expect(pmEntry(settings, 'pm0').apo).toBe('60');
+    expect(pmEntry(settings, 'pm0', 1).beepon).toBe(false);
+    expect(pmEntry(settings, 'pm0Bands').abnd118).toBe(true);
+    expect(pmEntry(settings, 'pm0Bands').bbnd144).toBe(false);
+    expect(asRecord(asList(settings.vfos)[0]).freq).toBe(118_000_000);
+    expect(asRecord(asList(settings.vfos)[1]).freq).toBe(144_000_000);
+    expect(asRecord(asList(settings.progvfo)[0]).blow).toBe(118_000_000);
+    expect(asRecord(asList(settings.progvfo)[0]).bhigh).toBe(136_000_000);
+    expect(asRecord(settings.repeaterId).rptrid).toBe('W0ABC');
+    expect(asRecord(asList(settings.dtmfCodes)[0]).code).toBe('146520*#');
+    expect(asRecord(asList(settings.dtmfNames)[0]).name).toBe('HOME');
+    expect(asRecord(asList(settings.pmNames)[0]).pmname).toBe('TRAVEL');
+    expect(asRecord(asList(settings.pmListNames)[0]).name).toBe('PM 1');
+    expect(asRecord(settings.mcpComment).comment).toBe('MCP comment');
+    expect(asRecord(settings.aprs).mycall).toBe('NOCALL');
+    expect(asRecord(settings.aprs).ssid).toBe('-2');
+    expect(asRecord(settings.aprsStatus).text).toBe('TEMP');
+    expect(asRecord(settings.aprsMsgGroup).groups).toBe('ALL,QST,CQ,KWD');
+    expect(asRecord(settings.aprsComment).comment).toBe('HELLO !!');
+    expect(asRecord(settings.skyCommand).cmdr).toBe('N0CMD');
+    expect(asRecord(settings.skyCommand).tptr).toBe('N0TPT');
+    expect(asRecord(settings.skyCommand).skytone).toBe('88.5');
   });
 
   it('round-trips mapped TM-D710A settings without moving other bytes', () => {
@@ -458,10 +457,10 @@ describe('Kenwood TM-D710A module', () => {
       { contents, radioModel: modelId },
     );
 
-    expect(encodedMemory.contents[0x0021]).to.equal(2);
-    expect(String.fromCharCode(...encodedMemory.contents.slice(0x02e0, 0x02e8))).to.equal('HAMBENCH');
-    expect(encodedMemory.contents[0x0350]).to.equal(0);
-    expect(encodedMemory.contents[0x0374]).to.equal(0);
-    expect(encodedMemory.contents[0x0122]).to.equal(0xaa);
+    expect(encodedMemory.contents[0x0021]).toBe(2);
+    expect(String.fromCharCode(...encodedMemory.contents.slice(0x02e0, 0x02e8))).toBe('HAMBENCH');
+    expect(encodedMemory.contents[0x0350]).toBe(0);
+    expect(encodedMemory.contents[0x0374]).toBe(0);
+    expect(encodedMemory.contents[0x0122]).toBe(0xaa);
   });
 });
