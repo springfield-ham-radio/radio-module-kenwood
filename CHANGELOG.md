@@ -1,3 +1,9 @@
+## [1.10.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.10.0...v1.10.1) (2026-09-25)
+
+### Bug Fixes
+
+* keep radio driver versions independent of the module zip ([0b16376](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/0b163764eb3103640aee3875b8987ab4a4935d04))
+
 ## [1.10.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.9.2...v1.10.0) (2026-09-24)
 
 ### Features
