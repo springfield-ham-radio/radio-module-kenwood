@@ -1,3 +1,9 @@
+## [1.11.2](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.1...v1.11.2) (2026-10-03)
+
+### Bug Fixes
+
+* **deps:** bump brace-expansion from 5.0.9 to 5.0.12 ([#10](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/10)) ([7afa8f7](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/7afa8f722e39c6bd20d817ac3015fd4930797394))
+
 ## [1.11.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.0...v1.11.1) (2026-10-03)
 
 ### Bug Fixes
