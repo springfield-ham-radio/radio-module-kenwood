@@ -1,3 +1,9 @@
+## [1.11.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.0...v1.11.1) (2026-10-03)
+
+### Bug Fixes
+
+* **deps:** bump undici from 6.28.0 to 6.29.0 ([#8](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/8)) ([2fd3e51](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/2fd3e5100b3cfa06658aa4f2f2d9adacf43b013e))
+
 ## [1.11.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.10.1...v1.11.0) (2026-10-03)
 
 ### Features
