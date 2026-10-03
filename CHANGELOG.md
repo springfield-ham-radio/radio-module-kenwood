@@ -1,3 +1,9 @@
+## [1.11.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.10.1...v1.11.0) (2026-10-03)
+
+### Features
+
+* declare transmit bands for the TH-F6, TH-D74, and TM-D710A ([99e1866](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/99e1866d7ee6a9ab48df5f77cda74b5548948e77))
+
 ## [1.10.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.10.0...v1.10.1) (2026-09-25)
 
 ### Bug Fixes
