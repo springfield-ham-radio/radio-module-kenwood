@@ -19,3 +19,7 @@ yarn pack:release
 ```
 
 `pack:release` writes the zip and `dist-release/catalog-module.json`. Each `configs/*.json` `version` stays that radio's driver version. The zip version comes from `package.json`.
+
+## License
+
+MIT — Copyright (c) 2026 Bryan Hunt. See [LICENSE](LICENSE).
