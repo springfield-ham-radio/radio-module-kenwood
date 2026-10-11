@@ -110,7 +110,7 @@ describe('Kenwood TH-D74 module', () => {
 
     const readStep = radioConfig.readMemory.find((step) => 'read' in step) as { read: Record<string, unknown> };
     expect(readStep.read.ack).toEqual({ send: ['0x06'] });
-    expect(readStep.read.ready).toBeUndefined();
+    expect(readStep.read.ready).toBe('0x06');
 
     const writeStep = radioConfig.writeMemory.find((step) => 'write' in step) as {
       write: { skip: Array<{ startAddress: number; endAddress: number }> };

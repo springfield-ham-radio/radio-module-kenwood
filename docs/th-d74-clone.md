@@ -23,7 +23,7 @@ Outside clone mode, the PC port speaks Kenwood CAT. The config sets `capabilitie
 3. `0M PROGRAM\r` → `0M\r` (often 0.5–1 s; config timeout 3 s)
 4. Set host baud to 57600 (no extra byte to discard)
 5. For block index `i` in **0 .. 1954** (1955 blocks; image size `0x7A300` = 500480 bytes, end address **500479**):
-   - Read: `R` + `u16be(i)` + `u16be(0)` → `W` + `u16be(i)` + `u16be(0)` + 256 bytes → host sends `0x06` (radio does not echo `0x06` back)
+   - Read: `R` + `u16be(i)` + `u16be(0)` → `W` + `u16be(i)` + `u16be(0)` + 256 bytes → host sends `0x06`. The radio’s `0x06` ack is often **late** and appears as a leading byte on the **next** block’s `W` reply (`06 W …`); the driver config sets `read.ready` to `0x06` so that byte is consumed before the next frame (same pattern as UV-5R clone).
    - Write: `W` + `u16be(i)` + `u16be(0 if size==256 else size)` + payload → radio replies `0x06`
 6. Write skips blocks **1953** and **1954** (addresses `0x7A100`–`0x7A2FF`, inclusive byte range 499968–500479), matching CHIRP upload defaults.
 7. `E` leaves programming mode (no reply)
