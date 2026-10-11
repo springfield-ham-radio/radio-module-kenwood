@@ -1,3 +1,9 @@
+## [1.11.3](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.2...v1.11.3) (2026-10-11)
+
+### Bug Fixes
+
+* **th-d74:** match live clone handshake and CHIRP image size ([#16](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/16)) ([d05ebd0](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/d05ebd0b6818f6068bc8cc149995226cd9131dcb))
+
 ## [1.11.2](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.1...v1.11.2) (2026-10-03)
 
 ### Bug Fixes
