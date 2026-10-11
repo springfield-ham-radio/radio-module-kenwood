@@ -4,6 +4,10 @@ Re-expressed from Kenwood handheld CAT behavior (TH-F6A). Not a copy of CHIRP so
 
 The TH-F6 does **not** clone EEPROM. Springfield’s memory map is a **logical** 32-byte × 400 channel image plus a small settings block so the generic memory-map codec can edit channels. Filling that image from the radio means issuing per-memory CAT commands. The config sets `capabilities.liveControl` and a Kenwood `cat` profile (`wakeCr`, `FQ`/`FO`, `MD`, High/Medium/Low) for the HamBench CAT page as well.
 
+## Radio setup
+
+- Menu **9** (**SP/MIC JACK**) must be **PC**. If it is set to microphone or another option, the radio will not answer CAT on the data jack.
+
 ## Serial
 
 - 9600 8N1 (4800, 9600, 19200, 38400, 57600, or 115200 if `ID` fails)

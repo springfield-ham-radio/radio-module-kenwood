@@ -81,6 +81,43 @@ function writeTmd710Record(
 describe('Kenwood TH-D74 module', () => {
   const { memoryMap, memoryConfig, modelId } = loadRadio('configs/kenwood-th-d74.json', 'src/shared/memory-maps/th-d74-settings.json');
 
+  it('declares live clone protocol steps matching CHIRP image size', () => {
+    const radioConfig = JSON.parse(readFileSync(join(rootDirectory, 'configs/kenwood-th-d74.json'), 'utf8')) as {
+      version: string;
+      serialConfig: { dtr?: boolean; rts?: boolean };
+      memoryConfig: RadioMemoryConfig;
+      readMemory: Array<Record<string, unknown>>;
+      writeMemory: Array<Record<string, unknown>>;
+    };
+
+    expect(radioConfig.version).toBe('1.11.1');
+    expect(radioConfig.serialConfig.dtr).toBe(true);
+    expect(radioConfig.serialConfig.rts).toBe(true);
+    expect(radioConfig.memoryConfig.segments.image.endAddress).toBe(500479);
+    expect(bufferSize(radioConfig.memoryConfig)).toBe(500480);
+
+    const wakeExpect = ['?', '0x0D', '?', '0x0D'];
+    const idExpect = ['I', 'D', ' ', 'T', 'H', '-', 'D', '7', '4', '0x0D'];
+
+    for (const steps of [radioConfig.readMemory, radioConfig.writeMemory]) {
+      expect(steps[0].description).toContain('Wake');
+      expect(steps[0].expect).toEqual(wakeExpect);
+      expect(steps[1].expect).toEqual(idExpect);
+      expect(steps[2].timeout).toBe(3000);
+      expect(steps[3]).toEqual({ description: 'Switch to clone baud', setBaudRate: 57600 });
+      expect(steps[steps.length - 1]).toEqual({ description: 'Leave programming mode', send: ['E'] });
+    }
+
+    const readStep = radioConfig.readMemory.find((step) => 'read' in step) as { read: Record<string, unknown> };
+    expect(readStep.read.ack).toEqual({ send: ['0x06'] });
+    expect(readStep.read.ready).toBeUndefined();
+
+    const writeStep = radioConfig.writeMemory.find((step) => 'write' in step) as {
+      write: { skip: Array<{ startAddress: number; endAddress: number }> };
+    };
+    expect(writeStep.write.skip).toEqual([{ startAddress: 499968, endAddress: 500479 }]);
+  });
+
   it('encodes and decodes a VHF channel with grouped stride', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,

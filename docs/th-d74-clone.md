@@ -4,22 +4,29 @@ Re-expressed from observed Kenwood MCP-D74 / clone-mode behavior. Not a copy of 
 
 Outside clone mode, the PC port speaks Kenwood CAT. The config sets `capabilities.liveControl` and a Kenwood `cat` profile (`FQ`/`FO`, `MD`, two VFOs).
 
+## Radio setup
+
+- Menu **980** = **COM** + **AF/IF Output** (clone/CAT on the USB CDC port). Power-cycle the radio after changing this menu.
+- Turn **KISS** off: press **F**, then **LIST**, and disable KISS if it is on.
+
 ## Serial
 
-- Default menu baud 9600 8N1 (9600, 19200, 38400, or 57600)
-- Hardware RTS/CTS on macOS USB CDC
-- After `0M PROGRAM`, both sides switch to **57600** for the dump
+- Default menu baud **9600 8N1** (9600, 19200, 38400, or 57600)
+- Hardware **RTS/CTS** on (macOS USB CDC)
+- **DTR** and **RTS** asserted (`serialConfig.dtr` / `serialConfig.rts`: true)
+- After `0M PROGRAM`, the host switches to **57600** for the block transfer. There is **no** inbound sync byte on a TH-D74; send `R` immediately after the baud change.
 
 ## Session
 
-1. Optional `ID\r` → `ID TH-D74\r` (baud detection)
-2. `0M PROGRAM\r` → `0M\r`
-3. Set 57600; discard one inbound byte
-4. For block `i` in `0 .. 1956` (image `0x7A300` / 256):
-   - Read: `R` + `u16be(i)` + `u16be(0)` → `W` + `u16be(i)` + `u16be(0)` + 256 bytes → send `0x06`, expect `0x06`
-   - Write: `W` + `u16be(i)` + `u16be(0 if size==256 else size)` + payload → `0x06`
-5. Write skips the last two blocks (`0x7A100`–`0x7A2FF`)
-6. `E` leaves programming mode
+1. `\r\r` → `?\r?\r` (wake; the config consumes this reply before `ID`)
+2. `ID\r` → `ID TH-D74\r`
+3. `0M PROGRAM\r` → `0M\r` (often 0.5–1 s; config timeout 3 s)
+4. Set host baud to 57600 (no extra byte to discard)
+5. For block index `i` in **0 .. 1954** (1955 blocks; image size `0x7A300` = 500480 bytes, end address **500479**):
+   - Read: `R` + `u16be(i)` + `u16be(0)` → `W` + `u16be(i)` + `u16be(0)` + 256 bytes → host sends `0x06` (radio does not echo `0x06` back)
+   - Write: `W` + `u16be(i)` + `u16be(0 if size==256 else size)` + payload → radio replies `0x06`
+6. Write skips blocks **1953** and **1954** (addresses `0x7A100`–`0x7A2FF`, inclusive byte range 499968–500479), matching CHIRP upload defaults.
+7. `E` leaves programming mode (no reply)
 
 ## Image layout (radio addresses)
 

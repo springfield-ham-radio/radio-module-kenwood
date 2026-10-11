@@ -5,7 +5,7 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.11.0",
+  "version": "1.11.1",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "capabilities": {
     "memoryRead": true,
@@ -53,7 +53,9 @@
     "dataBits": 8,
     "stopBits": 1,
     "parity": "none",
-    "rtscts": true
+    "rtscts": true,
+    "dtr": true,
+    "rts": true
   },
   "memoryConfig": {
     "chunkSize": 256,
@@ -62,20 +64,30 @@
     "segments": {
       "image": {
         "startAddress": 0,
-        "endAddress": 500991
+        "endAddress": 500479
       }
     }
   },
   "readMemory": [
     {
-      "description": "Enter programming mode",
-      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
-      "expect": ["0", "M", "0x0D"]
+      "description": "Wake CAT and consume ? replies",
+      "send": ["0x0D", "0x0D"],
+      "expect": ["?", "0x0D", "?", "0x0D"]
     },
     {
-      "description": "Switch to clone baud and discard sync byte",
-      "setBaudRate": 57600,
-      "expect": { "bytes": 1 }
+      "description": "Identify radio",
+      "send": ["I", "D", "0x0D"],
+      "expect": ["I", "D", " ", "T", "H", "-", "D", "7", "4", "0x0D"]
+    },
+    {
+      "description": "Enter programming mode",
+      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
+      "expect": ["0", "M", "0x0D"],
+      "timeout": 3000
+    },
+    {
+      "description": "Switch to clone baud",
+      "setBaudRate": 57600
     },
     {
       "description": "Read clone blocks",
@@ -84,8 +96,7 @@
         "send": ["R", "$block", "0x00", "0x00"],
         "expect": ["W", "$block", "0x00", "0x00", "$data"],
         "ack": {
-          "send": ["0x06"],
-          "expect": "0x06"
+          "send": ["0x06"]
         }
       }
     },
@@ -96,21 +107,31 @@
   ],
   "writeMemory": [
     {
-      "description": "Enter programming mode",
-      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
-      "expect": ["0", "M", "0x0D"]
+      "description": "Wake CAT and consume ? replies",
+      "send": ["0x0D", "0x0D"],
+      "expect": ["?", "0x0D", "?", "0x0D"]
     },
     {
-      "description": "Switch to clone baud and discard sync byte",
-      "setBaudRate": 57600,
-      "expect": { "bytes": 1 }
+      "description": "Identify radio",
+      "send": ["I", "D", "0x0D"],
+      "expect": ["I", "D", " ", "T", "H", "-", "D", "7", "4", "0x0D"]
+    },
+    {
+      "description": "Enter programming mode",
+      "send": ["0", "M", " ", "P", "R", "O", "G", "R", "A", "M", "0x0D"],
+      "expect": ["0", "M", "0x0D"],
+      "timeout": 3000
+    },
+    {
+      "description": "Switch to clone baud",
+      "setBaudRate": 57600
     },
     {
       "description": "Write clone blocks",
       "write": {
         "segments": ["image"],
         "chunkSize": 256,
-        "skip": [{ "startAddress": 499968, "endAddress": 500991 }],
+        "skip": [{ "startAddress": 499968, "endAddress": 500479 }],
         "send": ["W", "$block", "0x00", "0x00", "$data"],
         "expect": "0x06"
       }
