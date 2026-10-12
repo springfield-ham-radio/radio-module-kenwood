@@ -1,3 +1,9 @@
+## [1.11.5](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.4...v1.11.5) (2026-10-12)
+
+### Bug Fixes
+
+* **deps:** bump handlebars from 4.7.9 to 4.7.10 ([#17](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/17)) ([c809612](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/c8096127d55c4c4dc3c07d5636de74e065c76fc7))
+
 ## [1.11.4](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.3...v1.11.4) (2026-10-12)
 
 ### Bug Fixes
