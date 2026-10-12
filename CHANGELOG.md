@@ -1,3 +1,9 @@
+## [1.11.6](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.5...v1.11.6) (2026-10-12)
+
+### Bug Fixes
+
+* **deps:** bump ip-address from 10.5.0 to 10.7.2 ([#9](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/9)) ([b9c0572](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/b9c0572044e63a81336dde44d51da01a7adfab2d))
+
 ## [1.11.5](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.4...v1.11.5) (2026-10-12)
 
 ### Bug Fixes
