@@ -1,3 +1,9 @@
+## [1.11.4](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.3...v1.11.4) (2026-10-12)
+
+### Bug Fixes
+
+* **deps:** bump source-map-js from 1.2.1 to 1.2.2 ([#18](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/18)) ([fd7b893](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/fd7b8930ef3944f267dc5e3bfe5da218ef28cf5d))
+
 ## [1.11.3](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.2...v1.11.3) (2026-10-11)
 
 ### Bug Fixes
