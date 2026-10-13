@@ -4,25 +4,32 @@
  *
  * Usage: node scripts/pack-release-zip.mjs [releaseVersion] [--all]
  *   releaseVersion — semantic-release tag version (v{releaseVersion} in download URLs).
- *   --all — emit a zip for every config (local/CI). Default: only configs newer than
- *           the highest per-model asset already on any published release.
+ *   --all — emit a zip for every config (local/CI). Default: only configs whose
+ *           driver version is newer than the highest per-radio asset already published.
+ *           `radio-module-<manufacturer>-<semver>.zip` assets are ignored.
  *
  * Writes dist-release/radio-module-<modelId>-<config.version>.zip and
  * dist-release/catalog-entries.json (schema version 3 module objects).
  */
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { compareDriverSemver } from './check-driver-versions.mjs';
+import { collectRefClosure, readWorkingTreeText } from './ref-closure.mjs';
 
 const rootDirectory = join(dirname(fileURLToPath(import.meta.url)), '..');
-const PER_RADIO_ASSET_PATTERN = /^radio-module-([a-z0-9]+(?:-[a-z0-9]+)+)-(\d+\.\d+\.\d+)\.zip$/;
+/**
+ * Per-radio asset: `radio-module-<modelId>-<config.version>.zip`.
+ * modelId has at least two hyphenated segments (`kenwood-th-d74`), so the retired
+ * manufacturer zip `radio-module-kenwood-1.11.6.zip` does not match.
+ */
+export const PER_RADIO_ASSET_PATTERN = /^radio-module-([a-z0-9]+(?:-[a-z0-9]+)+)-(\d+\.\d+\.\d+)\.zip$/;
 
 /**
  * @param {string} moduleRoot
- * @param {{ releaseVersion?: string, all?: boolean }} [options]
+ * @param {{ releaseVersion?: string, all?: boolean, publishedAssetNames?: string[] }} [options]
  */
 export function packReleaseZips(moduleRoot, options = {}) {
   const packageJson = JSON.parse(readFileSync(join(moduleRoot, 'package.json'), 'utf8'));
@@ -34,7 +41,7 @@ export function packReleaseZips(moduleRoot, options = {}) {
   mkdirSync(outputDirectory, { recursive: true });
   clearPerRadioZips(outputDirectory);
 
-  const publishedByModel = packAll ? new Map() : publishedConfigVersionsByModel(moduleRoot);
+  const publishedByModel = packAll ? new Map() : publishedConfigVersions(moduleRoot, options.publishedAssetNames);
   const configs = listConfigDescriptors(moduleRoot);
   const entries = [];
   const packed = [];
@@ -62,60 +69,77 @@ export function packReleaseZips(moduleRoot, options = {}) {
 }
 
 /**
+ * Highest published driver version per model id.
+ * Pass `assetNames` in tests. Otherwise list non-draft GitHub Release assets.
+ *
  * @param {string} moduleRoot
- * @returns {Map<string, string>} modelId → highest published config version from release assets
+ * @param {string[]} [assetNames]
+ * @returns {Map<string, string>}
  */
-export function publishedConfigVersionsByModel(moduleRoot) {
+export function publishedConfigVersions(moduleRoot, assetNames) {
+  const names = assetNames ?? listReleaseAssetNames(moduleRoot);
+  return highestPublishedConfigVersions(names);
+}
+
+/**
+ * @param {string[]} assetNames
+ * @returns {Map<string, string>}
+ */
+export function highestPublishedConfigVersions(assetNames) {
   const byModel = new Map();
-  const slug = githubRepoSlug(JSON.parse(readFileSync(join(moduleRoot, 'package.json'), 'utf8')));
 
-  if (!slug) {
-    return byModel;
-  }
+  for (const name of assetNames) {
+    const match = PER_RADIO_ASSET_PATTERN.exec(name);
 
-  const result = spawnSync(
-    'gh',
-    ['release', 'list', '-R', slug, '--limit', '100', '--json', 'tagName,assets'],
-    { encoding: 'utf8' },
-  );
+    if (!match) {
+      continue;
+    }
 
-  if (result.status !== 0) {
-    return byModel;
-  }
+    const [, modelId, version] = match;
+    const previous = byModel.get(modelId);
 
-  let releases;
-
-  try {
-    releases = JSON.parse(result.stdout);
-  } catch {
-    return byModel;
-  }
-
-  if (!Array.isArray(releases)) {
-    return byModel;
-  }
-
-  for (const release of releases) {
-    const assets = Array.isArray(release?.assets) ? release.assets : [];
-
-    for (const asset of assets) {
-      const name = typeof asset?.name === 'string' ? asset.name : '';
-      const match = PER_RADIO_ASSET_PATTERN.exec(name);
-
-      if (!match) {
-        continue;
-      }
-
-      const [, modelId, version] = match;
-      const previous = byModel.get(modelId);
-
-      if (!previous || compareDriverSemver(version, previous) > 0) {
-        byModel.set(modelId, version);
-      }
+    if (!previous || compareDriverSemver(version, previous) > 0) {
+      byModel.set(modelId, version);
     }
   }
 
   return byModel;
+}
+
+/**
+ * Asset names on non-draft releases. Fails when the release list cannot be read
+ * so a lookup error is not treated as "nothing published yet".
+ *
+ * @param {string} moduleRoot
+ * @returns {string[]}
+ */
+export function listReleaseAssetNames(moduleRoot) {
+  const slug = githubRepoSlug(JSON.parse(readFileSync(join(moduleRoot, 'package.json'), 'utf8')));
+
+  if (!slug) {
+    throw new Error('package.json repository must be a GitHub URL to list release assets');
+  }
+
+  const result = spawnSync(
+    'gh',
+    [
+      'api',
+      '--paginate',
+      `repos/${slug}/releases?per_page=100`,
+      '--jq',
+      '.[] | select(.draft | not) | .assets[].name',
+    ],
+    { encoding: 'utf8', maxBuffer: 20 * 1024 * 1024 },
+  );
+
+  if (result.status !== 0) {
+    throw new Error((result.stderr || result.stdout || `failed to list releases for ${slug}`).trim());
+  }
+
+  return result.stdout
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 }
 
 /**
@@ -221,69 +245,15 @@ export function parseConfigDescriptor(moduleRoot, fileName, manufacturerDefault)
  * @returns {string[]} repo-relative paths to include in the zip
  */
 export function closurePathsForConfig(moduleRoot, descriptor) {
-  const configDirectory = dirname(join(moduleRoot, descriptor.relativeConfig));
-  const paths = new Set([descriptor.relativeConfig]);
-  const absoluteRefs = localRefPaths(descriptor.parsed, configDirectory);
+  const paths = collectRefClosure(moduleRoot, descriptor.relativeConfig, readWorkingTreeText);
 
-  for (const absolutePath of absoluteRefs) {
-    const relativePath = toRepoRelative(moduleRoot, absolutePath);
-
-    if (relativePath === undefined) {
-      throw new Error(`${descriptor.relativeConfig} $ref escapes the repository: ${absolutePath}`);
-    }
-
+  for (const relativePath of paths) {
     if (!existsSync(join(moduleRoot, relativePath))) {
       throw new Error(`${descriptor.relativeConfig} $ref target is missing: ${relativePath}`);
     }
-
-    paths.add(relativePath);
   }
 
-  return [...paths].sort();
-}
-
-/**
- * @param {unknown} value
- * @param {string} fromDirectory
- * @param {Set<string>} [into]
- * @returns {Set<string>}
- */
-export function localRefPaths(value, fromDirectory, into = new Set()) {
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      localRefPaths(item, fromDirectory, into);
-    }
-
-    return into;
-  }
-
-  if (!value || typeof value !== 'object') {
-    return into;
-  }
-
-  if (typeof value.$ref === 'string' && isLocalRef(value.$ref)) {
-    into.add(resolve(fromDirectory, value.$ref));
-  }
-
-  for (const child of Object.values(value)) {
-    localRefPaths(child, fromDirectory, into);
-  }
-
-  return into;
-}
-
-function isLocalRef(ref) {
-  return ref.length > 0 && !ref.startsWith('#') && !/^[a-z][a-z0-9+.-]*:/i.test(ref);
-}
-
-function toRepoRelative(rootDirectory, absolutePath) {
-  const relativePath = relative(rootDirectory, absolutePath);
-
-  if (relativePath.startsWith('..') || relativePath.includes('..')) {
-    return undefined;
-  }
-
-  return relativePath.split(sep).join('/');
+  return paths;
 }
 
 export function expectedZipName(modelId, configVersion) {

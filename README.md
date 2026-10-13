@@ -18,7 +18,7 @@ Model notes: [docs/th-f6-live.md](docs/th-f6-live.md), [docs/th-d74-clone.md](do
 yarn pack:release --all
 ```
 
-`pack:release` writes one zip per `configs/*.json` that needs a new release asset (driver `version` newer than any published `radio-module-<modelId>-*.zip`), plus `dist-release/catalog-entries.json` (schema version 3 catalog rows for those zips). Pass `--all` locally to build every radio. Release uses the semantic-release tag in `downloadUrl` while each zip and catalog `version` follow that radio's config semver ([ADR 0009](https://springfield-ham-radio.github.io/ham-radio-docs/developer/adr/0009-per-radio-modules.html)).
+`pack:release` writes one zip per `configs/*.json` plus `dist-release/catalog-entries.json` (schema version 3). The release job omits `--all` and uploads a zip only when that radio's driver `version` is newer than an existing `radio-module-<modelId>-<version>.zip`. Retired manufacturer assets such as `radio-module-kenwood-1.11.6.zip` do not count, so the first per-radio release uploads every radio. `downloadUrl` uses the semantic-release tag (`v<repo version>`); the zip name and catalog `version` use the config semver ([ADR 0009](https://springfield-ham-radio.github.io/ham-radio-docs/developer/adr/0009-per-radio-modules.html)).
 
 Each config sets `minApiVersion` (currently `18.0.1`). The repo `package.json` name stays `@springfield/radio-module-kenwood`.
 
