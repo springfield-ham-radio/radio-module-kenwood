@@ -147,7 +147,7 @@ describe('pack-release-zip', () => {
   it('ignores retired manufacturer zips when deciding the first per-radio release', () => {
     const published = highestPublishedConfigVersions([
       'radio-module-kenwood-1.11.6.zip',
-      'radio-module-kenwood-1.11.5.zip',
+      'radio-module-kenwood-1.11.2.zip',
       'radio-module-kenwood-1.0.0.zip',
     ]);
 
@@ -157,7 +157,7 @@ describe('pack-release-zip', () => {
       releaseVersion: '2.0.0',
       publishedAssetNames: [
         'radio-module-kenwood-1.11.6.zip',
-        'radio-module-kenwood-1.11.5.zip',
+        'radio-module-kenwood-1.11.2.zip',
         'radio-module-kenwood-1.0.0.zip',
       ],
     });

@@ -184,6 +184,54 @@ describe('driverVersionBumpFailures', () => {
     }
   });
 
+  it('requires a version bump when an existing minApiVersion changes', () => {
+    const root = initRepo();
+
+    try {
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.0",
+  "minApiVersion": "18.0.1",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+      git(root, ['add', '.']);
+      git(root, ['-c', 'user.email=dev@example.com', '-c', 'user.name=Dev', 'commit', '-m', 'set floor']);
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.0",
+  "minApiVersion": "19.0.0",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+
+      const failures = driverVersionBumpFailures(root, 'HEAD');
+
+      expect(failures).toHaveLength(1);
+      expect(failures[0]).toContain('configs/radio.json is still 1.0.0');
+
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.1",
+  "minApiVersion": "19.0.0",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+      expect(driverVersionBumpFailures(root, 'HEAD')).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it('keeps each Kenwood radio config on its own semver', () => {
     const semver = /^\d+\.\d+\.\d+$/;
 
