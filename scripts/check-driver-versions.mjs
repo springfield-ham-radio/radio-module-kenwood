@@ -2,17 +2,18 @@
 /**
  * Fail when a radio driver changed without a higher configs/*.json version.
  *
- * A driver is one configs/*.json file plus every relative $ref it uses
- * (schemas and memory maps). package.json is the zip version and is not
- * copied onto these files.
+ * A driver is one configs/*.json file plus every relative $ref it reaches,
+ * including nested refs. package.json is the git tag and is not copied
+ * onto these files.
  *
  * Usage: node scripts/check-driver-versions.mjs [base-ref]
  * base-ref defaults to HEAD (working tree versus the last commit).
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { collectRefClosure, readWorkingTreeText } from './ref-closure.mjs';
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 
@@ -69,25 +70,22 @@ export function driverVersionBumpFailures(rootDirectory, baseRef = 'HEAD') {
       continue;
     }
 
-    const configDirectory = dirname(join(rootDirectory, relativeConfig));
     const changed = [];
+    // Adding minApiVersion on the ADR 0009 cutover is catalog metadata. Changing a floor
+    // that the base config already declares still requires a driver version bump.
+    const ignoreNewMinApiVersion = baseJson?.minApiVersion === undefined;
 
-    if (canonicalConfig(headJson) !== canonicalConfig(baseJson)) {
+    if (canonicalConfig(headJson, ignoreNewMinApiVersion) !== canonicalConfig(baseJson, ignoreNewMinApiVersion)) {
       changed.push(relativeConfig);
     }
 
     const refPaths = new Set([
-      ...localRefPaths(headJson, configDirectory),
-      ...localRefPaths(baseJson, configDirectory),
+      ...collectRefClosure(rootDirectory, relativeConfig, readWorkingTreeText),
+      ...collectRefClosure(rootDirectory, relativeConfig, (root, path) => gitShow(root, baseRef, path)),
     ]);
+    refPaths.delete(relativeConfig);
 
-    for (const absolutePath of refPaths) {
-      const relativePath = toRepoRelative(rootDirectory, absolutePath);
-
-      if (relativePath === undefined) {
-        continue;
-      }
-
+    for (const relativePath of refPaths) {
       if (normalizeFile(readWorkingTree(rootDirectory, relativePath)) !== normalizeFile(gitShow(rootDirectory, baseRef, relativePath))) {
         changed.push(relativePath);
       }
@@ -137,13 +135,18 @@ function semverParts(version) {
   return [Number(match[1]), Number(match[2]), Number(match[3])];
 }
 
-function canonicalConfig(parsed) {
+function canonicalConfig(parsed, ignoreMinApiVersion = false) {
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     return JSON.stringify(parsed);
   }
 
-  const { version: _version, ...rest } = parsed;
-  return JSON.stringify(rest);
+  const { version: _version, minApiVersion, ...rest } = parsed;
+
+  if (ignoreMinApiVersion) {
+    return JSON.stringify(rest);
+  }
+
+  return JSON.stringify(minApiVersion === undefined ? rest : { minApiVersion, ...rest });
 }
 
 function normalizeFile(text) {
@@ -156,44 +159,6 @@ function normalizeFile(text) {
   } catch {
     return text;
   }
-}
-
-function localRefPaths(value, fromDirectory, into = new Set()) {
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      localRefPaths(item, fromDirectory, into);
-    }
-
-    return into;
-  }
-
-  if (!value || typeof value !== 'object') {
-    return into;
-  }
-
-  if (typeof value.$ref === 'string' && isLocalRef(value.$ref)) {
-    into.add(resolve(fromDirectory, value.$ref));
-  }
-
-  for (const child of Object.values(value)) {
-    localRefPaths(child, fromDirectory, into);
-  }
-
-  return into;
-}
-
-function isLocalRef(ref) {
-  return ref.length > 0 && !ref.startsWith('#') && !/^[a-z][a-z0-9+.-]*:/i.test(ref);
-}
-
-function toRepoRelative(rootDirectory, absolutePath) {
-  const relativePath = relative(rootDirectory, absolutePath);
-
-  if (relativePath.startsWith('..') || isAbsolute(relativePath)) {
-    return undefined;
-  }
-
-  return relativePath.split(sep).join('/');
 }
 
 function readWorkingTree(rootDirectory, relativePath) {

@@ -9,7 +9,7 @@ import { driverVersionBumpFailures } from '../../scripts/check-driver-versions.m
 const rootDirectory = join(dirname(fileURLToPath(import.meta.url)), '../..');
 
 function git(cwd: string, args: string[]): void {
-  const result = spawnSync('git', args, { cwd, encoding: 'utf8' });
+  const result = spawnSync('git', ['-c', 'commit.gpgsign=false', ...args], { cwd, encoding: 'utf8' });
 
   if (result.status !== 0) {
     throw new Error(result.stderr || result.stdout || `git ${args.join(' ')} failed`);
@@ -136,6 +136,97 @@ describe('driverVersionBumpFailures', () => {
 
     try {
       expect(() => driverVersionBumpFailures(root, 'not-a-ref')).toThrow('Unknown base ref');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('requires a higher version when a nested $ref changes', () => {
+    const root = initRepo();
+
+    try {
+      mkdirSync(join(root, 'src/shared/schemas/pieces'), { recursive: true });
+      writeFileSync(join(root, 'src/shared/schemas/pieces/extra.json'), '{ "type": "string" }\n');
+      writeFileSync(
+        join(root, 'src/shared/schemas/settings.json'),
+        '{ "type": "object", "properties": { "name": { "$ref": "pieces/extra.json#/definitions/name" } } }\n',
+      );
+      git(root, ['add', '.']);
+      git(root, ['-c', 'user.email=dev@example.com', '-c', 'user.name=Dev', 'commit', '-m', 'nest schema']);
+      writeFileSync(join(root, 'src/shared/schemas/pieces/extra.json'), '{ "type": "string", "minLength": 1 }\n');
+
+      const failures = driverVersionBumpFailures(root, 'HEAD');
+
+      expect(failures).toHaveLength(1);
+      expect(failures[0]).toContain('src/shared/schemas/pieces/extra.json');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('does not require a version bump when only minApiVersion is added', () => {
+    const root = initRepo();
+
+    try {
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.0",
+  "minApiVersion": "18.0.1",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+      expect(driverVersionBumpFailures(root, 'HEAD')).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('requires a version bump when an existing minApiVersion changes', () => {
+    const root = initRepo();
+
+    try {
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.0",
+  "minApiVersion": "18.0.1",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+      git(root, ['add', '.']);
+      git(root, ['-c', 'user.email=dev@example.com', '-c', 'user.name=Dev', 'commit', '-m', 'set floor']);
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.0",
+  "minApiVersion": "19.0.0",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+
+      const failures = driverVersionBumpFailures(root, 'HEAD');
+
+      expect(failures).toHaveLength(1);
+      expect(failures[0]).toContain('configs/radio.json is still 1.0.0');
+
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.1",
+  "minApiVersion": "19.0.0",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+      expect(driverVersionBumpFailures(root, 'HEAD')).toEqual([]);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
