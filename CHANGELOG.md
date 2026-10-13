@@ -1,3 +1,13 @@
+## [2.0.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.6...v2.0.0) (2026-10-13)
+
+### ⚠ BREAKING CHANGES
+
+* releases publish radio-module-<modelId>-<version>.zip per radio instead of one manufacturer zip. Implements ADR 0009.
+
+### Features
+
+* publish one module zip per radio ([#23](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/23)) ([cd7bce2](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/cd7bce2cb594bed9ecf37b2111767f0689a9dd12))
+
 ## [1.11.6](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.5...v1.11.6) (2026-10-12)
 
 ### Bug Fixes
