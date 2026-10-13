@@ -25,6 +25,7 @@ jobs:
       - run: yarn lint
       - run: yarn test:unit
       - run: yarn test:integration
+      - run: yarn pack:release
       - name: Check radio driver versions
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then

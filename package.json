@@ -26,7 +26,7 @@
   },
   "scripts": {
     "build": "node -e \"console.log('json-only radio module; nothing to build')\"",
-    "pack:release": "node scripts/pack-release-zip.mjs",
+    "pack:release": "node scripts/pack-release-zip.mjs --all",
     "check:driver-versions": "node scripts/check-driver-versions.mjs",
     "commitlint": "commitlint --edit",
     "format": "oxfmt",
@@ -64,7 +64,8 @@
     "@semantic-release/git": "11.0.1",
     "@semantic-release/github": "12.0.10",
     "@semantic-release/npm": "13.2.0",
-    "@springfield/ham-radio-api": "^17.12.0",
+    "@springfield/ham-radio-api": "^18.0.1",
+    "@springfield/ham-radio-registry": "^2.0.0",
     "@springfield/ham-radio-utils": "^4.15.1",
     "@types/node": "26.6.5",
     "husky": "9.1.7",
@@ -122,8 +123,8 @@
         {
           "assets": [
             {
-              "path": "dist-release/radio-module-kenwood-*.zip",
-              "label": "Radio module JSON package (zip)"
+              "path": "dist-release/radio-module-*.zip",
+              "label": "Per-radio module JSON package (zip)"
             }
           ]
         }

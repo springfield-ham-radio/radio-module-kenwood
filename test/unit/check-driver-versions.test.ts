@@ -141,6 +141,26 @@ describe('driverVersionBumpFailures', () => {
     }
   });
 
+  it('does not require a version bump when only minApiVersion is added', () => {
+    const root = initRepo();
+
+    try {
+      writeFileSync(
+        join(root, 'configs/radio.json'),
+        `{
+  "version": "1.0.0",
+  "minApiVersion": "18.0.1",
+  "memoryMap": { "$ref": "../src/shared/memory-maps/radio.json" },
+  "settingsSchema": { "settingsSchema": { "$ref": "../src/shared/schemas/settings.json" } }
+}
+`,
+      );
+      expect(driverVersionBumpFailures(root, 'HEAD')).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it('keeps each Kenwood radio config on its own semver', () => {
     const semver = /^\d+\.\d+\.\d+$/;
 

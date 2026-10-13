@@ -1,76 +1,326 @@
 #!/usr/bin/env node
 /**
- * Build a JSON-only zip of configs + shared schemas/memory maps for GitHub Releases.
- * Usage: node scripts/pack-release-zip.mjs [version]
- * The version argument is the zip version (package.json / semantic-release).
- * Each configs/*.json version stays that radio's driver version.
- * Writes dist-release/radio-module-kenwood-<version>.zip, dist-release/catalog-module.json,
- * and prints sha256:<hex> plus the radios actually in the zip.
+ * Build per-radio JSON zips and catalog entries for GitHub Releases (ADR 0009).
+ *
+ * Usage: node scripts/pack-release-zip.mjs [releaseVersion] [--all]
+ *   releaseVersion — semantic-release tag version (v{releaseVersion} in download URLs).
+ *   --all — emit a zip for every config (local/CI). Default: only configs newer than
+ *           the highest per-model asset already on any published release.
+ *
+ * Writes dist-release/radio-module-<modelId>-<config.version>.zip and
+ * dist-release/catalog-entries.json (schema version 3 module objects).
  */
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { compareDriverSemver } from './check-driver-versions.mjs';
 
 const rootDirectory = join(dirname(fileURLToPath(import.meta.url)), '..');
-const packageJson = JSON.parse(readFileSync(join(rootDirectory, 'package.json'), 'utf8'));
-const version = process.argv[2] || packageJson.version;
-const outputDirectory = join(rootDirectory, 'dist-release');
-const zipName = `radio-module-kenwood-${version}.zip`;
-const zipPath = join(outputDirectory, zipName);
+const PER_RADIO_ASSET_PATTERN = /^radio-module-([a-z0-9]+(?:-[a-z0-9]+)+)-(\d+\.\d+\.\d+)\.zip$/;
 
-mkdirSync(outputDirectory, { recursive: true });
+/**
+ * @param {string} moduleRoot
+ * @param {{ releaseVersion?: string, all?: boolean }} [options]
+ */
+export function packReleaseZips(moduleRoot, options = {}) {
+  const packageJson = JSON.parse(readFileSync(join(moduleRoot, 'package.json'), 'utf8'));
+  const releaseVersion = options.releaseVersion ?? packageJson.version;
+  const packAll = Boolean(options.all);
+  const outputDirectory = join(moduleRoot, 'dist-release');
+  const slug = githubRepoSlug(packageJson);
 
-if (existsSync(zipPath)) {
-  unlinkSync(zipPath);
+  mkdirSync(outputDirectory, { recursive: true });
+  clearPerRadioZips(outputDirectory);
+
+  const publishedByModel = packAll ? new Map() : publishedConfigVersionsByModel(moduleRoot);
+  const configs = listConfigDescriptors(moduleRoot);
+  const entries = [];
+  const packed = [];
+
+  for (const descriptor of configs) {
+    if (!shouldPublishConfig(descriptor, publishedByModel)) {
+      continue;
+    }
+
+    const zipName = expectedZipName(descriptor.modelId, descriptor.configVersion);
+    const zipPath = join(outputDirectory, zipName);
+    const pathsToZip = closurePathsForConfig(moduleRoot, descriptor);
+
+    createZip(moduleRoot, zipPath, pathsToZip);
+    const integrity = integrityFromFile(zipPath);
+    const entry = buildCatalogEntry(packageJson, descriptor, releaseVersion, slug, zipName, integrity);
+    entries.push(entry);
+    packed.push({ zipName, zipPath, integrity, modelId: descriptor.modelId, configVersion: descriptor.configVersion });
+  }
+
+  const catalogEntriesPath = join(outputDirectory, 'catalog-entries.json');
+  writeFileSync(catalogEntriesPath, `${JSON.stringify(entries, null, 2)}\n`);
+
+  return { catalogEntriesPath, entries, packed, releaseVersion, packAll };
 }
 
-const zipResult = spawnSync(
-  'zip',
-  ['-r', zipPath, 'configs', 'src/shared/schemas', 'src/shared/memory-maps', '-x', '*.DS_Store'],
-  {
-    cwd: rootDirectory,
-    encoding: 'utf8',
-  },
-);
+/**
+ * @param {string} moduleRoot
+ * @returns {Map<string, string>} modelId → highest published config version from release assets
+ */
+export function publishedConfigVersionsByModel(moduleRoot) {
+  const byModel = new Map();
+  const slug = githubRepoSlug(JSON.parse(readFileSync(join(moduleRoot, 'package.json'), 'utf8')));
 
-if (zipResult.status !== 0) {
-  console.error(zipResult.stderr || zipResult.stdout || 'zip failed');
-  process.exit(zipResult.status ?? 1);
+  if (!slug) {
+    return byModel;
+  }
+
+  const result = spawnSync(
+    'gh',
+    ['release', 'list', '-R', slug, '--limit', '100', '--json', 'tagName,assets'],
+    { encoding: 'utf8' },
+  );
+
+  if (result.status !== 0) {
+    return byModel;
+  }
+
+  let releases;
+
+  try {
+    releases = JSON.parse(result.stdout);
+  } catch {
+    return byModel;
+  }
+
+  if (!Array.isArray(releases)) {
+    return byModel;
+  }
+
+  for (const release of releases) {
+    const assets = Array.isArray(release?.assets) ? release.assets : [];
+
+    for (const asset of assets) {
+      const name = typeof asset?.name === 'string' ? asset.name : '';
+      const match = PER_RADIO_ASSET_PATTERN.exec(name);
+
+      if (!match) {
+        continue;
+      }
+
+      const [, modelId, version] = match;
+      const previous = byModel.get(modelId);
+
+      if (!previous || compareDriverSemver(version, previous) > 0) {
+        byModel.set(modelId, version);
+      }
+    }
+  }
+
+  return byModel;
 }
 
-const hash = createHash('sha256').update(readFileSync(zipPath)).digest('hex');
-const integrity = `sha256:${hash}`;
-const radios = catalogRadiosFromConfigs(rootDirectory);
-const catalogModule = buildCatalogModule(packageJson, version, zipName, integrity, radios);
-const catalogModulePath = join(outputDirectory, 'catalog-module.json');
+/**
+ * @param {import('./pack-release-zip.mjs').ConfigDescriptor} descriptor
+ * @param {Map<string, string>} publishedByModel
+ */
+export function shouldPublishConfig(descriptor, publishedByModel) {
+  const published = publishedByModel.get(descriptor.modelId);
 
-writeFileSync(catalogModulePath, `${JSON.stringify(catalogModule, null, 2)}\n`);
+  if (!published) {
+    return true;
+  }
 
-console.log(JSON.stringify({ zipPath, zipName, integrity, catalogModulePath, radios }, null, 2));
+  return compareDriverSemver(descriptor.configVersion, published) > 0;
+}
 
-function catalogRadiosFromConfigs(moduleRoot) {
+/**
+ * @typedef {{ fileName: string, relativeConfig: string, modelId: string, name: string, configVersion: string, minApiVersion: string, description?: string, manufacturer: string, parsed: unknown }} ConfigDescriptor
+ */
+
+/**
+ * @param {string} moduleRoot
+ * @returns {ConfigDescriptor[]}
+ */
+export function listConfigDescriptors(moduleRoot) {
   const configDirectory = join(moduleRoot, 'configs');
+  const manufacturerDefault = JSON.parse(readFileSync(join(moduleRoot, 'package.json'), 'utf8')).springfield?.manufacturer;
 
   return readdirSync(configDirectory)
     .filter((fileName) => fileName.endsWith('.json'))
     .sort()
-    .map((fileName) => {
-      const config = JSON.parse(readFileSync(join(configDirectory, fileName), 'utf8'));
-      const modelId = config?.id?.model;
-      const name = config?.id?.name;
+    .map((fileName) => parseConfigDescriptor(moduleRoot, fileName, manufacturerDefault));
+}
 
-      if (typeof modelId !== 'string' || modelId.length === 0 || typeof name !== 'string' || name.length === 0) {
-        throw new Error(`configs/${fileName} is missing id.model or id.name`);
-      }
+/**
+ * @param {string} moduleRoot
+ * @param {string} fileName
+ * @param {string} [manufacturerDefault]
+ * @returns {ConfigDescriptor}
+ */
+export function parseConfigDescriptor(moduleRoot, fileName, manufacturerDefault) {
+  const relativeConfig = `configs/${fileName}`;
+  const absoluteConfig = join(moduleRoot, relativeConfig);
+  let parsed;
 
-      return {
-        modelId,
-        name,
-        config: `configs/${fileName}`,
-      };
-    });
+  try {
+    parsed = JSON.parse(readFileSync(absoluteConfig, 'utf8'));
+  } catch {
+    throw new Error(`${relativeConfig} is not valid JSON`);
+  }
+
+  const modelId = parsed?.id?.model;
+  const name = parsed?.id?.name;
+  const configVersion = parsed?.version;
+  const minApiVersion = parsed?.minApiVersion;
+  const manufacturer =
+    typeof parsed?.id?.manufacturer === 'string' && parsed.id.manufacturer.length > 0
+      ? parsed.id.manufacturer
+      : manufacturerDefault;
+
+  if (typeof modelId !== 'string' || modelId.length === 0) {
+    throw new Error(`${relativeConfig} is missing id.model`);
+  }
+
+  if (typeof name !== 'string' || name.length === 0) {
+    throw new Error(`${relativeConfig} is missing id.name`);
+  }
+
+  if (typeof configVersion !== 'string' || !/^\d+\.\d+\.\d+/.test(configVersion)) {
+    throw new Error(`${relativeConfig} is missing a major.minor.patch version`);
+  }
+
+  if (typeof minApiVersion !== 'string' || minApiVersion.length === 0) {
+    throw new Error(`${relativeConfig} is missing minApiVersion`);
+  }
+
+  if (typeof manufacturer !== 'string' || manufacturer.length === 0) {
+    throw new Error(`${relativeConfig} is missing id.manufacturer`);
+  }
+
+  const expectedFile = `configs/${modelId}.json`;
+
+  if (relativeConfig !== expectedFile) {
+    throw new Error(`${relativeConfig} must be named ${expectedFile} (id.model ${modelId})`);
+  }
+
+  return {
+    fileName,
+    relativeConfig,
+    modelId,
+    name,
+    configVersion,
+    minApiVersion,
+    ...(typeof parsed.description === 'string' ? { description: parsed.description } : {}),
+    manufacturer,
+    parsed,
+  };
+}
+
+/**
+ * @param {string} moduleRoot
+ * @param {ConfigDescriptor} descriptor
+ * @returns {string[]} repo-relative paths to include in the zip
+ */
+export function closurePathsForConfig(moduleRoot, descriptor) {
+  const configDirectory = dirname(join(moduleRoot, descriptor.relativeConfig));
+  const paths = new Set([descriptor.relativeConfig]);
+  const absoluteRefs = localRefPaths(descriptor.parsed, configDirectory);
+
+  for (const absolutePath of absoluteRefs) {
+    const relativePath = toRepoRelative(moduleRoot, absolutePath);
+
+    if (relativePath === undefined) {
+      throw new Error(`${descriptor.relativeConfig} $ref escapes the repository: ${absolutePath}`);
+    }
+
+    if (!existsSync(join(moduleRoot, relativePath))) {
+      throw new Error(`${descriptor.relativeConfig} $ref target is missing: ${relativePath}`);
+    }
+
+    paths.add(relativePath);
+  }
+
+  return [...paths].sort();
+}
+
+/**
+ * @param {unknown} value
+ * @param {string} fromDirectory
+ * @param {Set<string>} [into]
+ * @returns {Set<string>}
+ */
+export function localRefPaths(value, fromDirectory, into = new Set()) {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      localRefPaths(item, fromDirectory, into);
+    }
+
+    return into;
+  }
+
+  if (!value || typeof value !== 'object') {
+    return into;
+  }
+
+  if (typeof value.$ref === 'string' && isLocalRef(value.$ref)) {
+    into.add(resolve(fromDirectory, value.$ref));
+  }
+
+  for (const child of Object.values(value)) {
+    localRefPaths(child, fromDirectory, into);
+  }
+
+  return into;
+}
+
+function isLocalRef(ref) {
+  return ref.length > 0 && !ref.startsWith('#') && !/^[a-z][a-z0-9+.-]*:/i.test(ref);
+}
+
+function toRepoRelative(rootDirectory, absolutePath) {
+  const relativePath = relative(rootDirectory, absolutePath);
+
+  if (relativePath.startsWith('..') || relativePath.includes('..')) {
+    return undefined;
+  }
+
+  return relativePath.split(sep).join('/');
+}
+
+export function expectedZipName(modelId, configVersion) {
+  return `radio-module-${modelId}-${configVersion}.zip`;
+}
+
+export function expectedPackageId(modelId) {
+  return `@springfield/radio-module-${modelId}`;
+}
+
+/**
+ * @param {Record<string, unknown>} pkg
+ * @param {ConfigDescriptor} descriptor
+ * @param {string} releaseVersion
+ * @param {string | undefined} slug
+ * @param {string} zipName
+ * @param {string} integrity
+ */
+export function buildCatalogEntry(pkg, descriptor, releaseVersion, slug, zipName, integrity) {
+  if (!slug) {
+    throw new Error('package.json repository must be a GitHub URL for catalog downloadUrl');
+  }
+
+  const downloadUrl = `https://github.com/${slug}/releases/download/v${releaseVersion}/${zipName}`;
+
+  return {
+    id: descriptor.modelId,
+    package: expectedPackageId(descriptor.modelId),
+    manufacturer: descriptor.manufacturer,
+    name: descriptor.name,
+    ...(descriptor.description ? { description: descriptor.description } : {}),
+    version: descriptor.configVersion,
+    config: descriptor.relativeConfig,
+    minApiVersion: descriptor.minApiVersion,
+    downloadUrl,
+    integrity,
+  };
 }
 
 function githubRepoSlug(pkg) {
@@ -79,23 +329,53 @@ function githubRepoSlug(pkg) {
   return match?.[1];
 }
 
-function buildCatalogModule(pkg, moduleVersion, moduleZipName, moduleIntegrity, moduleRadios) {
-  const slug = githubRepoSlug(pkg);
-  const scopedName = String(pkg.name);
-  const id = scopedName.replace(/^@[^/]+\//, '').replace(/^radio-module-/, '');
+function clearPerRadioZips(outputDirectory) {
+  if (!existsSync(outputDirectory)) {
+    return;
+  }
 
-  return {
-    id,
-    package: scopedName,
-    manufacturer: pkg.springfield?.manufacturer,
-    ...(typeof pkg.description === 'string' ? { description: pkg.description } : {}),
-    version: moduleVersion,
-    radios: moduleRadios,
-    supportedRadios: moduleRadios.map((radio) => radio.modelId),
-    minApiVersion: pkg.springfield?.minApiVersion || '17.3.0',
-    downloadUrl: slug
-      ? `https://github.com/${slug}/releases/download/v${moduleVersion}/${moduleZipName}`
-      : undefined,
-    integrity: moduleIntegrity,
-  };
+  for (const entry of readdirSync(outputDirectory)) {
+    if (entry.startsWith('radio-module-') && entry.endsWith('.zip')) {
+      unlinkSync(join(outputDirectory, entry));
+    }
+  }
+}
+
+function createZip(moduleRoot, zipPath, relativePaths) {
+  if (existsSync(zipPath)) {
+    unlinkSync(zipPath);
+  }
+
+  const zipResult = spawnSync('zip', ['-q', zipPath, ...relativePaths, '-x', '*.DS_Store'], {
+    cwd: moduleRoot,
+    encoding: 'utf8',
+  });
+
+  if (zipResult.status !== 0) {
+    throw new Error(zipResult.stderr || zipResult.stdout || 'zip failed');
+  }
+}
+
+function integrityFromFile(filePath) {
+  const hash = createHash('sha256').update(readFileSync(filePath)).digest('hex');
+  return `sha256:${hash}`;
+}
+
+function isCli() {
+  const entry = process.argv[1];
+  return Boolean(entry) && fileURLToPath(import.meta.url) === resolve(entry);
+}
+
+if (isCli()) {
+  const args = process.argv.slice(2);
+  const all = args.includes('--all');
+  const releaseVersion = args.find((arg) => arg !== '--all');
+
+  try {
+    const result = packReleaseZips(rootDirectory, { releaseVersion, all });
+    console.log(JSON.stringify(result, null, 2));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
 }
