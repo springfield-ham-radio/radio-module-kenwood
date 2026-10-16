@@ -1,3 +1,9 @@
+## [2.1.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.0.0...v2.1.0) (2026-10-16)
+
+### Features
+
+* add pack:beta for single-radio beta zips ([#24](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/24)) ([608a689](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/608a689a29ba9f49d8eb1920341336e36a8def9b))
+
 ## [2.0.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v1.11.6...v2.0.0) (2026-10-13)
 
 ### ⚠ BREAKING CHANGES
