@@ -24,11 +24,7 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  closurePathsForConfig,
-  listConfigDescriptors,
-  parseConfigDescriptor,
-} from './pack-release-zip.mjs';
+import { closurePathsForConfig, listConfigDescriptors } from './pack-release-zip.mjs';
 
 export const STRICT_SEMVER_PATTERN = /^\d+\.\d+\.\d+$/;
 export const BETA_COUNTER_PATTERN = /^[1-9]\d*$/;
