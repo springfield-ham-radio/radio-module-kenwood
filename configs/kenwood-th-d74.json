@@ -5,9 +5,19 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.11.1",
+  "version": "1.12.0",
   "minApiVersion": "18.0.1",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
+  "readMessage": {
+    "title": "Use the micro-USB port",
+    "body": "Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\nDo not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\nMenu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.",
+    "severity": "warning"
+  },
+  "writeMessage": {
+    "title": "Use the micro-USB port",
+    "body": "Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\nDo not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\nMenu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.",
+    "severity": "warning"
+  },
   "capabilities": {
     "memoryRead": true,
     "memoryWrite": true,

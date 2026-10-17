@@ -90,7 +90,7 @@ describe('Kenwood TH-D74 module', () => {
       writeMemory: Array<Record<string, unknown>>;
     };
 
-    expect(radioConfig.version).toBe('1.11.1');
+    expect(radioConfig.version).toBe('1.12.0');
     expect(radioConfig.serialConfig.dtr).toBe(true);
     expect(radioConfig.serialConfig.rts).toBe(true);
     expect(radioConfig.memoryConfig.segments.image.endAddress).toBe(500479);
