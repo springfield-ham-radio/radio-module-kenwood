@@ -5,9 +5,19 @@
     "name": "Kenwood TH-F6",
     "manufacturer": "Kenwood"
   },
-  "version": "1.11.0",
+  "version": "1.12.0",
   "minApiVersion": "18.0.1",
   "description": "TH-F6 live CAT programming. Memory map is a logical 32-byte channel image; serial I/O uses Kenwood MR/MW/MNA commands (see docs/th-f6-live.md).",
+  "readMessage": {
+    "title": "Set Menu 9 to PC",
+    "body": "This radio answers the computer only when Menu 9 (SP/MIC JACK) is PC. The default is SP/MIC.\n\nPress [MNU], choose menu 9, press [MNU] again, select PC, then press [MNU] to store. Turn the radio off, connect the programming cable to the SP/MIC jack (the two-plug Kenwood cable), and turn the radio on.\n\nThe PC port is 9600 baud, 8 data bits, no parity, 1 stop bit. Leave HamBench at 9600 unless a read fails. Menu 28 (PACKET) is the TNC speed, not this baud.",
+    "severity": "info"
+  },
+  "writeMessage": {
+    "title": "Set Menu 9 to PC",
+    "body": "This radio answers the computer only when Menu 9 (SP/MIC JACK) is PC. The default is SP/MIC.\n\nPress [MNU], choose menu 9, press [MNU] again, select PC, then press [MNU] to store. Turn the radio off, connect the programming cable to the SP/MIC jack (the two-plug Kenwood cable), and turn the radio on.\n\nThe PC port is 9600 baud, 8 data bits, no parity, 1 stop bit. Leave HamBench at 9600 unless a read fails. Menu 28 (PACKET) is the TNC speed, not this baud.",
+    "severity": "info"
+  },
   "capabilities": {
     "memoryRead": true,
     "memoryWrite": true,
