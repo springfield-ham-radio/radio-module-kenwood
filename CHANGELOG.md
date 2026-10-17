@@ -1,3 +1,9 @@
+## [2.2.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.1.0...v2.2.0) (2026-10-17)
+
+### Features
+
+* add read/write setup messages for TH-F6 and TH-D74 ([#25](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/25)) ([6c988e2](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/6c988e2670f1bfc5e7d32665d4aec4056f5ce33a)), closes [ham-radio-api#24](https://github.com/springfield-ham-radio/ham-radio-api/issues/24)
+
 ## [2.1.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.0.0...v2.1.0) (2026-10-16)
 
 ### Features
