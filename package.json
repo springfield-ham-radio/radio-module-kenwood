@@ -67,16 +67,16 @@
     "@semantic-release/npm": "13.2.0",
     "@springfield/ham-radio-api": "^18.2.0",
     "@springfield/ham-radio-registry": "^2.1.0",
-    "@springfield/ham-radio-utils": "^4.15.1",
+    "@springfield/ham-radio-utils": "^4.15.4",
     "@types/node": "26.6.5",
     "husky": "9.1.7",
     "loglayer": "^9.4.0",
-    "oxfmt": "^0.72.0",
-    "oxlint": "1.87.0",
+    "oxfmt": "^0.73.0",
+    "oxlint": "1.88.0",
     "semantic-release": "25.0.9",
     "typescript": "7.0.2",
     "vite": "^8.3.4",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   },
   "resolutions": {
     "conventional-changelog-conventionalcommits": "9.3.1",
