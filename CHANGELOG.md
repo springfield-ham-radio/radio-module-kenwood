@@ -1,3 +1,9 @@
+## [2.3.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.2.0...v2.3.0) (2026-10-21)
+
+### Features
+
+* **configs:** add protocol onError cleanup for Kenwood clone radios ([#28](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/28)) ([f5fe129](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/f5fe12907c9a0d6094cc7ec65518c1cf44981e08))
+
 ## [Unreleased]
 
 ### Features
