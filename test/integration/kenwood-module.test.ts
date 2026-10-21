@@ -84,13 +84,23 @@ describe('Kenwood TH-D74 module', () => {
   it('declares live clone protocol steps matching CHIRP image size', () => {
     const radioConfig = JSON.parse(readFileSync(join(rootDirectory, 'configs/kenwood-th-d74.json'), 'utf8')) as {
       version: string;
+      minApiVersion: string;
       serialConfig: { dtr?: boolean; rts?: boolean };
       memoryConfig: RadioMemoryConfig;
       readMemory: Array<Record<string, unknown>>;
       writeMemory: Array<Record<string, unknown>>;
+      onError: {
+        readMemory: Array<Record<string, unknown>>;
+        writeMemory: Array<Record<string, unknown>>;
+      };
     };
 
-    expect(radioConfig.version).toBe('1.12.0');
+    expect(radioConfig.version).toBe('1.13.0');
+    expect(radioConfig.minApiVersion).toBe('18.3.0');
+    expect(radioConfig.onError).toEqual({
+      readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
+      writeMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
+    });
     expect(radioConfig.serialConfig.dtr).toBe(true);
     expect(radioConfig.serialConfig.rts).toBe(true);
     expect(radioConfig.memoryConfig.segments.image.endAddress).toBe(500479);

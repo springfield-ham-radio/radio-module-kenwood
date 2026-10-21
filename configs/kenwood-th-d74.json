@@ -5,8 +5,8 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.12.0",
-  "minApiVersion": "18.0.1",
+  "version": "1.13.0",
+  "minApiVersion": "18.3.0",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "readMessage": {
     "title": "Use the micro-USB port",
@@ -152,5 +152,15 @@
       "description": "Leave programming mode",
       "send": ["E"]
     }
-  ]
+  ],
+  "onError": {
+    "readMemory": [
+      { "setBaudRate": 57600 },
+      { "send": ["E"] }
+    ],
+    "writeMemory": [
+      { "setBaudRate": 57600 },
+      { "send": ["E"] }
+    ]
+  }
 }

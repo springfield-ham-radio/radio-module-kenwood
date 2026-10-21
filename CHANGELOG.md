@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Features
+
+* **kenwood-th-d74, kenwood-tm-d710a:** add protocol `onError` cleanup for failed or cancelled clone reads/writes (driver `1.13.0`, `minApiVersion` `18.3.0`) ([ADR 0011](https://springfield-ham-radio.github.io/ham-radio-docs/developer/adr/0011-protocol-onerror.html))
+
 ## [2.2.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.1.0...v2.2.0) (2026-10-17)
 
 ### Features
