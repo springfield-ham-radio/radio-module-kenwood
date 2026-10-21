@@ -5,8 +5,8 @@
     "name": "Kenwood TM-D710A",
     "manufacturer": "Kenwood"
   },
-  "version": "1.11.0",
-  "minApiVersion": "18.0.1",
+  "version": "1.13.0",
+  "minApiVersion": "18.3.0",
   "description": "TM-D710A clone-mode programming (256-byte R/W blocks after 0M PROGRAM; skips radio block 0x7F)",
   "capabilities": {
     "memoryRead": true,
@@ -134,5 +134,9 @@
       "description": "Leave programming mode",
       "send": ["E"]
     }
-  ]
+  ],
+  "onError": {
+    "readMemory": [{ "send": ["E"] }],
+    "writeMemory": [{ "send": ["E"] }]
+  }
 }
