@@ -456,7 +456,7 @@
             "widget": "select",
             "menu": {
               "number": 17,
-              "code": "SAVE"
+              "code": "SV"
             },
             "description": "How long the receiver sleeps between checks while you are listening. Off keeps it awake. Longer times save more battery and can miss the start of a short call."
           }
@@ -560,7 +560,7 @@
             "group": "aux",
             "label": "VOX Enable",
             "widget": "switch",
-            "description": "Transmits when the radio hears your voice. On the keypad, VOX on busy is menu 20, gain is menu 21, and delay is menu 22."
+            "description": "Enables voice-operated transmit (front-panel VOX). Menus 20–22 (VXB, VXG, VXD) set on-busy, gain, and delay separately and are not this switch."
           }
         },
         {
