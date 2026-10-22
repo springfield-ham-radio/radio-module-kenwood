@@ -39,4 +39,10 @@ Kenwood tone list is standard CTCSS minus 159.8, 165.5, 171.3, 177.3, 183.5, 189
 
 ## Settings
 
-Menu values are live `CMD` get/set (for example `APO`, `BAT`, `SV`, `BAL`, `MNF`, `SCR`, `ATT`, `ARO`, `VOX`, `CNT`, `MES`). The logical settings block in `th-f6-settings.json` mirrors those keys for the codec; applying them on the radio is per-command CAT, not a clone write.
+Menu values are live `CMD` get/set. The logical settings block in `th-f6-settings.json` (addresses 12800–12927) mirrors those keys for the codec. The driver reads and writes them as CAT lines after the memory loop. A loaded marker at 12927 gates writes, so a zero-filled image is not pushed.
+
+Scalar commands use `CMD` to read and `CMD <n>` to set. `CNT` is two digits. `MES` is up to 8 characters. `NAR <band>` reads FM narrow for band 0 (2 m), 1 (1.25 m), or 2 (70 cm); the set form is `NAR <band>,<0|1>`. `MGL` is a space plus eight characters: position n is the digit n when memory group n is linked, otherwise a space.
+
+Commands: `APO`, `BAT`, `SV`, `BAL`, `MNF`, `SCR`, `ATT`, `ARO`, `VOX`, `CNT`, `MES`, `BEP`, `TXS`, `ELK`, `MRM`, `VXB`, `VXG`, `VXD`, `NAR`, `MGL`, `TSP`, `TXH`, `PT`, `DLK`, `CKEY`, `TH`, `NSFT`, `ANT`, `LAN`, `DATP`.
+
+Not on this form: menu 4 (programmable VFO), menu 6 (offset), menu 9 (SP/MIC jack), menu 10 (DTMF memories), menu 31 (reset), and live operating state (squelch, lamp, lock, band, busy, dual, tone alert, fine step, auto simplex).
