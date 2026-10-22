@@ -20,6 +20,7 @@ describe('Kenwood DSL module', () => {
       model: 'kenwood-th-d74',
       vfoCount: 2,
       vfoChannel: false,
+      powers: ['H', 'M', 'L', 'EL'],
     },
     {
       configPath: 'configs/kenwood-th-f6.json',
@@ -27,6 +28,7 @@ describe('Kenwood DSL module', () => {
       model: 'kenwood-th-f6',
       vfoCount: 1,
       vfoChannel: false,
+      powers: ['H', 'L', 'EL'],
     },
     {
       configPath: 'configs/kenwood-tm-d710a.json',
@@ -34,6 +36,7 @@ describe('Kenwood DSL module', () => {
       model: 'kenwood-tm-d710a',
       vfoCount: 2,
       vfoChannel: true,
+      powers: ['High', 'Medium', 'Low'],
     },
   ]) {
     it(`declares a memoryMap codec for ${fixture.model}`, () => {
@@ -74,7 +77,7 @@ describe('Kenwood DSL module', () => {
       expect(config.cat?.protocol).toBe('kenwood');
       expect(config.cat?.vfoCount).toBe(fixture.vfoCount);
       expect(Boolean(config.cat?.vfoChannel)).toBe(fixture.vfoChannel);
-      expect(config.cat?.powers).toEqual(['High', 'Medium', 'Low']);
+      expect(config.cat?.powers).toEqual(fixture.powers);
     });
   }
 
