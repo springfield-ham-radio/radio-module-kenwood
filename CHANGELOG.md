@@ -1,3 +1,9 @@
+## [2.3.2](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.3.1...v2.3.2) (2026-10-22)
+
+### Bug Fixes
+
+* **th-f6:** settings metadata, power labels, and codec tests ([#30](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/30)) ([c9036df](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/c9036df0224824006b265b07ab109735f5fb65bf))
+
 ## [2.3.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.3.0...v2.3.1) (2026-10-22)
 
 ### Bug Fixes
