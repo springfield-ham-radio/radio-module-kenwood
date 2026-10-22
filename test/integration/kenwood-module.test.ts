@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.13.1');
+    expect(radioConfig.version).toBe('1.13.2');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -257,6 +257,48 @@ describe('Kenwood TH-F6 module', () => {
       expect(radioChannel.receiveFrequency).toBe(146_520_000);
       expect(radioChannel.transmitTone).toEqual({ tone: 885, type: RadioToneType.CTCSS });
     }
+  });
+
+  it('decodes logical settings bytes at 12800 after a live CAT read', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+
+    const mockMemory = { contents: new Uint8Array(bufferSize(memoryConfig)).fill(0xff), radioModel: modelId };
+    mockMemory.contents[12800] = 1;
+    mockMemory.contents[12801] = 0;
+    mockMemory.contents[12802] = 5;
+    mockMemory.contents[12807] = 1;
+    mockMemory.contents[12809] = 8;
+    Buffer.from('HELLO !!', 'ascii').copy(mockMemory.contents, 12810);
+
+    const decodedProgram = codec.decode(mockMemory);
+    const settings = asRecord(asRecord(decodedProgram.settings).settings);
+
+    expect(settings.apo).toBe('30min');
+    expect(settings.bat).toBe('Lithium');
+    expect(settings.sv).toBe('1.0s');
+    expect(settings.aro).toBe(true);
+    expect(settings.cnt).toBe(8);
+    expect(settings.mes).toBe('HELLO !!');
+  });
+
+  it('treats zero-filled contrast as an unread settings block, not a valid radio value', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+
+    const mockMemory = { contents: new Uint8Array(bufferSize(memoryConfig)).fill(0), radioModel: modelId };
+    const settings = asRecord(asRecord(codec.decode(mockMemory).settings).settings);
+
+    expect(settings.cnt).toBe(0);
+    expect(settings.apo).toBe('Off');
   });
 });
 
