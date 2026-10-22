@@ -5,7 +5,7 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.13.0",
+  "version": "1.13.1",
   "minApiVersion": "18.3.0",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "readMessage": {
@@ -107,7 +107,9 @@
         "send": ["R", "$block", "0x00", "0x00"],
         "expect": ["W", "$block", "0x00", "0x00", "$data"],
         "ack": {
-          "send": ["0x06"]
+          "send": ["0x06"],
+          "expect": "0x06",
+          "timeout": 50
         },
         "ready": "0x06"
       }
