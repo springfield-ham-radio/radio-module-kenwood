@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.13.0');
+    expect(radioConfig.version).toBe('1.13.1');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -119,7 +119,7 @@ describe('Kenwood TH-D74 module', () => {
     }
 
     const readStep = radioConfig.readMemory.find((step) => 'read' in step) as { read: Record<string, unknown> };
-    expect(readStep.read.ack).toEqual({ send: ['0x06'] });
+    expect(readStep.read.ack).toEqual({ send: ['0x06'], expect: '0x06', timeout: 50 });
     expect(readStep.read.ready).toBe('0x06');
 
     const writeStep = radioConfig.writeMemory.find((step) => 'write' in step) as {
