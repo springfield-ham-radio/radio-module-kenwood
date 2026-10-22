@@ -300,6 +300,77 @@ describe('Kenwood TH-F6 module', () => {
     expect(settings.cnt).toBe(0);
     expect(settings.apo).toBe('Off');
   });
+
+  it('round-trips settings appended after the power-on message', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+
+    const phase2 = {
+      bep: true,
+      txs: true,
+      elk: false,
+      mrm: 'Current band',
+      vxb: true,
+      vxg: 4,
+      vxd: '3000ms',
+      nar2m: true,
+      nar125: false,
+      nar70cm: true,
+      mgl0: false,
+      mgl1: true,
+      mgl2: false,
+      mgl3: true,
+      mgl4: false,
+      mgl5: true,
+      mgl6: false,
+      mgl7: true,
+      tsp: 'Fast',
+      txh: true,
+      pt: '500ms',
+      dlk: false,
+      ckey: '1750 Hz',
+      th: true,
+      nsft: false,
+      ant: true,
+      lan: 'Japanese',
+      datp: '9600',
+    };
+
+    const originalProgram: RadioProgram = {
+      channels: [],
+      settings: {
+        settings: {
+          apo: '30min',
+          cnt: 8,
+          mes: 'HELLO !!',
+          ...phase2,
+        },
+      },
+    };
+
+    const mockMemory = { contents: new Uint8Array(bufferSize(memoryConfig)).fill(0xff), radioModel: modelId };
+    const encodedMemory = codec.encode(originalProgram, mockMemory);
+    const decodedSettings = asRecord(asRecord(codec.decode(encodedMemory).settings).settings);
+
+    expect(encodedMemory.contents[12800]).toBe(1);
+    expect(encodedMemory.contents[12809]).toBe(8);
+    expect(Buffer.from(encodedMemory.contents.subarray(12810, 12818)).toString('ascii').replace(/\0/g, '')).toBe('HELLO !!');
+    expect([...encodedMemory.contents.subarray(12818, 12846)]).toEqual([
+      1, 1, 0, 1, 1, 4, 6, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 1, 1, 0, 1, 1, 1,
+    ]);
+    expect(encodedMemory.contents[12846]).toBe(0xff);
+    expect(encodedMemory.contents[12927]).toBe(0xff);
+    expect(decodedSettings).toMatchObject({
+      apo: '30min',
+      cnt: 8,
+      mes: 'HELLO !!',
+      ...phase2,
+    });
+  });
 });
 
 describe('Kenwood TM-D710A module', () => {

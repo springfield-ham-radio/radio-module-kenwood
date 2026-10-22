@@ -3,14 +3,14 @@
   "description": "Kenwood TH-F6 logical channel image (32-byte records). Radio I/O is live CAT, not this image.",
   "groups": [
     {
+      "id": "main",
+      "label": "Main",
+      "icon": "i-lucide-layout-dashboard"
+    },
+    {
       "id": "display",
       "label": "Display",
       "icon": "i-lucide-monitor"
-    },
-    {
-      "id": "aux",
-      "label": "Auxiliary",
-      "icon": "i-lucide-unplug"
     },
     {
       "id": "save",
@@ -18,9 +18,80 @@
       "icon": "i-lucide-battery-medium"
     },
     {
-      "id": "main",
-      "label": "Main",
-      "icon": "i-lucide-layout-dashboard"
+      "id": "audio",
+      "label": "Audio",
+      "icon": "i-lucide-volume-2",
+      "groups": [
+        {
+          "id": "beep",
+          "label": "Beep"
+        }
+      ]
+    },
+    {
+      "id": "transmit",
+      "label": "Transmit",
+      "icon": "i-lucide-radio-tower",
+      "groups": [
+        {
+          "id": "inhibit",
+          "label": "Inhibit"
+        },
+        {
+          "id": "vox",
+          "label": "VOX"
+        },
+        {
+          "id": "narrow",
+          "label": "FM Narrow"
+        }
+      ]
+    },
+    {
+      "id": "memory",
+      "label": "Memory",
+      "icon": "i-lucide-database",
+      "groups": [
+        {
+          "id": "recall",
+          "label": "Recall"
+        },
+        {
+          "id": "group-link",
+          "label": "Group Link",
+          "description": "Memory channels are split into groups 0–7. Linked groups are scanned together."
+        }
+      ]
+    },
+    {
+      "id": "dtmf",
+      "label": "DTMF",
+      "icon": "i-lucide-hash",
+      "groups": [
+        {
+          "id": "options",
+          "label": "Options"
+        }
+      ]
+    },
+    {
+      "id": "aux",
+      "label": "Auxiliary",
+      "icon": "i-lucide-unplug",
+      "groups": [
+        {
+          "id": "tune",
+          "label": "Tuning"
+        },
+        {
+          "id": "call",
+          "label": "Call"
+        },
+        {
+          "id": "radio",
+          "label": "Radio"
+        }
+      ]
     }
   ],
   "structs": [
@@ -557,10 +628,11 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "aux",
+            "group": "transmit",
+            "subgroup": "vox",
             "label": "VOX Enable",
             "widget": "switch",
-            "description": "Enables voice-operated transmit (front-panel VOX). Menus 20–22 (VXB, VXG, VXD) set on-busy, gain, and delay separately and are not this switch."
+            "description": "Enables voice-operated transmit (front-panel VOX). On-busy, gain, and delay are separate controls in this section."
           }
         },
         {
@@ -599,6 +671,550 @@
               "code": "MES"
             },
             "description": "Text shown when the radio is turned on."
+          }
+        },
+        {
+          "id": "bep",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "subgroup": "beep",
+            "label": "Key Beep",
+            "widget": "switch",
+            "menu": {
+              "number": 19,
+              "code": "BEP"
+            },
+            "description": "Beeps when a key is pressed. The radio default is on."
+          }
+        },
+        {
+          "id": "txs",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "inhibit",
+            "label": "TX Inhibit",
+            "widget": "switch",
+            "menu": {
+              "number": 8,
+              "code": "TXS"
+            },
+            "description": "Blocks transmit so the radio cannot be keyed. Receive still works."
+          }
+        },
+        {
+          "id": "elk",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "tune",
+            "label": "Tune Enable",
+            "widget": "switch",
+            "menu": {
+              "number": 7,
+              "code": "ELK"
+            },
+            "description": "Allows the tuning control to change frequency while the keypad is locked."
+          }
+        },
+        {
+          "id": "mrm",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "All bands",
+              "Current band"
+            ]
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "recall",
+            "label": "Memory Recall",
+            "widget": "select",
+            "menu": {
+              "number": 3,
+              "code": "MRM"
+            },
+            "description": "Which memories the radio offers when you recall a channel. All bands, or only memories in the band you are on."
+          }
+        },
+        {
+          "id": "vxb",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "vox",
+            "label": "VOX on Busy",
+            "widget": "switch",
+            "menu": {
+              "number": 20,
+              "code": "VXB"
+            },
+            "description": "Lets VOX key the transmitter even while a signal is being received."
+          }
+        },
+        {
+          "id": "vxg",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "vox",
+            "label": "VOX Gain",
+            "widget": "integer",
+            "menu": {
+              "number": 21,
+              "code": "VXG"
+            },
+            "description": "How easily your voice keys the transmitter. 0 is least sensitive and 9 is most sensitive. The radio default is 4."
+          }
+        },
+        {
+          "id": "vxd",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "250ms",
+              "500ms",
+              "750ms",
+              "1000ms",
+              "1500ms",
+              "2000ms",
+              "3000ms"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "vox",
+            "label": "VOX Delay",
+            "widget": "select",
+            "menu": {
+              "number": 22,
+              "code": "VXD"
+            },
+            "description": "How long the radio stays in transmit after you stop talking."
+          }
+        },
+        {
+          "id": "nar2m",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "narrow",
+            "label": "FM Narrow, 2 m",
+            "widget": "switch",
+            "menu": {
+              "number": 29,
+              "code": "NAR"
+            },
+            "description": "Narrow FM (2.5 kHz deviation) on the 2 m band. Off is wide FM (5 kHz). This is ham band 0."
+          }
+        },
+        {
+          "id": "nar125",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "narrow",
+            "label": "FM Narrow, 1.25 m",
+            "widget": "switch",
+            "menu": {
+              "number": 29,
+              "code": "NAR"
+            },
+            "description": "Narrow FM (2.5 kHz deviation) on the 1.25 m band. Off is wide FM (5 kHz). This is ham band 1."
+          }
+        },
+        {
+          "id": "nar70cm",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "narrow",
+            "label": "FM Narrow, 70 cm",
+            "widget": "switch",
+            "menu": {
+              "number": 29,
+              "code": "NAR"
+            },
+            "description": "Narrow FM (2.5 kHz deviation) on the 70 cm band. Off is wide FM (5 kHz). This is ham band 2."
+          }
+        },
+        {
+          "id": "mgl0",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 0",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 0 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl1",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 1",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 1 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl2",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 2",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 2 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl3",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 3",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 3 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl4",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 4",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 4 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl5",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 5",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 5 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl6",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 6",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 6 in a group-link scan."
+          }
+        },
+        {
+          "id": "mgl7",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "group-link",
+            "label": "Group 7",
+            "widget": "switch",
+            "menu": {
+              "number": 2,
+              "code": "MGL"
+            },
+            "description": "Include memory group 7 in a group-link scan."
+          }
+        },
+        {
+          "id": "tsp",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Slow",
+              "Fast"
+            ]
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "options",
+            "label": "DTMF Speed",
+            "widget": "select",
+            "menu": {
+              "number": 11,
+              "code": "TSP"
+            },
+            "description": "How fast the radio sends a stored DTMF sequence."
+          }
+        },
+        {
+          "id": "txh",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "options",
+            "label": "DTMF Hold",
+            "widget": "switch",
+            "menu": {
+              "number": 12,
+              "code": "TXH"
+            },
+            "description": "Keeps the radio in transmit for about two seconds after a DTMF sequence."
+          }
+        },
+        {
+          "id": "pt",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "100ms",
+              "250ms",
+              "500ms",
+              "750ms",
+              "1000ms",
+              "1500ms",
+              "2000ms"
+            ]
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "options",
+            "label": "DTMF Pause",
+            "widget": "select",
+            "menu": {
+              "number": 13,
+              "code": "PT"
+            },
+            "description": "Pause length used for a space in a DTMF number."
+          }
+        },
+        {
+          "id": "dlk",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "options",
+            "label": "DTMF Lock",
+            "widget": "switch",
+            "menu": {
+              "number": 14,
+              "code": "DLK"
+            },
+            "description": "Stops the keypad from sending DTMF tones."
+          }
+        },
+        {
+          "id": "ckey",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Call",
+              "1750 Hz"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "call",
+            "label": "Call Key",
+            "widget": "select",
+            "menu": {
+              "number": 23,
+              "code": "CKEY"
+            },
+            "description": "What the Call key does. Call recalls the call channel. 1750 Hz transmits a 1750 Hz tone. The TH-F6A default is Call. The TH-F7E default is 1750 Hz."
+          }
+        },
+        {
+          "id": "th",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "call",
+            "label": "1750 Hz Hold",
+            "widget": "switch",
+            "menu": {
+              "number": 24,
+              "code": "TH"
+            },
+            "description": "Holds the 1750 Hz tone while the Call key is pressed. Used on the TH-F7E."
+          }
+        },
+        {
+          "id": "nsft",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "radio",
+            "label": "Beat Shift",
+            "widget": "switch",
+            "menu": {
+              "number": 25,
+              "code": "NSFT"
+            },
+            "description": "Shifts the microprocessor clock to move an internal birdie off the frequency you are listening to."
+          }
+        },
+        {
+          "id": "ant",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "radio",
+            "label": "Bar Antenna",
+            "widget": "switch",
+            "menu": {
+              "number": 26,
+              "code": "ANT"
+            },
+            "description": "Uses the internal bar antenna for HF receive below about 10 MHz on the B band. On is enabled. The radio default is enabled."
+          }
+        },
+        {
+          "id": "lan",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "English",
+              "Japanese"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "radio",
+            "label": "Language",
+            "widget": "select",
+            "menu": {
+              "number": 27,
+              "code": "LAN"
+            },
+            "description": "Language used for the radio's own menu text. Japanese is Katakana."
+          }
+        },
+        {
+          "id": "datp",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1200",
+              "9600"
+            ]
+          },
+          "ui": {
+            "group": "aux",
+            "subgroup": "radio",
+            "label": "Packet Speed",
+            "widget": "select",
+            "menu": {
+              "number": 28,
+              "code": "DATP"
+            },
+            "description": "TNC packet speed in baud. This is not the PC programming baud."
           }
         }
       ]
