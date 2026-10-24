@@ -99,7 +99,7 @@ describe('pack-release-zip', () => {
     const { catalogEntriesPath, entries, packed } = packReleaseZips(rootDirectory, { releaseVersion: '9.9.9', all: true });
 
     expect(packed.map((item) => item.zipName).sort()).toEqual([
-      expectedZipName('kenwood-th-d74', '1.15.1'),
+      expectedZipName('kenwood-th-d74', '1.15.2'),
       expectedZipName('kenwood-th-f6', '1.14.0'),
       expectedZipName('kenwood-tm-d710a', '1.13.0'),
     ]);
@@ -113,7 +113,7 @@ describe('pack-release-zip', () => {
 
     const d74 = entries.find((entry) => entry.id === 'kenwood-th-d74');
     expect(d74?.downloadUrl).toBe(
-      `https://github.com/springfield-ham-radio/radio-module-kenwood/releases/download/v9.9.9/${expectedZipName('kenwood-th-d74', '1.15.1')}`,
+      `https://github.com/springfield-ham-radio/radio-module-kenwood/releases/download/v9.9.9/${expectedZipName('kenwood-th-d74', '1.15.2')}`,
     );
 
     const d74Zip = packed.find((item) => item.modelId === 'kenwood-th-d74');
@@ -136,7 +136,7 @@ describe('pack-release-zip', () => {
 
   it('skips configs already published at the same driver version', () => {
     const published = new Map([
-      ['kenwood-th-d74', '1.15.1'],
+      ['kenwood-th-d74', '1.15.2'],
       ['kenwood-th-f6', '1.14.0'],
       ['kenwood-tm-d710a', '1.13.0'],
     ]);
@@ -166,7 +166,7 @@ describe('pack-release-zip', () => {
     });
 
     expect(packed.map((item) => item.zipName).sort()).toEqual([
-      'radio-module-kenwood-th-d74-1.15.1.zip',
+      'radio-module-kenwood-th-d74-1.15.2.zip',
       'radio-module-kenwood-th-f6-1.14.0.zip',
       'radio-module-kenwood-tm-d710a-1.13.0.zip',
     ]);

@@ -32,11 +32,11 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.15.1');
+    expect(version).toBe('1.15.2');
     expect(memoryMap.version).toBe('1.2.0');
   });
 
-  it('decodes confirmed bytes and keeps inferred indexes on the manual step', () => {
+  it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
       memoryMap,
@@ -50,9 +50,12 @@ describe('TH-D74 menu settings', () => {
       { offset: 0x1006, raw: 0x00, structId: 'micSensitivity', field: 'sensitivity', expected: 'High' },
       { offset: 0x1006, raw: 0x01, structId: 'micSensitivity', field: 'sensitivity', expected: 'Medium' },
       { offset: 0x1006, raw: 0x02, structId: 'micSensitivity', field: 'sensitivity', expected: 'Low' },
+      { offset: 0x1008, raw: 0x00, structId: 'ssbHighCut', field: 'cutoff', expected: '2.2kHz' },
       { offset: 0x1008, raw: 0x01, structId: 'ssbHighCut', field: 'cutoff', expected: '2.4kHz' },
       { offset: 0x1008, raw: 0x02, structId: 'ssbHighCut', field: 'cutoff', expected: '2.6kHz' },
+      { offset: 0x1008, raw: 0x03, structId: 'ssbHighCut', field: 'cutoff', expected: '2.8kHz' },
       { offset: 0x1008, raw: 0x04, structId: 'ssbHighCut', field: 'cutoff', expected: '3.0kHz' },
+      { offset: 0x1024, raw: 0x01, structId: 'cwPitch', field: 'pitch', expected: '500Hz' },
       { offset: 0x1024, raw: 0x04, structId: 'cwPitch', field: 'pitch', expected: '800Hz' },
       { offset: 0x1024, raw: 0x06, structId: 'cwPitch', field: 'pitch', expected: '1000Hz' },
       { offset: 0x1030, raw: 0, structId: 'recallMethod', field: 'method', expected: 'All Bands' },
@@ -63,6 +66,8 @@ describe('TH-D74 menu settings', () => {
       { offset: 0x1062, raw: 0x01, structId: 'lcdBrightness', field: 'brightness', expected: 'Medium' },
       { offset: 0x1062, raw: 0x02, structId: 'lcdBrightness', field: 'brightness', expected: 'High' },
       { offset: 0x107f, raw: 0x00, structId: 'cursorShift', field: 'delay', expected: 'Off' },
+      { offset: 0x107f, raw: 0x01, structId: 'cursorShift', field: 'delay', expected: '1.0s' },
+      { offset: 0x107f, raw: 0x02, structId: 'cursorShift', field: 'delay', expected: '1.5s' },
       { offset: 0x107f, raw: 0x03, structId: 'cursorShift', field: 'delay', expected: '2.0s' },
       { offset: 0x1085, raw: 0, structId: 'dtmfKeysLock', field: 'locked', expected: 'false' },
       { offset: 0x1085, raw: 1, structId: 'dtmfKeysLock', field: 'locked', expected: 'true' },
@@ -84,20 +89,19 @@ describe('TH-D74 menu settings', () => {
     const encodedHigh = codec.encode(highBrightness, { contents: Uint8Array.from(contents), radioModel: modelId });
     expect(encodedHigh.contents[0x1062]).toBe(0x02);
 
-    // Inferred from a clear index pattern. Not measured in a clone image.
-    contents[0x1008] = 0x00;
-    contents[0x1024] = 0x00;
-    contents[0x107f] = 0x01;
+    // 500, 800, and 1000 Hz are measured. The other pitches follow that confirmed 100 Hz pattern from 400 Hz at 0x00.
+    const cwPitchPattern = [
+      { raw: 0x00, expected: '400Hz' },
+      { raw: 0x02, expected: '600Hz' },
+      { raw: 0x03, expected: '700Hz' },
+      { raw: 0x05, expected: '900Hz' },
+    ];
 
-    const inferredLow = asRecord(codec.decode({ contents, radioModel: modelId }).settings);
-    expect(asRecord(inferredLow.ssbHighCut).cutoff).toBe('2.2kHz');
-
-    contents[0x1008] = 0x03;
-
-    const inferred = asRecord(codec.decode({ contents, radioModel: modelId }).settings);
-    expect(asRecord(inferred.ssbHighCut).cutoff).toBe('2.8kHz');
-    expect(asRecord(inferred.cwPitch).pitch).toBe('400Hz');
-    expect(asRecord(inferred.cursorShift).delay).toBe('1.0s');
+    for (const step of cwPitchPattern) {
+      contents[0x1024] = step.raw;
+      const settings = asRecord(codec.decode({ contents, radioModel: modelId }).settings);
+      expect(asRecord(settings.cwPitch).pitch).toBe(step.expected);
+    }
   });
 
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
