@@ -1,3 +1,9 @@
+## [2.6.2](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.1...v2.6.2) (2026-10-24)
+
+### Bug Fixes
+
+* **th-d74:** map confirmed LCD High and menu bytes ([#37](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/37)) ([c1ce0f9](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/c1ce0f9aceba3c790dd413cfc7b9c62def5de8e0))
+
 ## [2.6.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.0...v2.6.1) (2026-10-24)
 
 ### Bug Fixes
