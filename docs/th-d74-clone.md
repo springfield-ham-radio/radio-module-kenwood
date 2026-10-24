@@ -52,9 +52,9 @@ These are the first radio-wide settings. Bytes outside the fields below are not 
 | 110 TX Inhibit | `0x1001` | `0` Off, `1` On |
 | 111 Time-Out Timer | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
 | 112 Mic Sensitivity | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
-| 120 SSB High Cut | `0x1008` | `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x04` 3.0 kHz confirmed. Manual list is 2.2 / 2.4 / 2.6 / 2.8 / 3.0 kHz, and the confirmed bytes are 0.2 kHz steps, so `0x00` 2.2 kHz and `0x03` 2.8 kHz are inferred |
+| 120 SSB High Cut | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
 | 130 Scan Resume (analog) | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
-| 170 CW Pitch | `0x1024` | `0x04` 800 Hz, `0x06` 1000 Hz confirmed (100 Hz per step). Manual range is 400–1000 Hz, so `0x00` 400 Hz and the other 100 Hz steps are inferred |
+| 170 CW Pitch | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
 | 202 Recall Method | `0x1030` | `0` All Bands, `1` Current Band |
 | 311 TX Monitor | `0x1032` | `1` On, `0` Off |
 | 900 Backlight Control | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |
@@ -62,7 +62,7 @@ These are the first radio-wide settings. Bytes outside the fields below are not 
 | 914 Beep | `0x1071` | `0` Off, `1` On |
 | 920 Battery Saver | `0x1076` | index `0..9` = Off, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0 s |
 | 921 Auto Power Off | `0x1077` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min |
-| 945 Cursor Shift | `0x107F` | `0x00` Off, `0x03` 2.0 s confirmed. Manual list is Off / 1.0 / 1.5 / 2.0 s, so `0x01` 1.0 s and `0x02` 1.5 s are inferred |
+| 945 Cursor Shift | `0x107F` | `0x00` Off, `0x01` 1.0 s, `0x02` 1.5 s, `0x03` 2.0 s |
 | 961 DTMF Keys Lock | `0x1085` | `0` Off, `1` On |
 | 970 Speed/Distance | `0x1088` | `0x00` mi/h, `0x01` km/h, `0x02` knots. The manual's printed order depends on the region and does not match these bytes |
 | 903 Power-on Message | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |

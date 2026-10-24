@@ -996,7 +996,7 @@
               "number": 120,
               "code": "SSB High Cut"
             },
-            "description": "SSB receive high-cut frequency. Clone images confirm 0x01 = 2.4 kHz, 0x02 = 2.6 kHz, and 0x04 = 3.0 kHz. The manual lists 2.2, 2.4, 2.6, 2.8, and 3.0 kHz. Those confirmed bytes are 0.2 kHz steps, so 0x00 = 2.2 kHz and 0x03 = 2.8 kHz are inferred."
+            "description": "SSB receive high-cut frequency. Clone images confirm 0x00 = 2.2 kHz, 0x01 = 2.4 kHz, 0x02 = 2.6 kHz, 0x03 = 2.8 kHz, and 0x04 = 3.0 kHz."
           }
         }
       ]
@@ -1058,7 +1058,7 @@
               "number": 170,
               "code": "Pitch Frequency"
             },
-            "description": "CW sidetone pitch. Clone images confirm 0x04 = 800 Hz and 0x06 = 1000 Hz. The step between those bytes is 100 Hz. The manual range is 400 to 1000 Hz, so 0x00 = 400 Hz and the unmeasured steps 500, 600, 700, and 900 Hz are inferred."
+            "description": "CW sidetone pitch. Clone images confirm 0x01 = 500 Hz, 0x04 = 800 Hz, and 0x06 = 1000 Hz. Those measurements confirm 100 Hz steps from 400 Hz at 0x00. The remaining steps follow that confirmed pattern."
           }
         }
       ]
@@ -1283,7 +1283,7 @@
               "number": 945,
               "code": "Cursor Shift"
             },
-            "description": "How long the radio waits before moving the text cursor. Clone images confirm 0x00 Off and 0x03 = 2.0 s. The manual lists Off, 1.0, 1.5, and 2.0 seconds in that order, so 0x01 = 1.0 s and 0x02 = 1.5 s are inferred."
+            "description": "How long the radio waits before moving the text cursor. Clone images confirm 0x00 Off, 0x01 = 1.0 s, 0x02 = 1.5 s, and 0x03 = 2.0 s."
           }
         }
       ]
