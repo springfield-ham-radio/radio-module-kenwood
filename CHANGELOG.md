@@ -1,3 +1,9 @@
+## [2.6.3](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.2...v2.6.3) (2026-10-24)
+
+### Bug Fixes
+
+* **th-d74:** confirm measured SSB, cursor shift, and CW pitch bytes ([#38](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/38)) ([517e59f](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/517e59fdeaa270a1cf0a6dc16084f661d59d0ba6))
+
 ## [2.6.2](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.1...v2.6.2) (2026-10-24)
 
 ### Bug Fixes
