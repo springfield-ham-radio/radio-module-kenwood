@@ -32,7 +32,7 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.15.0');
+    expect(version).toBe('1.15.1');
     expect(memoryMap.version).toBe('1.2.0');
   });
 
@@ -47,6 +47,7 @@ describe('TH-D74 menu settings', () => {
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
 
     const confirmed: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x1006, raw: 0x00, structId: 'micSensitivity', field: 'sensitivity', expected: 'High' },
       { offset: 0x1006, raw: 0x01, structId: 'micSensitivity', field: 'sensitivity', expected: 'Medium' },
       { offset: 0x1006, raw: 0x02, structId: 'micSensitivity', field: 'sensitivity', expected: 'Low' },
       { offset: 0x1008, raw: 0x01, structId: 'ssbHighCut', field: 'cutoff', expected: '2.4kHz' },
@@ -60,9 +61,13 @@ describe('TH-D74 menu settings', () => {
       { offset: 0x1032, raw: 0, structId: 'txMonitor', field: 'monitor', expected: 'false' },
       { offset: 0x1062, raw: 0x00, structId: 'lcdBrightness', field: 'brightness', expected: 'Low' },
       { offset: 0x1062, raw: 0x01, structId: 'lcdBrightness', field: 'brightness', expected: 'Medium' },
+      { offset: 0x1062, raw: 0x02, structId: 'lcdBrightness', field: 'brightness', expected: 'High' },
       { offset: 0x107f, raw: 0x00, structId: 'cursorShift', field: 'delay', expected: 'Off' },
       { offset: 0x107f, raw: 0x03, structId: 'cursorShift', field: 'delay', expected: '2.0s' },
+      { offset: 0x1085, raw: 0, structId: 'dtmfKeysLock', field: 'locked', expected: 'false' },
+      { offset: 0x1085, raw: 1, structId: 'dtmfKeysLock', field: 'locked', expected: 'true' },
       { offset: 0x1088, raw: 0x00, structId: 'speedDistance', field: 'unit', expected: 'mi/h' },
+      { offset: 0x1088, raw: 0x01, structId: 'speedDistance', field: 'unit', expected: 'km/h' },
       { offset: 0x1088, raw: 0x02, structId: 'speedDistance', field: 'unit', expected: 'knots' },
     ];
 
@@ -72,13 +77,17 @@ describe('TH-D74 menu settings', () => {
       expect(String(asRecord(settings[sample.structId])[sample.field])).toBe(sample.expected);
     }
 
+    // 0x02 used to be unmapped and encode rewrote it as Low.
+    contents[0x1062] = 0x02;
+    const highBrightness = codec.decode({ contents, radioModel: modelId });
+    expect(asRecord(asRecord(highBrightness.settings).lcdBrightness).brightness).toBe('High');
+    const encodedHigh = codec.encode(highBrightness, { contents: Uint8Array.from(contents), radioModel: modelId });
+    expect(encodedHigh.contents[0x1062]).toBe(0x02);
+
     // Inferred from a clear index pattern. Not measured in a clone image.
-    contents[0x1006] = 0x00;
     contents[0x1008] = 0x00;
     contents[0x1024] = 0x00;
     contents[0x107f] = 0x01;
-    contents[0x1088] = 0x01;
-    contents[0x1085] = 0;
 
     const inferredLow = asRecord(codec.decode({ contents, radioModel: modelId }).settings);
     expect(asRecord(inferredLow.ssbHighCut).cutoff).toBe('2.2kHz');
@@ -86,12 +95,9 @@ describe('TH-D74 menu settings', () => {
     contents[0x1008] = 0x03;
 
     const inferred = asRecord(codec.decode({ contents, radioModel: modelId }).settings);
-    expect(asRecord(inferred.micSensitivity).sensitivity).toBe('High');
     expect(asRecord(inferred.ssbHighCut).cutoff).toBe('2.8kHz');
     expect(asRecord(inferred.cwPitch).pitch).toBe('400Hz');
     expect(asRecord(inferred.cursorShift).delay).toBe('1.0s');
-    expect(asRecord(inferred.speedDistance).unit).toBe('km/h');
-    expect(asRecord(inferred.dtmfKeysLock).locked).toBe(false);
   });
 
   it('keeps mixed text padding byte-identical when the text is not edited', () => {

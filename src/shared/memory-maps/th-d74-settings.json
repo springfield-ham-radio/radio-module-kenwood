@@ -965,7 +965,7 @@
               "number": 112,
               "code": "Mic. Sensitivity"
             },
-            "description": "Microphone sensitivity. Clone images confirm 0x01 Medium and 0x02 Low. High at 0x00 follows the manual order High, Medium, Low, and was not in the measured images."
+            "description": "Microphone sensitivity. Clone images confirm 0x00 High, 0x01 Medium, and 0x02 Low."
           }
         }
       ]
@@ -1156,7 +1156,8 @@
             "kind": "enum",
             "values": [
               "Low",
-              "Medium"
+              "Medium",
+              "High"
             ]
           },
           "ui": {
@@ -1168,7 +1169,7 @@
               "number": 902,
               "code": "LCD Brightness"
             },
-            "description": "Display brightness. Clone images confirm 0x00 Low and 0x01 Medium. The manual lists High, Medium, Low, which is not this byte order, so High is not mapped. TODO: confirm the stored byte for High before adding it. An unlisted byte is rewritten as Low on encode."
+            "description": "Display brightness. Clone images confirm 0x00 Low, 0x01 Medium, and 0x02 High."
           }
         }
       ]
@@ -1306,7 +1307,7 @@
               "number": 961,
               "code": "DTMF Keys Lock"
             },
-            "description": "Stops the keypad from sending DTMF tones while transmitting. 0 is Off and 1 is On, inferred from the other Off/On menus (TX Inhibit, Beep, and TX Monitor). A clone image confirmed this address but not the polarity. TODO: confirm 0 and 1 on a radio."
+            "description": "Stops the keypad from sending DTMF tones while transmitting. Clone images confirm 0 is Off and 1 is On."
           }
         }
       ]
@@ -1335,7 +1336,7 @@
               "number": 970,
               "code": "Speed, Distance"
             },
-            "description": "Units for speed and distance. Clone images confirm 0x00 = mi/h and 0x02 = knots. The manual also lists km/h, but the printed order depends on the region and does not match these bytes. km/h at 0x01 is inferred as the remaining option."
+            "description": "Units for speed and distance. Clone images confirm 0x00 = mi/h, 0x01 = km/h, and 0x02 = knots. The manual's printed order depends on the region and does not match these bytes."
           }
         }
       ]
