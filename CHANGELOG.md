@@ -1,3 +1,9 @@
+## [2.6.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.5.0...v2.6.0) (2026-10-24)
+
+### Features
+
+* **th-d74:** add menu settings and preserve text padding ([#33](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/33)) ([432a841](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/432a8411696532061b862acef981b52622afe253))
+
 ## [2.5.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.4.0...v2.5.0) (2026-10-24)
 
 ### Features
