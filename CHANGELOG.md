@@ -1,3 +1,9 @@
+## [2.5.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.4.0...v2.5.0) (2026-10-24)
+
+### Features
+
+* **th-d74:** add the first menu settings ([#32](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/32)) ([c88b01b](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/c88b01bbd4a6830ea0af87e25d9d6260cc65e195))
+
 ## [2.4.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.3.2...v2.4.0) (2026-10-22)
 
 ### Features
