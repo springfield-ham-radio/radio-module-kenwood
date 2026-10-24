@@ -67,7 +67,7 @@
     "@semantic-release/npm": "13.2.0",
     "@springfield/ham-radio-api": "18.3.0",
     "@springfield/ham-radio-registry": "^2.1.0",
-    "@springfield/ham-radio-utils": "patch:@springfield/ham-radio-utils@npm%3A4.16.0#~/.yarn/patches/@springfield-ham-radio-utils-npm-4.16.0-79ab5b6845.patch",
+    "@springfield/ham-radio-utils": "^4.16.1",
     "@types/node": "26.6.5",
     "husky": "9.1.7",
     "loglayer": "^9.4.0",
@@ -80,8 +80,7 @@
   },
   "resolutions": {
     "conventional-changelog-conventionalcommits": "9.3.1",
-    "loglayer": "9.4.0",
-    "@springfield/ham-radio-utils@npm:^4.15.1": "patch:@springfield/ham-radio-utils@npm%3A4.16.0#~/.yarn/patches/@springfield-ham-radio-utils-npm-4.16.0-79ab5b6845.patch"
+    "loglayer": "9.4.0"
   },
   "engines": {
     "node": ">=18.0.0"
