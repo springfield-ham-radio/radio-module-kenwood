@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and the first menu settings",
+  "version": "1.2.0",
+  "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
       "id": "transmit",
@@ -14,6 +14,32 @@
         {
           "id": "timer",
           "label": "Timer"
+        },
+        {
+          "id": "microphone",
+          "label": "Microphone"
+        }
+      ]
+    },
+    {
+      "id": "filter",
+      "label": "Receive Filter",
+      "icon": "i-lucide-sliders-horizontal",
+      "groups": [
+        {
+          "id": "ssb",
+          "label": "SSB"
+        }
+      ]
+    },
+    {
+      "id": "cw",
+      "label": "CW",
+      "icon": "i-lucide-activity",
+      "groups": [
+        {
+          "id": "pitch",
+          "label": "Pitch"
         }
       ]
     },
@@ -38,8 +64,16 @@
           "label": "Backlight"
         },
         {
+          "id": "brightness",
+          "label": "Brightness"
+        },
+        {
           "id": "power-on",
           "label": "Power On"
+        },
+        {
+          "id": "cursor",
+          "label": "Cursor"
         }
       ]
     },
@@ -51,6 +85,10 @@
         {
           "id": "beep",
           "label": "Beep"
+        },
+        {
+          "id": "monitor",
+          "label": "Monitor"
         }
       ]
     },
@@ -97,6 +135,39 @@
       "id": "groups",
       "label": "Memory Groups",
       "icon": "i-lucide-folder"
+    },
+    {
+      "id": "memory",
+      "label": "Memory",
+      "icon": "i-lucide-database",
+      "groups": [
+        {
+          "id": "recall",
+          "label": "Recall"
+        }
+      ]
+    },
+    {
+      "id": "dtmf",
+      "label": "DTMF",
+      "icon": "i-lucide-hash",
+      "groups": [
+        {
+          "id": "lock",
+          "label": "Lock"
+        }
+      ]
+    },
+    {
+      "id": "units",
+      "label": "Units",
+      "icon": "i-lucide-gauge",
+      "groups": [
+        {
+          "id": "speed",
+          "label": "Speed"
+        }
+      ]
     }
   ],
   "structs": [
@@ -804,7 +875,7 @@
               "number": 610,
               "code": "My Callsign"
             },
-            "description": "Four-character note stored immediately after My Callsign. The radio shows the pair as CALL/MEMO."
+            "description": "Four-character note stored immediately after My Callsign. The radio shows the pair as CALL/MEMO. Edited text is space-padded."
           }
         }
       ]
@@ -865,7 +936,67 @@
               "number": 111,
               "code": "Time-out Timer"
             },
-            "description": "Ends a transmission that stays keyed longer than this. The steps run from 0.5 minutes to 5.0 minutes in half-minute steps, then 10 minutes."
+            "description": "Ends a transmission that stays keyed longer than this. The steps run from 0.5 minutes to 5.0 minutes in half-minute steps, then 10 minutes. Clone images confirm index 0x09 is 5.0 min and 0x0A is 10 min, which matches this list."
+          }
+        }
+      ]
+    },
+    {
+      "id": "micSensitivity",
+      "seek": "0x1006",
+      "fields": [
+        {
+          "id": "sensitivity",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "High",
+              "Medium",
+              "Low"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "microphone",
+            "label": "Mic Sensitivity",
+            "widget": "select",
+            "menu": {
+              "number": 112,
+              "code": "Mic. Sensitivity"
+            },
+            "description": "Microphone sensitivity. Clone images confirm 0x01 Medium and 0x02 Low. High at 0x00 follows the manual order High, Medium, Low, and was not in the measured images."
+          }
+        }
+      ]
+    },
+    {
+      "id": "ssbHighCut",
+      "seek": "0x1008",
+      "fields": [
+        {
+          "id": "cutoff",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "2.2kHz",
+              "2.4kHz",
+              "2.6kHz",
+              "2.8kHz",
+              "3.0kHz"
+            ]
+          },
+          "ui": {
+            "group": "filter",
+            "subgroup": "ssb",
+            "label": "SSB High Cut",
+            "widget": "select",
+            "menu": {
+              "number": 120,
+              "code": "SSB High Cut"
+            },
+            "description": "SSB receive high-cut frequency. Clone images confirm 0x01 = 2.4 kHz, 0x02 = 2.6 kHz, and 0x04 = 3.0 kHz. The manual lists 2.2, 2.4, 2.6, 2.8, and 3.0 kHz. Those confirmed bytes are 0.2 kHz steps, so 0x00 = 2.2 kHz and 0x03 = 2.8 kHz are inferred."
           }
         }
       ]
@@ -900,6 +1031,91 @@
       ]
     },
     {
+      "id": "cwPitch",
+      "seek": "0x1024",
+      "fields": [
+        {
+          "id": "pitch",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "400Hz",
+              "500Hz",
+              "600Hz",
+              "700Hz",
+              "800Hz",
+              "900Hz",
+              "1000Hz"
+            ]
+          },
+          "ui": {
+            "group": "cw",
+            "subgroup": "pitch",
+            "label": "CW Pitch",
+            "widget": "select",
+            "menu": {
+              "number": 170,
+              "code": "Pitch Frequency"
+            },
+            "description": "CW sidetone pitch. Clone images confirm 0x04 = 800 Hz and 0x06 = 1000 Hz. The step between those bytes is 100 Hz. The manual range is 400 to 1000 Hz, so 0x00 = 400 Hz and the unmeasured steps 500, 600, 700, and 900 Hz are inferred."
+          }
+        }
+      ]
+    },
+    {
+      "id": "recallMethod",
+      "seek": "0x1030",
+      "fields": [
+        {
+          "id": "method",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "All Bands",
+              "Current Band"
+            ]
+          },
+          "ui": {
+            "group": "memory",
+            "subgroup": "recall",
+            "label": "Recall Method",
+            "widget": "select",
+            "menu": {
+              "number": 202,
+              "code": "Recall Method"
+            },
+            "description": "Which memories the channel knob walks through. 0 is All Bands. 1 is Current Band."
+          }
+        }
+      ]
+    },
+    {
+      "id": "txMonitor",
+      "seek": "0x1032",
+      "fields": [
+        {
+          "id": "monitor",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "subgroup": "monitor",
+            "label": "TX Monitor",
+            "widget": "switch",
+            "menu": {
+              "number": 311,
+              "code": "TX Monitor"
+            },
+            "description": "Lets you hear your own transmitted audio. Stored as 1 On and 0 Off."
+          }
+        }
+      ]
+    },
+    {
       "id": "backlight",
       "seek": "0x1060",
       "fields": [
@@ -925,6 +1141,34 @@
               "code": "Backlight Control"
             },
             "description": "When the display backlight turns on. Manual follows the backlight key. On stays lit. Auto lights while you operate the radio, then follows the backlight timer. Auto (DC-IN) stays lit on external power and follows Auto on the battery."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lcdBrightness",
+      "seek": "0x1062",
+      "fields": [
+        {
+          "id": "brightness",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Low",
+              "Medium"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "subgroup": "brightness",
+            "label": "LCD Brightness",
+            "widget": "select",
+            "menu": {
+              "number": 902,
+              "code": "LCD Brightness"
+            },
+            "description": "Display brightness. Clone images confirm 0x00 Low and 0x01 Medium. The manual lists High, Medium, Low, which is not this byte order, so High is not mapped. TODO: confirm the stored byte for High before adding it. An unlisted byte is rewritten as Low on encode."
           }
         }
       ]
@@ -1014,6 +1258,89 @@
       ]
     },
     {
+      "id": "cursorShift",
+      "seek": "0x107F",
+      "fields": [
+        {
+          "id": "delay",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "1.0s",
+              "1.5s",
+              "2.0s"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "subgroup": "cursor",
+            "label": "Cursor Shift",
+            "widget": "select",
+            "menu": {
+              "number": 945,
+              "code": "Cursor Shift"
+            },
+            "description": "How long the radio waits before moving the text cursor. Clone images confirm 0x00 Off and 0x03 = 2.0 s. The manual lists Off, 1.0, 1.5, and 2.0 seconds in that order, so 0x01 = 1.0 s and 0x02 = 1.5 s are inferred."
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfKeysLock",
+      "seek": "0x1085",
+      "fields": [
+        {
+          "id": "locked",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "lock",
+            "label": "DTMF Keys Lock",
+            "widget": "switch",
+            "menu": {
+              "number": 961,
+              "code": "DTMF Keys Lock"
+            },
+            "description": "Stops the keypad from sending DTMF tones while transmitting. 0 is Off and 1 is On, inferred from the other Off/On menus (TX Inhibit, Beep, and TX Monitor). A clone image confirmed this address but not the polarity. TODO: confirm 0 and 1 on a radio."
+          }
+        }
+      ]
+    },
+    {
+      "id": "speedDistance",
+      "seek": "0x1088",
+      "fields": [
+        {
+          "id": "unit",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "mi/h",
+              "km/h",
+              "knots"
+            ]
+          },
+          "ui": {
+            "group": "units",
+            "subgroup": "speed",
+            "label": "Speed/Distance",
+            "widget": "select",
+            "menu": {
+              "number": 970,
+              "code": "Speed, Distance"
+            },
+            "description": "Units for speed and distance. Clone images confirm 0x00 = mi/h and 0x02 = knots. The manual also lists km/h, but the printed order depends on the region and does not match these bytes. km/h at 0x01 is inferred as the remaining option."
+          }
+        }
+      ]
+    },
+    {
       "id": "powerOnMessage",
       "seek": "0x10C0",
       "fields": [
@@ -1034,7 +1361,7 @@
               "number": 903,
               "code": "Power-on Message"
             },
-            "description": "Text shown for a couple of seconds when the radio is turned on. Up to 16 characters."
+            "description": "Text shown for a couple of seconds when the radio is turned on. Up to 16 characters. Edited text is NUL-padded."
           }
         }
       ]

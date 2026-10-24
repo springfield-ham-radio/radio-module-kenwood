@@ -1,0 +1,90 @@
+diff --git a/dist/memory/memory-map-codec.js b/dist/memory/memory-map-codec.js
+index 120c1a3d794894c5d182f05ab09f18164229857f..a6964088fac24333cfbb25d364e89aacad2ca50d 100644
+--- a/dist/memory/memory-map-codec.js
++++ b/dist/memory/memory-map-codec.js
+@@ -434,6 +434,20 @@ function decodeStruct(struct, contents, memoryConfig, instanceIndex) {
+     }
+     return result;
+ }
++/**
++ * ASCII decode stops at NUL/0xFF and trims trailing spaces, then encode used to
++ * fill the remainder with a single pad byte. Clone images mix those bytes.
++ * When the text is unchanged, keep the stored bytes.
++ */
++function asciiTextMatchesStoredBytes(field, settingValue, originalBytes) {
++    if (field.value?.kind !== 'ascii') {
++        return false;
++    }
++    const raw = originalBytes.length === 1 ? originalBytes[0] : originalBytes;
++    const decoded = decodeRawValue(field.value, raw);
++    const text = typeof settingValue === 'string' ? settingValue : '';
++    return text === decoded;
++}
+ function encodeStruct(struct, values, contents, memoryConfig, instanceIndex) {
+     const base = structInstanceAddress(struct, instanceIndex);
+     let radioAddress = base;
+@@ -466,6 +480,14 @@ function encodeStruct(struct, values, contents, memoryConfig, instanceIndex) {
+             continue;
+         }
+         const settingValue = values[field.id];
++        const originalBytes = [];
++        for (let index = 0; index < length; index += 1) {
++            originalBytes.push(readByte(contents, bufferOffsetFor(radioAddress + index, memoryConfig, contents)));
++        }
++        if (asciiTextMatchesStoredBytes(field, settingValue, originalBytes)) {
++            radioAddress += length;
++            continue;
++        }
+         if (field.type === 'u16' || field.type === 'u32') {
+             const encoded = encodeRawValue(field.value ?? { kind: 'integer' }, settingValue ?? 0, length);
+             for (let index = 0; index < length; index += 1) {
+diff --git a/src/memory/memory-map-codec.ts b/src/memory/memory-map-codec.ts
+index 2215613e8fd36f5727b587d6ae0633938c2ecbe8..63142001e8f802c89cc9ae599e719fa52de41813 100644
+--- a/src/memory/memory-map-codec.ts
++++ b/src/memory/memory-map-codec.ts
+@@ -551,6 +551,28 @@ function decodeStruct(
+   return result;
+ }
+ 
++/**
++ * ASCII decode stops at NUL/0xFF and trims trailing spaces, then encode used to
++ * fill the remainder with a single pad byte. Clone images mix those bytes
++ * (power-on messages can end in spaces; D-STAR memos can end in NUL). When the
++ * text is unchanged, keep the stored bytes so a settings write is identical.
++ */
++function asciiTextMatchesStoredBytes(
++  field: RadioMemoryMapField,
++  settingValue: RadioSettingValue | undefined,
++  originalBytes: number[],
++): boolean {
++  if (field.value?.kind !== 'ascii') {
++    return false;
++  }
++
++  const raw = originalBytes.length === 1 ? originalBytes[0] : originalBytes;
++  const decoded = decodeRawValue(field.value, raw);
++  const text = typeof settingValue === 'string' ? settingValue : '';
++
++  return text === decoded;
++}
++
+ function encodeStruct(
+   struct: RadioMemoryMapStruct,
+   values: Record<string, RadioSettingValue>,
+@@ -596,6 +618,16 @@ function encodeStruct(
+     }
+ 
+     const settingValue = values[field.id];
++    const originalBytes: number[] = [];
++
++    for (let index = 0; index < length; index += 1) {
++      originalBytes.push(readByte(contents, bufferOffsetFor(radioAddress + index, memoryConfig, contents)));
++    }
++
++    if (asciiTextMatchesStoredBytes(field, settingValue, originalBytes)) {
++      radioAddress += length;
++      continue;
++    }
+ 
+     if (field.type === 'u16' || field.type === 'u32') {
+       const encoded = encodeRawValue(field.value ?? { kind: 'integer' }, settingValue ?? 0, length);
