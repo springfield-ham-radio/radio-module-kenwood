@@ -40,3 +40,24 @@ Outside clone mode, the PC port speaks Kenwood CAT. The config sets `capabilitie
 Memory `n` is at group `n / 6`, slot `n % 6`. Occupied flag `used`: `0xFF` empty, `0` below 150 MHz, `1` below 400 MHz, `2` otherwise.
 
 This module maps regular memories **0–999**.
+
+## Menu settings (absolute image offsets)
+
+These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` is volatile radio state and is intentionally unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped.
+
+| Menu | Offset | Storage |
+| --- | --- | --- |
+| 610 D-STAR My Callsign | `0x2B1` | 8 ASCII, space-padded |
+| 610 callsign memo | `0x2B9` | 4 ASCII, space-padded. The radio shows `CALL/MEMO` |
+| 110 TX Inhibit | `0x1001` | `0` Off, `1` On |
+| 111 Time-Out Timer | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min |
+| 130 Scan Resume (analog) | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
+| 900 Backlight Control | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN) |
+| 914 Beep | `0x1071` | `0` Off, `1` On |
+| 920 Battery Saver | `0x1076` | index `0..9` = Off, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0 s |
+| 921 Auto Power Off | `0x1077` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min |
+| 903 Power-on Message | `0x10C0` | 16 ASCII, NUL-padded |
+| 500 APRS My Callsign | `0x1200` | 6 ASCII, NUL-padded |
+| 500 APRS SSID | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
+
+APRS SSID is text, not an enum. An enum would write the list index as one byte. The radio stores the characters of the suffix, hyphen included, so a 6-character callsign and a `-15` SSID still fit menu 500, which allows 9 characters. The 3-byte width is inferred from that limit; a two-digit SSID was not measured.

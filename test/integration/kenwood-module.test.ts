@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.13.2');
+    expect(radioConfig.version).toBe('1.14.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -194,6 +194,122 @@ describe('Kenwood TH-D74 module', () => {
 
     expect(encodedMemory.contents[0x4000]).not.toBe(0xff);
     expect(encodedMemory.contents[0x4100]).not.toBe(0xff);
+  });
+
+  it('round-trips the first menu settings and leaves every other image byte unchanged', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+
+    const contents = new Uint8Array(500480).fill(0xff);
+    expect(contents.length).toBe(bufferSize(memoryConfig));
+    // Group names are space-padded. Decoding an all-0xFF name and encoding it
+    // writes spaces, so this region is primed to the stored empty value.
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+
+    // Clone framing byte. It is not a menu field.
+    contents[0x01ea] = 0x01;
+    // Volatile radio state. Do not map it.
+    contents[0x038c] = 0x5a;
+    // Gap between TX Inhibit and the time-out timer.
+    contents[0x1002] = 0x22;
+
+    contents[0x1001] = 1;
+    contents[0x1003] = 0x09;
+    contents[0x100c] = 1;
+    contents[0x1060] = 3;
+    contents[0x1071] = 1;
+    contents[0x1076] = 5;
+    contents[0x1077] = 2;
+    writeAscii(contents, 0x10c0, 'HELLO !!', 16, 0);
+    writeAscii(contents, 0x1200, 'W1AW', 6, 0);
+    writeAscii(contents, 0x1206, '-7', 3, 0);
+    writeAscii(contents, 0x02b1, 'W1AW', 8, 0x20);
+    writeAscii(contents, 0x02b9, 'HT', 4, 0x20);
+
+    const original = Uint8Array.from(contents);
+    const decoded = codec.decode({ contents, radioModel: modelId });
+    const settings = asRecord(decoded.settings);
+
+    expect(asRecord(settings.txInhibit).txInhibit).toBe(true);
+    expect(asRecord(settings.timeoutTimer).timeout).toBe('5.0min');
+    expect(asRecord(settings.scanResume).resume).toBe('Carrier');
+    expect(asRecord(settings.backlight).control).toBe('Auto (DC-IN)');
+    expect(asRecord(settings.beep).beep).toBe(true);
+    expect(asRecord(settings.battery)).toMatchObject({ saver: '1.0s', apo: '30min' });
+    expect(asRecord(settings.powerOnMessage).message).toBe('HELLO !!');
+    expect(asRecord(settings.aprsMyCall)).toMatchObject({ callsign: 'W1AW', ssid: '-7' });
+    expect(asRecord(settings.dstarMyCall)).toMatchObject({ callsign: 'W1AW', memo: 'HT' });
+
+    const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+    const mappedRanges: Array<[number, number]> = [
+      [0x02b1, 12],
+      [0x1001, 1],
+      [0x1003, 1],
+      [0x100c, 1],
+      [0x1060, 1],
+      [0x1071, 1],
+      [0x1076, 2],
+      [0x10c0, 16],
+      [0x1200, 9],
+    ];
+    const changedOutsideMap: string[] = [];
+
+    for (let offset = 0; offset < original.length; offset += 1) {
+      const mapped = mappedRanges.some(([start, length]) => offset >= start && offset < start + length);
+
+      if (!mapped && encoded.contents[offset] !== original[offset]) {
+        changedOutsideMap.push(`0x${offset.toString(16)}: 0x${original[offset].toString(16)} -> 0x${encoded.contents[offset].toString(16)}`);
+      }
+    }
+
+    expect(changedOutsideMap).toEqual([]);
+    expect(encoded.contents[0x01ea]).toBe(0x01);
+    expect(encoded.contents[0x038c]).toBe(0x5a);
+    expect(encoded.contents[0x1002]).toBe(0x22);
+    expect(encoded.contents).toEqual(original);
+
+    const confirmed: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x1076, raw: 5, structId: 'battery', field: 'saver', expected: '1.0s' },
+      { offset: 0x1076, raw: 7, structId: 'battery', field: 'saver', expected: '3.0s' },
+      { offset: 0x1076, raw: 9, structId: 'battery', field: 'saver', expected: '5.0s' },
+      { offset: 0x1077, raw: 0, structId: 'battery', field: 'apo', expected: 'Off' },
+      { offset: 0x1077, raw: 2, structId: 'battery', field: 'apo', expected: '30min' },
+      { offset: 0x1003, raw: 0x09, structId: 'timeoutTimer', field: 'timeout', expected: '5.0min' },
+      { offset: 0x1003, raw: 0x0a, structId: 'timeoutTimer', field: 'timeout', expected: '10min' },
+      { offset: 0x1060, raw: 0, structId: 'backlight', field: 'control', expected: 'Manual' },
+      { offset: 0x1060, raw: 3, structId: 'backlight', field: 'control', expected: 'Auto (DC-IN)' },
+      { offset: 0x100c, raw: 0, structId: 'scanResume', field: 'resume', expected: 'Time' },
+      { offset: 0x100c, raw: 1, structId: 'scanResume', field: 'resume', expected: 'Carrier' },
+      { offset: 0x1071, raw: 0, structId: 'beep', field: 'beep', expected: 'false' },
+      { offset: 0x1001, raw: 0, structId: 'txInhibit', field: 'txInhibit', expected: 'false' },
+    ];
+
+    for (const sample of confirmed) {
+      const image = Uint8Array.from(original);
+      image[sample.offset] = sample.raw;
+      const sampleSettings = asRecord(asRecord(codec.decode({ contents: image, radioModel: modelId }).settings)[sample.structId]);
+      const actual = sampleSettings[sample.field];
+      expect(String(actual)).toBe(sample.expected);
+    }
+
+    const wideSsid = codec.encode(
+      {
+        ...decoded,
+        settings: {
+          ...decoded.settings,
+          aprsMyCall: { callsign: 'N0CALL', ssid: '-15' },
+        },
+      },
+      { contents: Uint8Array.from(original), radioModel: modelId },
+    );
+    expect(Buffer.from(wideSsid.contents.subarray(0x1200, 0x1209)).toString('ascii')).toBe('N0CALL-15');
+    expect(wideSsid.contents[0x1209]).toBe(original[0x1209]);
+    expect(wideSsid.contents[0x01ea]).toBe(0x01);
+    expect(wideSsid.contents[0x038c]).toBe(0x5a);
   });
 });
 

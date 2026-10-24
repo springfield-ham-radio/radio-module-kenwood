@@ -1,7 +1,98 @@
 {
-  "version": "1.0.0",
-  "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, and names",
+  "version": "1.1.0",
+  "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and the first menu settings",
   "groups": [
+    {
+      "id": "transmit",
+      "label": "Transmit",
+      "icon": "i-lucide-radio-tower",
+      "groups": [
+        {
+          "id": "inhibit",
+          "label": "Inhibit"
+        },
+        {
+          "id": "timer",
+          "label": "Timer"
+        }
+      ]
+    },
+    {
+      "id": "scan",
+      "label": "Scan",
+      "icon": "i-lucide-scan",
+      "groups": [
+        {
+          "id": "resume",
+          "label": "Resume"
+        }
+      ]
+    },
+    {
+      "id": "display",
+      "label": "Display",
+      "icon": "i-lucide-monitor",
+      "groups": [
+        {
+          "id": "backlight",
+          "label": "Backlight"
+        },
+        {
+          "id": "power-on",
+          "label": "Power On"
+        }
+      ]
+    },
+    {
+      "id": "audio",
+      "label": "Audio",
+      "icon": "i-lucide-volume-2",
+      "groups": [
+        {
+          "id": "beep",
+          "label": "Beep"
+        }
+      ]
+    },
+    {
+      "id": "battery",
+      "label": "Battery",
+      "icon": "i-lucide-battery-medium",
+      "groups": [
+        {
+          "id": "saver",
+          "label": "Battery Saver"
+        },
+        {
+          "id": "power-off",
+          "label": "Auto Power Off"
+        }
+      ]
+    },
+    {
+      "id": "aprs",
+      "label": "APRS",
+      "icon": "i-lucide-map-pinned",
+      "groups": [
+        {
+          "id": "identity",
+          "label": "Identity",
+          "description": "Menu 500 stores the callsign and SSID as separate text. The callsign is 6 bytes at 0x1200, NUL-padded. The SSID is the literal suffix, including the hyphen (for example -7), in 3 NUL-padded bytes at 0x1206. It is not a 0-15 index. A shorter callsign does not shift the SSID."
+        }
+      ]
+    },
+    {
+      "id": "dstar",
+      "label": "D-STAR",
+      "icon": "i-lucide-satellite",
+      "groups": [
+        {
+          "id": "identity",
+          "label": "Identity",
+          "description": "Menu 610 is an 8-character callsign at 0x2B1 and a 4-character memo at 0x2B9, both space-padded. The radio shows them as CALL/MEMO."
+        }
+      ]
+    },
     {
       "id": "groups",
       "label": "Memory Groups",
@@ -668,6 +759,328 @@
             "label": "Group name",
             "widget": "text",
             "description": "Name shown for this memory group."
+          }
+        }
+      ]
+    },
+    {
+      "id": "dstarMyCall",
+      "seek": "0x02B1",
+      "fields": [
+        {
+          "id": "callsign",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 32
+          },
+          "ui": {
+            "group": "dstar",
+            "subgroup": "identity",
+            "label": "My Callsign",
+            "widget": "text",
+            "menu": {
+              "number": 610,
+              "code": "My Callsign"
+            },
+            "description": "D-STAR My Callsign, up to 8 characters. Stored space-padded. The radio shows it with the memo as CALL/MEMO."
+          }
+        },
+        {
+          "id": "memo",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 4,
+            "pad": 32
+          },
+          "ui": {
+            "group": "dstar",
+            "subgroup": "identity",
+            "label": "Callsign memo",
+            "widget": "text",
+            "menu": {
+              "number": 610,
+              "code": "My Callsign"
+            },
+            "description": "Four-character note stored immediately after My Callsign. The radio shows the pair as CALL/MEMO."
+          }
+        }
+      ]
+    },
+    {
+      "id": "txInhibit",
+      "seek": "0x1001",
+      "fields": [
+        {
+          "id": "txInhibit",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "inhibit",
+            "label": "TX Inhibit",
+            "widget": "switch",
+            "menu": {
+              "number": 110,
+              "code": "TX Inhibit"
+            },
+            "description": "Blocks the transmitter so the radio cannot be keyed. Receive still works."
+          }
+        }
+      ]
+    },
+    {
+      "id": "timeoutTimer",
+      "seek": "0x1003",
+      "fields": [
+        {
+          "id": "timeout",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "0.5min",
+              "1.0min",
+              "1.5min",
+              "2.0min",
+              "2.5min",
+              "3.0min",
+              "3.5min",
+              "4.0min",
+              "4.5min",
+              "5.0min",
+              "10min"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "timer",
+            "label": "Time-Out Timer",
+            "widget": "select",
+            "menu": {
+              "number": 111,
+              "code": "Time-out Timer"
+            },
+            "description": "Ends a transmission that stays keyed longer than this. The steps run from 0.5 minutes to 5.0 minutes in half-minute steps, then 10 minutes."
+          }
+        }
+      ]
+    },
+    {
+      "id": "scanResume",
+      "seek": "0x100C",
+      "fields": [
+        {
+          "id": "resume",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Time",
+              "Carrier",
+              "Seek"
+            ]
+          },
+          "ui": {
+            "group": "scan",
+            "subgroup": "resume",
+            "label": "Scan Resume",
+            "widget": "select",
+            "menu": {
+              "number": 130,
+              "code": "Resume"
+            },
+            "description": "What analog scan does after it stops on a signal. Time resumes after the restart timer. Carrier resumes when the signal drops. Seek stops and stays. Digital scan resume is a separate menu and is not this setting."
+          }
+        }
+      ]
+    },
+    {
+      "id": "backlight",
+      "seek": "0x1060",
+      "fields": [
+        {
+          "id": "control",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Manual",
+              "On",
+              "Auto",
+              "Auto (DC-IN)"
+            ]
+          },
+          "ui": {
+            "group": "display",
+            "subgroup": "backlight",
+            "label": "Backlight Control",
+            "widget": "select",
+            "menu": {
+              "number": 900,
+              "code": "Backlight Control"
+            },
+            "description": "When the display backlight turns on. Manual follows the backlight key. On stays lit. Auto lights while you operate the radio, then follows the backlight timer. Auto (DC-IN) stays lit on external power and follows Auto on the battery."
+          }
+        }
+      ]
+    },
+    {
+      "id": "beep",
+      "seek": "0x1071",
+      "fields": [
+        {
+          "id": "beep",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "audio",
+            "subgroup": "beep",
+            "label": "Key Beep",
+            "widget": "switch",
+            "menu": {
+              "number": 914,
+              "code": "Beep"
+            },
+            "description": "Beeps when a key is pressed."
+          }
+        }
+      ]
+    },
+    {
+      "id": "battery",
+      "seek": "0x1076",
+      "fields": [
+        {
+          "id": "saver",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "0.2s",
+              "0.4s",
+              "0.6s",
+              "0.8s",
+              "1.0s",
+              "2.0s",
+              "3.0s",
+              "4.0s",
+              "5.0s"
+            ]
+          },
+          "ui": {
+            "group": "battery",
+            "subgroup": "saver",
+            "label": "Battery Saver",
+            "widget": "select",
+            "menu": {
+              "number": 920,
+              "code": "Battery Saver"
+            },
+            "description": "How long the receiver sleeps between checks while the squelch is closed. Off keeps it awake. Longer times save more battery and can miss the start of a short call."
+          }
+        },
+        {
+          "id": "apo",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "15min",
+              "30min",
+              "60min"
+            ]
+          },
+          "ui": {
+            "group": "battery",
+            "subgroup": "power-off",
+            "label": "Auto Power Off",
+            "widget": "select",
+            "menu": {
+              "number": 921,
+              "code": "APO"
+            },
+            "description": "Turns the radio off after this long with no keypress or tuning. Off disables it. Scanning keeps the radio awake."
+          }
+        }
+      ]
+    },
+    {
+      "id": "powerOnMessage",
+      "seek": "0x10C0",
+      "fields": [
+        {
+          "id": "message",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 16,
+            "pad": 0
+          },
+          "ui": {
+            "group": "display",
+            "subgroup": "power-on",
+            "label": "Power-on Message",
+            "widget": "text",
+            "menu": {
+              "number": 903,
+              "code": "Power-on Message"
+            },
+            "description": "Text shown for a couple of seconds when the radio is turned on. Up to 16 characters."
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsMyCall",
+      "seek": "0x1200",
+      "fields": [
+        {
+          "id": "callsign",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 6,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "identity",
+            "label": "My Callsign",
+            "widget": "text",
+            "menu": {
+              "number": 500,
+              "code": "My Callsign"
+            },
+            "description": "APRS callsign, up to 6 characters, NUL-padded. The SSID is the next field and does not move when this callsign is shorter than 6 characters."
+          }
+        },
+        {
+          "id": "ssid",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 3,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "identity",
+            "label": "SSID",
+            "widget": "text",
+            "menu": {
+              "number": 500,
+              "code": "My Callsign"
+            },
+            "description": "APRS SSID as stored text, including the hyphen, for example -7 or -15. This is not a 0-15 index. Three bytes, NUL-padded. Together with the 6-character callsign this fills menu 500, which allows 9 characters."
           }
         }
       ]
