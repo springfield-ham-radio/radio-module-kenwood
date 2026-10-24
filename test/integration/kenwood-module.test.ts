@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.15.0');
+    expect(radioConfig.version).toBe('1.15.1');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -226,7 +226,7 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1030] = 0;
     contents[0x1032] = 1;
     contents[0x1060] = 3;
-    contents[0x1062] = 0x00;
+    contents[0x1062] = 0x02;
     contents[0x1071] = 1;
     contents[0x1076] = 5;
     contents[0x1077] = 2;
@@ -252,7 +252,7 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.recallMethod).method).toBe('All Bands');
     expect(asRecord(settings.txMonitor).monitor).toBe(true);
     expect(asRecord(settings.backlight).control).toBe('Auto (DC-IN)');
-    expect(asRecord(settings.lcdBrightness).brightness).toBe('Low');
+    expect(asRecord(settings.lcdBrightness).brightness).toBe('High');
     expect(asRecord(settings.beep).beep).toBe(true);
     expect(asRecord(settings.battery)).toMatchObject({ saver: '1.0s', apo: '30min' });
     expect(asRecord(settings.cursorShift).delay).toBe('2.0s');
@@ -313,6 +313,7 @@ describe('Kenwood TH-D74 module', () => {
       { offset: 0x100c, raw: 1, structId: 'scanResume', field: 'resume', expected: 'Carrier' },
       { offset: 0x1071, raw: 0, structId: 'beep', field: 'beep', expected: 'false' },
       { offset: 0x1001, raw: 0, structId: 'txInhibit', field: 'txInhibit', expected: 'false' },
+      { offset: 0x1006, raw: 0x00, structId: 'micSensitivity', field: 'sensitivity', expected: 'High' },
       { offset: 0x1006, raw: 0x01, structId: 'micSensitivity', field: 'sensitivity', expected: 'Medium' },
       { offset: 0x1006, raw: 0x02, structId: 'micSensitivity', field: 'sensitivity', expected: 'Low' },
       { offset: 0x1008, raw: 0x01, structId: 'ssbHighCut', field: 'cutoff', expected: '2.4kHz' },
@@ -326,9 +327,13 @@ describe('Kenwood TH-D74 module', () => {
       { offset: 0x1032, raw: 0, structId: 'txMonitor', field: 'monitor', expected: 'false' },
       { offset: 0x1062, raw: 0x00, structId: 'lcdBrightness', field: 'brightness', expected: 'Low' },
       { offset: 0x1062, raw: 0x01, structId: 'lcdBrightness', field: 'brightness', expected: 'Medium' },
+      { offset: 0x1062, raw: 0x02, structId: 'lcdBrightness', field: 'brightness', expected: 'High' },
       { offset: 0x107f, raw: 0x00, structId: 'cursorShift', field: 'delay', expected: 'Off' },
       { offset: 0x107f, raw: 0x03, structId: 'cursorShift', field: 'delay', expected: '2.0s' },
+      { offset: 0x1085, raw: 0, structId: 'dtmfKeysLock', field: 'locked', expected: 'false' },
+      { offset: 0x1085, raw: 1, structId: 'dtmfKeysLock', field: 'locked', expected: 'true' },
       { offset: 0x1088, raw: 0x00, structId: 'speedDistance', field: 'unit', expected: 'mi/h' },
+      { offset: 0x1088, raw: 0x01, structId: 'speedDistance', field: 'unit', expected: 'km/h' },
       { offset: 0x1088, raw: 0x02, structId: 'speedDistance', field: 'unit', expected: 'knots' },
     ];
 
