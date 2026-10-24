@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.0...v2.6.1) (2026-10-24)
+
+### Bug Fixes
+
+* **deps:** bump fast-uri from 3.1.7 to 3.1.9 ([#35](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/35)) ([1a02f55](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/1a02f551cec778d1b4d798d2f9ec422725be68bc))
+* **deps:** bump undici from 6.29.0 to 6.29.1 ([#36](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/36)) ([27b1e85](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/27b1e85f9595a7084a12c4266db90e1aad2ba859))
+
 ## [2.6.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.5.0...v2.6.0) (2026-10-24)
 
 ### Features
