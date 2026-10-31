@@ -45,29 +45,49 @@ This module maps regular memories **0–999**.
 
 These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` is volatile radio state and is intentionally unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped.
 
-| Menu | Offset | Storage |
-| --- | --- | --- |
-| 610 D-STAR My Callsign | `0x2B1` | 8 ASCII, space-padded |
-| 610 callsign memo | `0x2B9` | 4 ASCII. Edited text is space-padded. A clone image stored NUL at `0x2BC`; an unchanged write keeps that byte. The radio shows `CALL/MEMO` |
-| 110 TX Inhibit | `0x1001` | `0` Off, `1` On |
-| 111 Time-Out Timer | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
-| 112 Mic Sensitivity | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
-| 120 SSB High Cut | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
-| 130 Scan Resume (analog) | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
-| 170 CW Pitch | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
-| 202 Recall Method | `0x1030` | `0` All Bands, `1` Current Band |
-| 311 TX Monitor | `0x1032` | `1` On, `0` Off |
-| 900 Backlight Control | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |
-| 902 LCD Brightness | `0x1062` | `0x00` Low, `0x01` Medium, `0x02` High |
-| 914 Beep | `0x1071` | `0` Off, `1` On |
-| 920 Battery Saver | `0x1076` | index `0..9` = Off, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0 s |
-| 921 Auto Power Off | `0x1077` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min |
-| 945 Cursor Shift | `0x107F` | `0x00` Off, `0x01` 1.0 s, `0x02` 1.5 s, `0x03` 2.0 s |
-| 961 DTMF Keys Lock | `0x1085` | `0` Off, `1` On |
-| 970 Speed/Distance | `0x1088` | `0x00` mi/h, `0x01` km/h, `0x02` knots. The manual's printed order depends on the region and does not match these bytes |
-| 903 Power-on Message | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |
-| 500 APRS My Callsign | `0x1200` | 6 ASCII, NUL-padded |
-| 500 APRS SSID | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
+Each settings field has an optional `section` string. It is the manual's top-level menu group for that hundred (the name the radio shows for the 100s, 200s, and so on). HamBench groups controls under that name and does not show the menu number in the group heading. Memory group names are menu 201 and use section Memory. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
+
+| Menu | Section | Offset | Storage |
+| --- | --- | --- | --- |
+| 610 D-STAR My Callsign | Digital | `0x2B1` | 8 ASCII, space-padded |
+| 610 callsign memo | Digital | `0x2B9` | 4 ASCII. Edited text is space-padded. A clone image stored NUL at `0x2BC`; an unchanged write keeps that byte. The radio shows `CALL/MEMO` |
+| 110 TX Inhibit | TX/RX | `0x1001` | `0` Off, `1` On |
+| 111 Time-Out Timer | TX/RX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
+| 112 Mic Sensitivity | TX/RX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
+| 120 SSB High Cut | TX/RX | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
+| 130 Scan Resume (analog) | TX/RX | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
+| 170 CW Pitch | TX/RX | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
+| 202 Recall Method | Memory | `0x1030` | `0` All Bands, `1` Current Band |
+| 311 TX Monitor | Audio File | `0x1032` | `1` On, `0` Off |
+| 900 Backlight Control | Configuration | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |
+| 902 LCD Brightness | Configuration | `0x1062` | `0x00` Low, `0x01` Medium, `0x02` High |
+| 914 Beep | Configuration | `0x1071` | `0` Off, `1` On |
+| 920 Battery Saver | Configuration | `0x1076` | index `0..9` = Off, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0 s |
+| 921 Auto Power Off | Configuration | `0x1077` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min |
+| 945 Cursor Shift | Configuration | `0x107F` | `0x00` Off, `0x01` 1.0 s, `0x02` 1.5 s, `0x03` 2.0 s |
+| 961 DTMF Keys Lock | Configuration | `0x1085` | `0` Off, `1` On |
+| 970 Speed/Distance | Configuration | `0x1088` | `0x00` mi/h, `0x01` km/h, `0x02` knots. The manual's printed order depends on the region and does not match these bytes |
+| 903 Power-on Message | Configuration | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |
+| 500 APRS My Callsign | APRS | `0x1200` | 6 ASCII, NUL-padded |
+| 500 APRS SSID | APRS | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
+
+The following menus are in the TH-D74A/E manual and are not mapped. No clone image in this repo shows which byte each one writes, and a neighboring address is not enough: an earlier public draft put the wrong string at `0x1200` and described `0x1088` as three unit bytes, while measured images show menu 970 alone at `0x1088` and APRS My Callsign at `0x1200`.
+
+| Menu | Manual name | Manual choices | Why it is not mapped |
+| --- | --- | --- | --- |
+| 121 | CW Width | 0.3 / 0.5 / 1.0 / 1.5 / 2.0 kHz | No measured image byte |
+| 122 | AM High Cut | 3.0 / 4.5 / 6.0 / 7.5 kHz | No measured image byte |
+| 131 | Resume (Digital) | Time / Carrier / Seek | No measured image byte |
+| 132 | Time Restart | 1–10 seconds, default 5 | Integer range. No measured image byte |
+| 133 | Carrier Restart | 1–10 seconds, default 2 | Integer range. No measured image byte |
+| 141 | Auto Offset | Off / On | Optional, and no measured image byte |
+| 901 | Backlight Timer | 3–60 seconds, default 10 | The body text is a range, not the three printed samples. No measured image byte |
+| 904 | Single Band Display | Off / GPS(Altitude) / GPS(GS) / Date | Stored order is unmeasured. Backlight and speed already disagree with the manual's printed order |
+| 911 | TX/RX EQ | RX EQ, TX EQ (FM, NFM), TX EQ (DV), each on or off | This is not beep volume. Three checkboxes, no measured image byte |
+| 915 | Beep Volume | Level 1 through Level 7, default Level 5 | Menu 915, not 911. No measured image byte |
+| 971 | Altitude, Rain | feet, inch / m, mm | No measured image byte. Region text in the menu table is the default, not a one-value radio |
+| 972 | Temperature | °F / °C | No measured image byte |
+| 973 | Latitude, Longitude | dd°mm.mm' / dd°mm'ss.s" | No measured image byte |
 
 APRS SSID is text, not an enum. An enum would write the list index as one byte. The radio stores the characters of the suffix, hyphen included, so a 6-character callsign and a `-15` SSID still fit menu 500, which allows 9 characters. The 3-byte width is inferred from that limit; a two-digit SSID was not measured.
 
