@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -18,6 +18,10 @@
         {
           "id": "microphone",
           "label": "Microphone"
+        },
+        {
+          "id": "offset",
+          "label": "Offset"
         }
       ]
     },
@@ -29,6 +33,14 @@
         {
           "id": "ssb",
           "label": "SSB"
+        },
+        {
+          "id": "cw",
+          "label": "CW"
+        },
+        {
+          "id": "am",
+          "label": "AM"
         }
       ]
     },
@@ -51,6 +63,14 @@
         {
           "id": "resume",
           "label": "Resume"
+        },
+        {
+          "id": "digital",
+          "label": "Digital"
+        },
+        {
+          "id": "restart",
+          "label": "Restart"
         }
       ]
     },
@@ -1016,6 +1036,71 @@
       ]
     },
     {
+      "id": "cwWidth",
+      "seek": "0x1009",
+      "fields": [
+        {
+          "id": "width",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "0.3kHz",
+              "0.5kHz",
+              "1.0kHz",
+              "1.5kHz",
+              "2.0kHz"
+            ]
+          },
+          "ui": {
+            "group": "filter",
+            "subgroup": "cw",
+            "label": "CW Width",
+            "widget": "select",
+            "menu": {
+              "number": 121,
+              "code": "CW Width"
+            },
+            "description": "CW receive filter width. Measured on the radio: 0x00 = 0.3 kHz, 0x01 = 0.5 kHz, 0x02 = 1.0 kHz, 0x03 = 1.5 kHz, and 0x04 = 2.0 kHz.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "amHighCut",
+      "seek": "0x100A",
+      "fields": [
+        {
+          "id": "cutoff",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "3.0kHz",
+              "4.5kHz",
+              "6.0kHz",
+              "7.5kHz"
+            ]
+          },
+          "ui": {
+            "group": "filter",
+            "subgroup": "am",
+            "label": "AM High Cut",
+            "widget": "select",
+            "menu": {
+              "number": 122,
+              "code": "AM High Cut"
+            },
+            "description": "AM receive high-cut frequency. Measured on the radio: 0x00 = 3.0 kHz, 0x01 = 4.5 kHz, 0x02 = 6.0 kHz, and 0x03 = 7.5 kHz.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "scanResume",
       "seek": "0x100C",
       "fields": [
@@ -1039,7 +1124,120 @@
               "number": 130,
               "code": "Resume"
             },
-            "description": "What analog scan does after it stops on a signal. Time resumes after the restart timer. Carrier resumes when the signal drops. Seek stops and stays. Digital scan resume is a separate menu and is not this setting.",
+            "description": "What analog scan does after it stops on a signal. Time resumes after the restart timer. Carrier resumes when the signal drops. Seek stops and stays. Digital scan resume is menu 131.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "digitalScanResume",
+      "seek": "0x100D",
+      "fields": [
+        {
+          "id": "resume",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Time",
+              "Carrier",
+              "Seek"
+            ]
+          },
+          "ui": {
+            "group": "scan",
+            "subgroup": "digital",
+            "label": "Resume (Digital)",
+            "widget": "select",
+            "menu": {
+              "number": 131,
+              "code": "Resume (Digital)"
+            },
+            "description": "What digital scan does after it stops on a signal. Measured on the radio: 0 = Time, 1 = Carrier, 2 = Seek.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "timeRestart",
+      "seek": "0x100E",
+      "fields": [
+        {
+          "id": "seconds",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 1,
+            "max": 10
+          },
+          "ui": {
+            "group": "scan",
+            "subgroup": "restart",
+            "label": "Time Restart",
+            "widget": "integer",
+            "menu": {
+              "number": 132,
+              "code": "Time Restart"
+            },
+            "description": "How long Time scan stays on a signal before it resumes, in seconds. The radio stores the number itself, 1 through 10. The manual default is 5.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "carrierRestart",
+      "seek": "0x100F",
+      "fields": [
+        {
+          "id": "seconds",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 1,
+            "max": 10
+          },
+          "ui": {
+            "group": "scan",
+            "subgroup": "restart",
+            "label": "Carrier Restart",
+            "widget": "integer",
+            "menu": {
+              "number": 133,
+              "code": "Carrier Restart"
+            },
+            "description": "How long Carrier scan waits after the signal drops before it resumes, in seconds. The radio stores the number itself, 1 through 10. The manual default is 2.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "autoOffset",
+      "seek": "0x1018",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "offset",
+            "label": "Auto Offset",
+            "widget": "switch",
+            "menu": {
+              "number": 141,
+              "code": "Auto Offset"
+            },
+            "description": "Applies the standard repeater offset for the current band. Measured by switching the menu from On to Off: 0 is Off and 1 is On.",
             "section": "TX/RX",
             "sectionOrder": 1
           }

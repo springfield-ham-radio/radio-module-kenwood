@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.16.0');
-    expect(memoryMap.version).toBe('1.3.0');
+    expect(version).toBe('1.17.0');
+    expect(memoryMap.version).toBe('1.4.0');
   });
 
   it('names each menu setting with the manual section for that hundred', () => {
@@ -78,7 +78,8 @@ describe('TH-D74 menu settings', () => {
     }
 
     expect(seen.get(500)).toBe('APRS');
-    expect(seen.size).toBe(19);
+    expect(seen.get(141)).toBe('TX/RX');
+    expect(seen.size).toBe(25);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -149,6 +150,68 @@ describe('TH-D74 menu settings', () => {
     }
   });
 
+  it('encodes and decodes the measured TX/RX menu bytes', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
+      contents[offset] = 0;
+    }
+
+    const samples: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x1009, raw: 0, structId: 'cwWidth', field: 'width', expected: '0.3kHz' },
+      { offset: 0x1009, raw: 1, structId: 'cwWidth', field: 'width', expected: '0.5kHz' },
+      { offset: 0x1009, raw: 2, structId: 'cwWidth', field: 'width', expected: '1.0kHz' },
+      { offset: 0x1009, raw: 3, structId: 'cwWidth', field: 'width', expected: '1.5kHz' },
+      { offset: 0x1009, raw: 4, structId: 'cwWidth', field: 'width', expected: '2.0kHz' },
+      { offset: 0x100a, raw: 0, structId: 'amHighCut', field: 'cutoff', expected: '3.0kHz' },
+      { offset: 0x100a, raw: 1, structId: 'amHighCut', field: 'cutoff', expected: '4.5kHz' },
+      { offset: 0x100a, raw: 2, structId: 'amHighCut', field: 'cutoff', expected: '6.0kHz' },
+      { offset: 0x100a, raw: 3, structId: 'amHighCut', field: 'cutoff', expected: '7.5kHz' },
+      { offset: 0x100d, raw: 0, structId: 'digitalScanResume', field: 'resume', expected: 'Time' },
+      { offset: 0x100d, raw: 1, structId: 'digitalScanResume', field: 'resume', expected: 'Carrier' },
+      { offset: 0x100d, raw: 2, structId: 'digitalScanResume', field: 'resume', expected: 'Seek' },
+      { offset: 0x100e, raw: 1, structId: 'timeRestart', field: 'seconds', expected: '1' },
+      { offset: 0x100e, raw: 5, structId: 'timeRestart', field: 'seconds', expected: '5' },
+      { offset: 0x100e, raw: 10, structId: 'timeRestart', field: 'seconds', expected: '10' },
+      { offset: 0x100f, raw: 1, structId: 'carrierRestart', field: 'seconds', expected: '1' },
+      { offset: 0x100f, raw: 2, structId: 'carrierRestart', field: 'seconds', expected: '2' },
+      { offset: 0x100f, raw: 10, structId: 'carrierRestart', field: 'seconds', expected: '10' },
+      { offset: 0x1018, raw: 0, structId: 'autoOffset', field: 'enabled', expected: 'false' },
+      { offset: 0x1018, raw: 1, structId: 'autoOffset', field: 'enabled', expected: 'true' },
+    ];
+
+    for (const sample of samples) {
+      contents[sample.offset] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      const settings = asRecord(decoded.settings);
+      expect(String(asRecord(settings[sample.structId])[sample.field])).toBe(sample.expected);
+
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[sample.offset]).toBe(sample.raw);
+    }
+
+    contents[0x1018] = 1;
+    const on = codec.decode({ contents, radioModel: modelId });
+    const turnedOff = codec.encode(
+      {
+        ...on,
+        settings: {
+          ...on.settings,
+          autoOffset: { enabled: false },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(turnedOff.contents[0x1018]).toBe(0);
+    expect(turnedOff.contents[0x38c]).toBe(0xff);
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -159,7 +222,7 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x100c, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
+    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
       contents[offset] = 0;
     }
 
