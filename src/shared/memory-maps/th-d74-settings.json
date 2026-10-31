@@ -830,7 +830,8 @@
             "label": "Group name",
             "widget": "text",
             "description": "Name shown for this memory group.",
-            "section": "Memory"
+            "section": "Memory",
+            "sectionOrder": 2
           }
         }
       ]
@@ -857,7 +858,8 @@
               "code": "My Callsign"
             },
             "description": "D-STAR My Callsign, up to 8 characters. Stored space-padded. The radio shows it with the memo as CALL/MEMO.",
-            "section": "Digital"
+            "section": "Digital",
+            "sectionOrder": 6
           }
         },
         {
@@ -878,7 +880,8 @@
               "code": "My Callsign"
             },
             "description": "Four-character note stored immediately after My Callsign. The radio shows the pair as CALL/MEMO. Edited text is space-padded.",
-            "section": "Digital"
+            "section": "Digital",
+            "sectionOrder": 6
           }
         }
       ]
@@ -903,7 +906,8 @@
               "code": "TX Inhibit"
             },
             "description": "Blocks the transmitter so the radio cannot be keyed. Receive still works.",
-            "section": "TX/RX"
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
@@ -941,7 +945,8 @@
               "code": "Time-out Timer"
             },
             "description": "Ends a transmission that stays keyed longer than this. The steps run from 0.5 minutes to 5.0 minutes in half-minute steps, then 10 minutes. Clone images confirm index 0x09 is 5.0 min and 0x0A is 10 min, which matches this list.",
-            "section": "TX/RX"
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
@@ -971,7 +976,8 @@
               "code": "Mic. Sensitivity"
             },
             "description": "Microphone sensitivity. Clone images confirm 0x00 High, 0x01 Medium, and 0x02 Low.",
-            "section": "TX/RX"
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
@@ -1003,7 +1009,8 @@
               "code": "SSB High Cut"
             },
             "description": "SSB receive high-cut frequency. Clone images confirm 0x00 = 2.2 kHz, 0x01 = 2.4 kHz, 0x02 = 2.6 kHz, 0x03 = 2.8 kHz, and 0x04 = 3.0 kHz.",
-            "section": "TX/RX"
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
@@ -1033,7 +1040,8 @@
               "code": "Resume"
             },
             "description": "What analog scan does after it stops on a signal. Time resumes after the restart timer. Carrier resumes when the signal drops. Seek stops and stays. Digital scan resume is a separate menu and is not this setting.",
-            "section": "TX/RX"
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
@@ -1067,7 +1075,8 @@
               "code": "Pitch Frequency"
             },
             "description": "CW sidetone pitch. Clone images confirm 0x01 = 500 Hz, 0x04 = 800 Hz, and 0x06 = 1000 Hz. Those measurements confirm 100 Hz steps from 400 Hz at 0x00. The remaining steps follow that confirmed pattern.",
-            "section": "TX/RX"
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
@@ -1096,7 +1105,8 @@
               "code": "Recall Method"
             },
             "description": "Which memories the channel knob walks through. 0 is All Bands. 1 is Current Band.",
-            "section": "Memory"
+            "section": "Memory",
+            "sectionOrder": 2
           }
         }
       ]
@@ -1121,7 +1131,8 @@
               "code": "TX Monitor"
             },
             "description": "Lets you hear your own transmitted audio. Stored as 1 On and 0 Off.",
-            "section": "Audio File"
+            "section": "Audio File",
+            "sectionOrder": 3
           }
         }
       ]
@@ -1152,7 +1163,8 @@
               "code": "Backlight Control"
             },
             "description": "When the display backlight turns on. Manual follows the backlight key. On stays lit. Auto lights while you operate the radio, then follows the backlight timer. Auto (DC-IN) stays lit on external power and follows Auto on the battery.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1182,7 +1194,8 @@
               "code": "LCD Brightness"
             },
             "description": "Display brightness. Clone images confirm 0x00 Low, 0x01 Medium, and 0x02 High.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1207,7 +1220,8 @@
               "code": "Beep"
             },
             "description": "Beeps when a key is pressed.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1244,7 +1258,8 @@
               "code": "Battery Saver"
             },
             "description": "How long the receiver sleeps between checks while the squelch is closed. Off keeps it awake. Longer times save more battery and can miss the start of a short call.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         },
         {
@@ -1269,7 +1284,8 @@
               "code": "APO"
             },
             "description": "Turns the radio off after this long with no keypress or tuning. Off disables it. Scanning keeps the radio awake.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1300,7 +1316,8 @@
               "code": "Cursor Shift"
             },
             "description": "How long the radio waits before moving the text cursor. Clone images confirm 0x00 Off, 0x01 = 1.0 s, 0x02 = 1.5 s, and 0x03 = 2.0 s.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1325,7 +1342,8 @@
               "code": "DTMF Keys Lock"
             },
             "description": "Stops the keypad from sending DTMF tones while transmitting. Clone images confirm 0 is Off and 1 is On.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1355,7 +1373,8 @@
               "code": "Speed, Distance"
             },
             "description": "Units for speed and distance. Clone images confirm 0x00 = mi/h, 0x01 = km/h, and 0x02 = knots. The manual's printed order depends on the region and does not match these bytes.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1382,7 +1401,8 @@
               "code": "Power-on Message"
             },
             "description": "Text shown for a couple of seconds when the radio is turned on. Up to 16 characters. Edited text is NUL-padded.",
-            "section": "Configuration"
+            "section": "Configuration",
+            "sectionOrder": 9
           }
         }
       ]
@@ -1409,7 +1429,8 @@
               "code": "My Callsign"
             },
             "description": "APRS callsign, up to 6 characters, NUL-padded. The SSID is the next field and does not move when this callsign is shorter than 6 characters.",
-            "section": "APRS"
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -1430,7 +1451,8 @@
               "code": "My Callsign"
             },
             "description": "APRS SSID as stored text, including the hyphen, for example -7 or -15. This is not a 0-15 index. Three bytes, NUL-padded. Together with the 6-character callsign this fills menu 500, which allows 9 characters.",
-            "section": "APRS"
+            "section": "APRS",
+            "sectionOrder": 5
           }
         }
       ]

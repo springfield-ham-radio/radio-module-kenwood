@@ -14,6 +14,8 @@ Docs: [Install radios](https://springfield-ham-radio.github.io/ham-radio-docs/gu
 
 Model notes: [docs/th-f6-live.md](docs/th-f6-live.md), [docs/th-d74-clone.md](docs/th-d74-clone.md), [docs/tm-d710a-clone.md](docs/tm-d710a-clone.md).
 
+TH-D74 menu settings set `ui.section` to the manual group for that hundred and `ui.sectionOrder` to the hundreds digit (TX/RX 1, Memory 2, Audio File 3, APRS 5, Digital 6, Configuration 9). HamBench sorts those sections by `sectionOrder` and does not show menu numbers in the heading.
+
 ```bash
 yarn pack:release --all
 yarn pack:beta kenwood-th-d74

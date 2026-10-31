@@ -45,7 +45,7 @@ This module maps regular memories **0–999**.
 
 These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` is volatile radio state and is intentionally unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped.
 
-Each settings field has an optional `section` string. It is the manual's top-level menu group for that hundred (the name the radio shows for the 100s, 200s, and so on). HamBench groups controls under that name and does not show the menu number in the group heading. Memory group names are menu 201 and use section Memory. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
+Each settings field has an optional `section` string and `sectionOrder` number. `section` is the manual's top-level menu group for that hundred (the name the radio shows for the 100s, 200s, and so on). `sectionOrder` is that hundred's digit: TX/RX 1, Memory 2, Audio File 3, APRS 5, Digital 6, Configuration 9. HamBench groups controls under the section name, sorts those groups by `sectionOrder`, and does not show the menu number in the group heading. Memory group names are menu 201 and use section Memory with order 2. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
 | Menu | Section | Offset | Storage |
 | --- | --- | --- | --- |

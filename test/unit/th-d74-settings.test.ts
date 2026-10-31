@@ -52,7 +52,7 @@ describe('TH-D74 menu settings', () => {
 
     for (const struct of memoryMap.structs) {
       for (const field of struct.fields) {
-        const ui = field.ui as { section?: string; menu?: { number: number }; group?: string; label?: string } | undefined;
+        const ui = field.ui as { section?: string; sectionOrder?: number; menu?: { number: number }; group?: string; label?: string } | undefined;
 
         if (!ui) {
           continue;
@@ -60,16 +60,19 @@ describe('TH-D74 menu settings', () => {
 
         if (ui.group === 'groups') {
           expect(ui.section).toBe('Memory');
+          expect(ui.sectionOrder).toBe(2);
           continue;
         }
 
         if (ui.group === 'channel' || ui.menu === undefined) {
           expect(ui.section).toBeUndefined();
+          expect(ui.sectionOrder).toBeUndefined();
           continue;
         }
 
         const hundred = Math.floor(ui.menu.number / 100);
         expect(ui.section, `${struct.id}.${field.id}`).toBe(sections[hundred]);
+        expect(ui.sectionOrder, `${struct.id}.${field.id}`).toBe(hundred);
         seen.set(ui.menu.number, ui.section ?? '');
       }
     }
