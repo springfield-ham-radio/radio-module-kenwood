@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.16.0');
+    expect(radioConfig.version).toBe('1.17.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -221,7 +221,13 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1003] = 0x09;
     contents[0x1006] = 0x01;
     contents[0x1008] = 0x04;
+    contents[0x1009] = 0x04;
+    contents[0x100a] = 0x02;
     contents[0x100c] = 1;
+    contents[0x100d] = 2;
+    contents[0x100e] = 5;
+    contents[0x100f] = 2;
+    contents[0x1018] = 1;
     contents[0x1024] = 0x06;
     contents[0x1030] = 0;
     contents[0x1032] = 1;
@@ -247,7 +253,13 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.timeoutTimer).timeout).toBe('5.0min');
     expect(asRecord(settings.micSensitivity).sensitivity).toBe('Medium');
     expect(asRecord(settings.ssbHighCut).cutoff).toBe('3.0kHz');
+    expect(asRecord(settings.cwWidth).width).toBe('2.0kHz');
+    expect(asRecord(settings.amHighCut).cutoff).toBe('6.0kHz');
     expect(asRecord(settings.scanResume).resume).toBe('Carrier');
+    expect(asRecord(settings.digitalScanResume).resume).toBe('Seek');
+    expect(asRecord(settings.timeRestart).seconds).toBe(5);
+    expect(asRecord(settings.carrierRestart).seconds).toBe(2);
+    expect(asRecord(settings.autoOffset).enabled).toBe(true);
     expect(asRecord(settings.cwPitch).pitch).toBe('1000Hz');
     expect(asRecord(settings.recallMethod).method).toBe('All Bands');
     expect(asRecord(settings.txMonitor).monitor).toBe(true);
@@ -269,7 +281,11 @@ describe('Kenwood TH-D74 module', () => {
       [0x1003, 1],
       [0x1006, 1],
       [0x1008, 1],
+      [0x1009, 1],
+      [0x100a, 1],
       [0x100c, 1],
+      [0x100d, 3],
+      [0x1018, 1],
       [0x1024, 1],
       [0x1030, 1],
       [0x1032, 1],

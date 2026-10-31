@@ -43,7 +43,7 @@ This module maps regular memories **0–999**.
 
 ## Menu settings (absolute image offsets)
 
-These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` is volatile radio state and is intentionally unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped.
+These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped.
 
 Each settings field has an optional `section` string and `sectionOrder` number. `section` is the manual's top-level menu group for that hundred (the name the radio shows for the 100s, 200s, and so on). `sectionOrder` is that hundred's digit: TX/RX 1, Memory 2, Audio File 3, APRS 5, Digital 6, Configuration 9. HamBench groups controls under the section name, sorts those groups by `sectionOrder`, and does not show the menu number in the group heading. Memory group names are menu 201 and use section Memory with order 2. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
@@ -55,7 +55,13 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 111 Time-Out Timer | TX/RX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
 | 112 Mic Sensitivity | TX/RX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
 | 120 SSB High Cut | TX/RX | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
+| 121 CW Width | TX/RX | `0x1009` | `0x00` 0.3 kHz, `0x01` 0.5 kHz, `0x02` 1.0 kHz, `0x03` 1.5 kHz, `0x04` 2.0 kHz |
+| 122 AM High Cut | TX/RX | `0x100A` | `0x00` 3.0 kHz, `0x01` 4.5 kHz, `0x02` 6.0 kHz, `0x03` 7.5 kHz |
 | 130 Scan Resume (analog) | TX/RX | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
+| 131 Resume (Digital) | TX/RX | `0x100D` | `0` Time, `1` Carrier, `2` Seek |
+| 132 Time Restart | TX/RX | `0x100E` | Raw seconds, 1–10 |
+| 133 Carrier Restart | TX/RX | `0x100F` | Raw seconds, 1–10 |
+| 141 Auto Offset | TX/RX | `0x1018` | `0` Off, `1` On. Measured by switching the menu from On to Off |
 | 170 CW Pitch | TX/RX | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
 | 202 Recall Method | Memory | `0x1030` | `0` All Bands, `1` Current Band |
 | 311 TX Monitor | Audio File | `0x1032` | `1` On, `0` Off |
@@ -75,12 +81,6 @@ The following menus are in the TH-D74A/E manual and are not mapped. No clone ima
 
 | Menu | Manual name | Manual choices | Why it is not mapped |
 | --- | --- | --- | --- |
-| 121 | CW Width | 0.3 / 0.5 / 1.0 / 1.5 / 2.0 kHz | No measured image byte |
-| 122 | AM High Cut | 3.0 / 4.5 / 6.0 / 7.5 kHz | No measured image byte |
-| 131 | Resume (Digital) | Time / Carrier / Seek | No measured image byte |
-| 132 | Time Restart | 1–10 seconds, default 5 | Integer range. No measured image byte |
-| 133 | Carrier Restart | 1–10 seconds, default 2 | Integer range. No measured image byte |
-| 141 | Auto Offset | Off / On | Optional, and no measured image byte |
 | 901 | Backlight Timer | 3–60 seconds, default 10 | The body text is a range, not the three printed samples. No measured image byte |
 | 904 | Single Band Display | Off / GPS(Altitude) / GPS(GS) / Date | Stored order is unmeasured. Backlight and speed already disagree with the manual's printed order |
 | 911 | TX/RX EQ | RX EQ, TX EQ (FM, NFM), TX EQ (DV), each on or off | This is not beep volume. Three checkboxes, no measured image byte |
