@@ -32,8 +32,53 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.15.2');
-    expect(memoryMap.version).toBe('1.2.0');
+    expect(version).toBe('1.16.0');
+    expect(memoryMap.version).toBe('1.3.0');
+  });
+
+  it('names each menu setting with the manual section for that hundred', () => {
+    const sections: Record<number, string> = {
+      1: 'TX/RX',
+      2: 'Memory',
+      3: 'Audio File',
+      4: 'GPS',
+      5: 'APRS',
+      6: 'Digital',
+      7: 'FM Broadcasting',
+      8: 'SD Card',
+      9: 'Configuration',
+    };
+    const seen = new Map<number, string>();
+
+    for (const struct of memoryMap.structs) {
+      for (const field of struct.fields) {
+        const ui = field.ui as { section?: string; sectionOrder?: number; menu?: { number: number }; group?: string; label?: string } | undefined;
+
+        if (!ui) {
+          continue;
+        }
+
+        if (ui.group === 'groups') {
+          expect(ui.section).toBe('Memory');
+          expect(ui.sectionOrder).toBe(2);
+          continue;
+        }
+
+        if (ui.group === 'channel' || ui.menu === undefined) {
+          expect(ui.section).toBeUndefined();
+          expect(ui.sectionOrder).toBeUndefined();
+          continue;
+        }
+
+        const hundred = Math.floor(ui.menu.number / 100);
+        expect(ui.section, `${struct.id}.${field.id}`).toBe(sections[hundred]);
+        expect(ui.sectionOrder, `${struct.id}.${field.id}`).toBe(hundred);
+        seen.set(ui.menu.number, ui.section ?? '');
+      }
+    }
+
+    expect(seen.get(500)).toBe('APRS');
+    expect(seen.size).toBe(19);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
