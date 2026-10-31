@@ -76,7 +76,7 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 903 Power-on Message | Configuration | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |
 | 500 APRS My Callsign | APRS | `0x1200` | 6 ASCII, NUL-padded |
 | 500 APRS SSID | APRS | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
-| 501 Icon | APRS | `0x1367` | 2 ASCII, table character then symbol code. `\Y` is the old Radio icon and `/R` is RV. Any other pair is a custom symbol. Edited text is NUL-padded |
+| 501 Icon | APRS | `0x1367` | 2 ASCII, table character then symbol code. The choice list shows the manual icon name. Radio is `\Y` and RV is `/R`. A code that is not in the list is left unchanged |
 | 522 Shift/Offset | APRS | `0x1363` | `0` Off, `1` On |
 | 523 QSY Limit Distance | APRS | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
 | 531 Slow Rate | APRS | `0x1370` | Raw minutes, manual range 1–100 (default 30) |

@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -1689,18 +1689,284 @@
           "value": {
             "kind": "ascii",
             "length": 2,
-            "pad": 0
+            "pad": 0,
+            "choices": [
+              {
+                "label": "Person",
+                "value": "/["
+              },
+              {
+                "label": "Bicycle",
+                "value": "/b"
+              },
+              {
+                "label": "Motorcycle",
+                "value": "/<"
+              },
+              {
+                "label": "Car",
+                "value": "/>"
+              },
+              {
+                "label": "Bus",
+                "value": "/U"
+              },
+              {
+                "label": "Railroad Engine",
+                "value": "/="
+              },
+              {
+                "label": "Home",
+                "value": "/-"
+              },
+              {
+                "label": "Yagi@QTH",
+                "value": "/y"
+              },
+              {
+                "label": "KENWOOD",
+                "value": "\\K"
+              },
+              {
+                "label": "Radio",
+                "value": "\\Y"
+              },
+              {
+                "label": "RV",
+                "value": "/R"
+              },
+              {
+                "label": "Van",
+                "value": "/v"
+              },
+              {
+                "label": "Jeep",
+                "value": "/j"
+              },
+              {
+                "label": "Truck",
+                "value": "/k"
+              },
+              {
+                "label": "Truck (18-wheeler)",
+                "value": "/u"
+              },
+              {
+                "label": "Police",
+                "value": "/P"
+              },
+              {
+                "label": "Ambulance",
+                "value": "/a"
+              },
+              {
+                "label": "Fire Truck",
+                "value": "/f"
+              },
+              {
+                "label": "Canoe",
+                "value": "/C"
+              },
+              {
+                "label": "Boat",
+                "value": "/s"
+              },
+              {
+                "label": "Sailboat",
+                "value": "/Y"
+              },
+              {
+                "label": "APRStt",
+                "value": "\\A"
+              },
+              {
+                "label": "X",
+                "value": "/."
+              },
+              {
+                "label": "Triangle",
+                "value": "\\n"
+              },
+              {
+                "label": "Small Circle",
+                "value": "\\o"
+              },
+              {
+                "label": "Red Dot",
+                "value": "//"
+              },
+              {
+                "label": "Big Question Mark",
+                "value": "\\."
+              },
+              {
+                "label": "Balloon",
+                "value": "/O"
+              },
+              {
+                "label": "Glider",
+                "value": "/g"
+              },
+              {
+                "label": "Helicopter",
+                "value": "/X"
+              },
+              {
+                "label": "Aircraft",
+                "value": "/'"
+              },
+              {
+                "label": "Large Aircraft",
+                "value": "/^"
+              },
+              {
+                "label": "Shuttle",
+                "value": "/S"
+              },
+              {
+                "label": "Satellite",
+                "value": "\\S"
+              },
+              {
+                "label": "Rover",
+                "value": "/p"
+              },
+              {
+                "label": "Eyeball",
+                "value": "/E"
+              },
+              {
+                "label": "Portable (Tent)",
+                "value": "/;"
+              },
+              {
+                "label": "HAM Store",
+                "value": "\\h"
+              },
+              {
+                "label": "School",
+                "value": "/K"
+              },
+              {
+                "label": "Hospital",
+                "value": "/h"
+              },
+              {
+                "label": "Red Cross",
+                "value": "/+"
+              },
+              {
+                "label": "Lighthouse",
+                "value": "\\L"
+              },
+              {
+                "label": "Speedpost",
+                "value": "\\m"
+              },
+              {
+                "label": "WorkZone",
+                "value": "\\j"
+              },
+              {
+                "label": "Wreck",
+                "value": "\\x"
+              },
+              {
+                "label": "Sheriff",
+                "value": "/!"
+              },
+              {
+                "label": "Fire",
+                "value": "/:"
+              },
+              {
+                "label": "Sunny",
+                "value": "\\U"
+              },
+              {
+                "label": "Gale Flags",
+                "value": "\\g"
+              },
+              {
+                "label": "Tornado",
+                "value": "\\t"
+              },
+              {
+                "label": "National WX Service Site",
+                "value": "/W"
+              },
+              {
+                "label": "WX",
+                "value": "/_"
+              },
+              {
+                "label": "Digipeater",
+                "value": "/#"
+              },
+              {
+                "label": "Mic-E Repeater",
+                "value": "/m"
+              },
+              {
+                "label": "QSO Repeater",
+                "value": "/r"
+              },
+              {
+                "label": "Circle",
+                "value": "/0"
+              },
+              {
+                "label": "IRLP",
+                "value": "I0"
+              },
+              {
+                "label": "EchoLink",
+                "value": "E0"
+              },
+              {
+                "label": "Node",
+                "value": "/n"
+              },
+              {
+                "label": "Gateway",
+                "value": "/&"
+              },
+              {
+                "label": "DF station",
+                "value": "/\\"
+              },
+              {
+                "label": "Dish Antenna",
+                "value": "/`"
+              },
+              {
+                "label": "PC User",
+                "value": "/L"
+              },
+              {
+                "label": "SSTV",
+                "value": "/T"
+              },
+              {
+                "label": "ATV",
+                "value": "/V"
+              },
+              {
+                "label": "BBS",
+                "value": "/B"
+              }
+            ]
           },
           "ui": {
             "group": "aprs",
             "subgroup": "icon",
             "label": "Icon",
-            "widget": "text",
+            "widget": "select",
             "menu": {
               "number": 501,
               "code": "Icon"
             },
-            "description": "APRS symbol, table character then symbol code. Measured examples: \\Y is the old Radio icon and /R is RV. Enter any two characters for a custom table and code. The manual icon list is Person /[, Bicycle /b, Motorcycle /<, Car />, Bus /U, Railroad Engine /=, Home /-, Yagi@QTH /y, KENWOOD \\K, Radio \\Y, RV /R, Van /v, Jeep /j, Truck /k, Truck (18-wheeler) /u, Police /P, Ambulance /a, Canoe /C, Boat /s, Sailboat /Y, APRStt \\A, X /., Triangle \\n, Small Circle \\o, Red Dot //, Big Question Mark \\., Balloon /O, Glider /g, Helicopter /X, Aircraft /', Large Aircraft /^, Shuttle /S, Satellite \\S, Rover /p, Eyeball /E, Portable (Tent) /;, HAM Store \\h, School /K, Hospital /h, Red Cross /+, Lighthouse \\L, Speedpost \\m, WorkZone \\j, Wreck /x, Sheriff /!, Fire /:, Sunny \\U, Gale Flags \\g, Tornado \\t, National WX Service Site /W, WX /_, Digipeater /#, Mic-E Repeater /m, QSO Repeater /r, Circle /0, IRLP I0, EchoLink E0, Node /n, Gateway /&, DF station /\\, Dish Antenna /`, PC User /L, SSTV /T, ATV /V, BBS /B. Edited text is NUL-padded.",
+            "description": "APRS symbol, stored as the table character and the symbol code. Radio is \\Y and RV is /R. The list is the TH-D74 manual icon names mapped to the public APRS symbol table (symbolsX.txt and symbols-new.txt). A symbol that is not in the list is left as those two characters. Edited text is NUL-padded.",
             "section": "APRS",
             "sectionOrder": 5
           }

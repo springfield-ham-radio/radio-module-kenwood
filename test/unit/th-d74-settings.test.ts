@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.18.0');
-    expect(memoryMap.version).toBe('1.5.0');
+    expect(version).toBe('1.18.1');
+    expect(memoryMap.version).toBe('1.5.1');
   });
 
   it('names each menu setting with the manual section for that hundred', () => {
@@ -256,6 +256,14 @@ describe('TH-D74 menu settings', () => {
       expect(encoded.contents[sample.offset]).toBe(sample.raw);
     }
 
+    const iconField = memoryMap.structs.find((struct) => struct.id === 'aprsIcon')?.fields[0];
+    const iconChoices = (iconField?.value as { choices?: Array<{ label: string; value: string }> } | undefined)?.choices ?? [];
+    expect(iconField?.ui?.widget).toBe('select');
+    expect(iconChoices.length).toBeGreaterThanOrEqual(60);
+    expect(iconChoices.find((choice) => choice.label === 'Radio')?.value).toBe('\\Y');
+    expect(iconChoices.find((choice) => choice.label === 'RV')?.value).toBe('/R');
+    expect(new Set(iconChoices.map((choice) => choice.value)).size).toBe(iconChoices.length);
+
     contents[0x1367] = '\\'.charCodeAt(0);
     contents[0x1368] = 'Y'.charCodeAt(0);
     const radioIcon = codec.decode({ contents, radioModel: modelId });
@@ -272,6 +280,17 @@ describe('TH-D74 menu settings', () => {
       { contents: Uint8Array.from(contents), radioModel: modelId },
     );
     expect(Buffer.from(customIcon.contents.subarray(0x1367, 0x1369)).toString('ascii')).toBe('Z9');
+
+    for (const choice of iconChoices) {
+      const chosen = codec.encode(
+        {
+          ...rvIcon,
+          settings: { ...rvIcon.settings, aprsIcon: { symbol: choice.value } },
+        },
+        { contents: Uint8Array.from(contents), radioModel: modelId },
+      );
+      expect(Buffer.from(chosen.contents.subarray(0x1367, 0x1369)).toString('ascii')).toBe(choice.value);
+    }
 
     contents[0x1366] = 0x7f;
     const allFilters = codec.decode({ contents, radioModel: modelId });
