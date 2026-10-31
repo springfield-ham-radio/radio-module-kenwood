@@ -1,3 +1,9 @@
+## [2.8.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.7.0...v2.8.0) (2026-10-31)
+
+### Features
+
+* **th-d74:** map measured TX/RX menus 121 through 141 ([#42](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/42)) ([bbf6a77](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/bbf6a77b0889f4695047514343a001a883c6c841))
+
 ## [2.7.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.3...v2.7.0) (2026-10-31)
 
 ### Features
