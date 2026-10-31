@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.17.0');
+    expect(radioConfig.version).toBe('1.18.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -229,6 +229,15 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x100f] = 2;
     contents[0x1018] = 1;
     contents[0x1024] = 0x06;
+    contents[0x1213] = 2;
+    contents[0x1363] = 1;
+    contents[0x1364] = 246;
+    contents[0x1365] = 248;
+    contents[0x1366] = 0x7f;
+    contents[0x1367] = '/'.charCodeAt(0);
+    contents[0x1368] = 'R'.charCodeAt(0);
+    contents[0x1370] = 30;
+    writeAscii(contents, 0x183b, 'CQ,BLN1', 35, 0);
     contents[0x1030] = 0;
     contents[0x1032] = 1;
     contents[0x1060] = 3;
@@ -272,6 +281,22 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.speedDistance).unit).toBe('knots');
     expect(asRecord(settings.powerOnMessage).message).toBe('HELLO !!');
     expect(asRecord(settings.aprsMyCall)).toMatchObject({ callsign: 'W1AW', ssid: '-7' });
+    expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
+    expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
+    expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
+    expect(asRecord(settings.aprsSlowRate).minutes).toBe(30);
+    expect(asRecord(settings.aprsWaypointFormat).format).toBe('KENWOOD');
+    expect(asRecord(settings.aprsPositionLimit).distance).toBe('2480 mi');
+    expect(asRecord(settings.aprsFilterType)).toMatchObject({
+      weather: true,
+      digipeater: true,
+      mobile: true,
+      object: true,
+      navitra: true,
+      oneWay: true,
+      others: true,
+    });
+    expect(asRecord(settings.aprsBulletinGroup).codes).toBe('CQ,BLN1');
     expect(asRecord(settings.dstarMyCall)).toMatchObject({ callsign: 'W1AW', memo: 'HT' });
 
     const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
@@ -298,6 +323,10 @@ describe('Kenwood TH-D74 module', () => {
       [0x1088, 1],
       [0x10c0, 16],
       [0x1200, 9],
+      [0x1213, 1],
+      [0x1363, 6],
+      [0x1370, 1],
+      [0x183b, 35],
     ];
     const changedOutsideMap: string[] = [];
 

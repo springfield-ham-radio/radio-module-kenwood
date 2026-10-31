@@ -76,6 +76,27 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 903 Power-on Message | Configuration | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |
 | 500 APRS My Callsign | APRS | `0x1200` | 6 ASCII, NUL-padded |
 | 500 APRS SSID | APRS | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
+| 501 Icon | APRS | `0x1367` | 2 ASCII, table character then symbol code. `\Y` is the old Radio icon and `/R` is RV. Any other pair is a custom symbol. Edited text is NUL-padded |
+| 522 Shift/Offset | APRS | `0x1363` | `0` Off, `1` On |
+| 523 QSY Limit Distance | APRS | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
+| 531 Slow Rate | APRS | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
+| 540 Waypoint Format | APRS | `0x1213` | `0` NMEA, `1` MAGELLAN, `2` KENWOOD. `0` and `2` were measured; `1` follows the manual order |
+| 550 Position Limit | APRS | `0x1365` | Tens of miles. `0` Off, `248` = 2480 mi. Manual steps Off, then 10 through 2500 |
+| 551 Filter Type | APRS | `0x1366` | Seven checkboxes in bits 0–6. All on is `0x7F`. Bit 7 is unused. See the bit table below |
+| 585 Bulletin Group Code | APRS | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
+
+Menu 551 bits, from the manual list Weather, Digipeater, Mobile, Object, NAVITRA, 1-WAY, Others. Turning Mobile and 1-WAY off cleared `0x04` and `0x20`. That list order from bit 0 puts Mobile on `0x04` and 1-WAY on `0x20`. The other five masks follow the same order and were not measured on their own. Bit 7 stays as it was.
+
+| Bit | Mask | Type | Source |
+| --- | --- | --- | --- |
+| 0 | `0x01` | Weather | Assumed |
+| 1 | `0x02` | Digipeater | Assumed |
+| 2 | `0x04` | Mobile | Measured pair, placed by list order |
+| 3 | `0x08` | Object | Assumed |
+| 4 | `0x10` | NAVITRA | Assumed |
+| 5 | `0x20` | 1-WAY | Measured pair, placed by list order |
+| 6 | `0x40` | Others | Assumed |
+| 7 | `0x80` | Unused | Left unchanged. All seven filters on is `0x7F` |
 
 The following menus are in the TH-D74A/E manual and are not mapped. No clone image in this repo shows which byte each one writes, and a neighboring address is not enough: an earlier public draft put the wrong string at `0x1200` and described `0x1088` as three unit bytes, while measured images show menu 970 alone at `0x1088` and APRS My Callsign at `0x1200`.
 
