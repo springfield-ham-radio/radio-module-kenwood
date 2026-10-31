@@ -1,3 +1,9 @@
+## [2.7.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.3...v2.7.0) (2026-10-31)
+
+### Features
+
+* **th-d74:** add manual menu sections to each setting ([#41](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/41)) ([6191544](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/6191544c6f71f94c0e1055b3f7ad0be5c69ada5f))
+
 ## [2.6.3](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.6.2...v2.6.3) (2026-10-24)
 
 ### Bug Fixes
