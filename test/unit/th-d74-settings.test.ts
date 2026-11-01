@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.17.0');
-    expect(memoryMap.version).toBe('1.4.0');
+    expect(version).toBe('1.18.1');
+    expect(memoryMap.version).toBe('1.5.1');
   });
 
   it('names each menu setting with the manual section for that hundred', () => {
@@ -79,7 +79,9 @@ describe('TH-D74 menu settings', () => {
 
     expect(seen.get(500)).toBe('APRS');
     expect(seen.get(141)).toBe('TX/RX');
-    expect(seen.size).toBe(25);
+    expect(seen.get(501)).toBe('APRS');
+    expect(seen.get(551)).toBe('APRS');
+    expect(seen.size).toBe(33);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -212,6 +214,135 @@ describe('TH-D74 menu settings', () => {
     expect(turnedOff.contents[0x38c]).toBe(0xff);
   });
 
+  it('encodes and decodes the measured APRS menu bytes', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365, 0x1366]) {
+      contents[offset] = 0;
+    }
+    contents.fill(0, 0x1367, 0x1369);
+    contents.fill(0, 0x183b, 0x183b + 35);
+
+    const samples: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x1363, raw: 0, structId: 'aprsShiftOffset', field: 'enabled', expected: 'false' },
+      { offset: 0x1363, raw: 1, structId: 'aprsShiftOffset', field: 'enabled', expected: 'true' },
+      { offset: 0x1364, raw: 0, structId: 'aprsQsyLimit', field: 'distance', expected: 'Off' },
+      { offset: 0x1364, raw: 1, structId: 'aprsQsyLimit', field: 'distance', expected: '10 mi' },
+      { offset: 0x1364, raw: 246, structId: 'aprsQsyLimit', field: 'distance', expected: '2460 mi' },
+      { offset: 0x1364, raw: 250, structId: 'aprsQsyLimit', field: 'distance', expected: '2500 mi' },
+      { offset: 0x1370, raw: 1, structId: 'aprsSlowRate', field: 'minutes', expected: '1' },
+      { offset: 0x1370, raw: 30, structId: 'aprsSlowRate', field: 'minutes', expected: '30' },
+      { offset: 0x1370, raw: 100, structId: 'aprsSlowRate', field: 'minutes', expected: '100' },
+      { offset: 0x1213, raw: 0, structId: 'aprsWaypointFormat', field: 'format', expected: 'NMEA' },
+      { offset: 0x1213, raw: 1, structId: 'aprsWaypointFormat', field: 'format', expected: 'MAGELLAN' },
+      { offset: 0x1213, raw: 2, structId: 'aprsWaypointFormat', field: 'format', expected: 'KENWOOD' },
+      { offset: 0x1365, raw: 0, structId: 'aprsPositionLimit', field: 'distance', expected: 'Off' },
+      { offset: 0x1365, raw: 248, structId: 'aprsPositionLimit', field: 'distance', expected: '2480 mi' },
+      { offset: 0x1365, raw: 250, structId: 'aprsPositionLimit', field: 'distance', expected: '2500 mi' },
+    ];
+
+    for (const sample of samples) {
+      contents[sample.offset] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      const settings = asRecord(decoded.settings);
+      expect(String(asRecord(settings[sample.structId])[sample.field])).toBe(sample.expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[sample.offset]).toBe(sample.raw);
+    }
+
+    const iconField = memoryMap.structs.find((struct) => struct.id === 'aprsIcon')?.fields[0];
+    const iconChoices = (iconField?.value as { choices?: Array<{ label: string; value: string }> } | undefined)?.choices ?? [];
+    expect(iconField?.ui?.widget).toBe('select');
+    expect(iconChoices.length).toBeGreaterThanOrEqual(60);
+    expect(iconChoices.find((choice) => choice.label === 'Radio')?.value).toBe('\\Y');
+    expect(iconChoices.find((choice) => choice.label === 'RV')?.value).toBe('/R');
+    expect(new Set(iconChoices.map((choice) => choice.value)).size).toBe(iconChoices.length);
+
+    contents[0x1367] = '\\'.charCodeAt(0);
+    contents[0x1368] = 'Y'.charCodeAt(0);
+    const radioIcon = codec.decode({ contents, radioModel: modelId });
+    expect(asRecord(asRecord(radioIcon.settings).aprsIcon).symbol).toBe('\\Y');
+    contents[0x1367] = '/'.charCodeAt(0);
+    contents[0x1368] = 'R'.charCodeAt(0);
+    const rvIcon = codec.decode({ contents, radioModel: modelId });
+    expect(asRecord(asRecord(rvIcon.settings).aprsIcon).symbol).toBe('/R');
+    const customIcon = codec.encode(
+      {
+        ...rvIcon,
+        settings: { ...rvIcon.settings, aprsIcon: { symbol: 'Z9' } },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(Buffer.from(customIcon.contents.subarray(0x1367, 0x1369)).toString('ascii')).toBe('Z9');
+
+    for (const choice of iconChoices) {
+      const chosen = codec.encode(
+        {
+          ...rvIcon,
+          settings: { ...rvIcon.settings, aprsIcon: { symbol: choice.value } },
+        },
+        { contents: Uint8Array.from(contents), radioModel: modelId },
+      );
+      expect(Buffer.from(chosen.contents.subarray(0x1367, 0x1369)).toString('ascii')).toBe(choice.value);
+    }
+
+    contents[0x1366] = 0x7f;
+    const allFilters = codec.decode({ contents, radioModel: modelId });
+    expect(asRecord(allFilters.settings).aprsFilterType).toMatchObject({
+      weather: true,
+      digipeater: true,
+      mobile: true,
+      object: true,
+      navitra: true,
+      oneWay: true,
+      others: true,
+    });
+    const filtered = codec.encode(
+      {
+        ...allFilters,
+        settings: {
+          ...allFilters.settings,
+          aprsFilterType: {
+            weather: true,
+            digipeater: true,
+            mobile: false,
+            object: true,
+            navitra: true,
+            oneWay: false,
+            others: true,
+          },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    // Mobile is 0x04 and 1-WAY is 0x20. Both off: 0x7F & ~0x24 = 0x5B.
+    expect(filtered.contents[0x1366]).toBe(0x5b);
+    contents[0x1366] = 0xff;
+    const withHighBit = codec.decode({ contents, radioModel: modelId });
+    const keptHighBit = codec.encode(withHighBit, { contents: Uint8Array.from(contents), radioModel: modelId });
+    expect(keptHighBit.contents[0x1366]).toBe(0xff);
+
+    contents.fill(0, 0x183b, 0x183b + 35);
+    const emptyBulletin = codec.decode({ contents, radioModel: modelId });
+    expect(asRecord(asRecord(emptyBulletin.settings).aprsBulletinGroup).codes).toBe('');
+    const writtenBulletin = codec.encode(
+      {
+        ...emptyBulletin,
+        settings: { ...emptyBulletin.settings, aprsBulletinGroup: { codes: 'CQ,BLN1' } },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(Buffer.from(writtenBulletin.contents.subarray(0x183b, 0x183b + 7)).toString('ascii')).toBe('CQ,BLN1');
+    expect([...writtenBulletin.contents.subarray(0x183b + 7, 0x183b + 35)].every((byte) => byte === 0)).toBe(true);
+    expect(writtenBulletin.contents[0x38c]).toBe(0xff);
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -222,9 +353,11 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
+    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365]) {
       contents[offset] = 0;
     }
+    contents.fill(0, 0x1367, 0x1369);
+    contents.fill(0, 0x183b, 0x183b + 35);
 
     const powerOn = Buffer.from('HELLO !!', 'ascii');
     powerOn.copy(contents, 0x10c0);
