@@ -43,7 +43,7 @@ This module maps regular memories **0–999**.
 
 ## Menu settings (absolute image offsets)
 
-These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped.
+These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped. Menu 104 is not mapped because the radio does not persist it.
 
 Each settings field has an optional `section` string and `sectionOrder` number. `section` is the manual's top-level menu group for that hundred (the name the radio shows for the 100s, 200s, and so on). `sectionOrder` is that hundred's digit: TX/RX 1, Memory 2, Audio File 3, APRS 5, Digital 6, Configuration 9. HamBench groups controls under the section name, sorts those groups by `sectionOrder`, and does not show the menu number in the group heading. Memory group names are menu 201 and use section Memory with order 2. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
@@ -51,6 +51,7 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | --- | --- | --- | --- |
 | 610 D-STAR My Callsign | Digital | `0x2B1` | 8 ASCII, space-padded |
 | 610 callsign memo | Digital | `0x2B9` | 4 ASCII. Edited text is space-padded. A clone image stored NUL at `0x2BC`; an unchanged write keeps that byte. The radio shows `CALL/MEMO` |
+| 101 Beat Shift | TX/RX | `0x1000` | index `0..7` = Type 1 through Type 8 |
 | 110 TX Inhibit | TX/RX | `0x1001` | `0` Off, `1` On |
 | 111 Time-Out Timer | TX/RX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
 | 112 Mic Sensitivity | TX/RX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
@@ -61,8 +62,20 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 131 Resume (Digital) | TX/RX | `0x100D` | `0` Time, `1` Carrier, `2` Seek |
 | 132 Time Restart | TX/RX | `0x100E` | Raw seconds, 1–10 |
 | 133 Carrier Restart | TX/RX | `0x100F` | Raw seconds, 1–10 |
+| 135 Scan Auto Backlight | TX/RX | `0x1012` | `0` Off, `1` On |
 | 141 Auto Offset | TX/RX | `0x1018` | `0` Off, `1` On. Measured by switching the menu from On to Off |
+| 142 CALL Key | TX/RX | `0x1019` | `0` CALL, `1` 1750 Hz |
+| 143 1750Hz TX Hold | TX/RX | `0x101A` | `0` Off, `1` On |
+| 150 VOX | TX/RX | `0x101B` | `0` Off, `1` On |
+| 151 VOX Gain | TX/RX | `0x101C` | Raw level, 0–9 |
+| 152 VOX Delay | TX/RX | `0x101D` | index `0..6` = 250, 500, 750, 1000, 1500, 2000, 3000 ms |
+| 153 TX on Busy | TX/RX | `0x101E` | `0` Off, `1` On |
+| 160 DTMF Encode Speed | TX/RX | `0x101F` | `0` 50 ms, `1` 100 ms, `2` 150 ms |
+| 161 Pause Time | TX/RX | `0x1020` | index `0..6` = 100, 250, 500, 750, 1000, 1500, 2000 ms |
+| 162 DTMF TX Hold | TX/RX | `0x1021` | `0` Off, `1` On |
 | 170 CW Pitch | TX/RX | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
+| 171 CW Reverse | TX/RX | `0x1026` | `0` Normal, `1` Reverse |
+| 180 QSO Log | TX/RX | `0x1027` | `0` Off, `1` On |
 | 202 Recall Method | Memory | `0x1030` | `0` All Bands, `1` Current Band |
 | 311 TX Monitor | Audio File | `0x1032` | `1` On, `0` Off |
 | 900 Backlight Control | Configuration | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |
