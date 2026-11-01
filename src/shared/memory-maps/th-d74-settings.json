@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -22,6 +22,22 @@
         {
           "id": "offset",
           "label": "Offset"
+        },
+        {
+          "id": "beat",
+          "label": "Beat Shift"
+        },
+        {
+          "id": "call",
+          "label": "CALL"
+        },
+        {
+          "id": "vox",
+          "label": "VOX"
+        },
+        {
+          "id": "busy",
+          "label": "Busy"
         }
       ]
     },
@@ -52,6 +68,10 @@
         {
           "id": "pitch",
           "label": "Pitch"
+        },
+        {
+          "id": "reverse",
+          "label": "Reverse"
         }
       ]
     },
@@ -71,6 +91,10 @@
         {
           "id": "restart",
           "label": "Restart"
+        },
+        {
+          "id": "backlight",
+          "label": "Backlight"
         }
       ]
     },
@@ -181,6 +205,17 @@
       "icon": "i-lucide-folder"
     },
     {
+      "id": "log",
+      "label": "QSO Log",
+      "icon": "i-lucide-notebook-pen",
+      "groups": [
+        {
+          "id": "qso",
+          "label": "Log"
+        }
+      ]
+    },
+    {
       "id": "memory",
       "label": "Memory",
       "icon": "i-lucide-database",
@@ -199,6 +234,18 @@
         {
           "id": "lock",
           "label": "Lock"
+        },
+        {
+          "id": "speed",
+          "label": "Speed"
+        },
+        {
+          "id": "pause",
+          "label": "Pause"
+        },
+        {
+          "id": "hold",
+          "label": "Hold"
         }
       ]
     },
@@ -931,6 +978,42 @@
       ]
     },
     {
+      "id": "beatShift",
+      "seek": "0x1000",
+      "fields": [
+        {
+          "id": "type",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Type 1",
+              "Type 2",
+              "Type 3",
+              "Type 4",
+              "Type 5",
+              "Type 6",
+              "Type 7",
+              "Type 8"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "beat",
+            "label": "Beat Shift",
+            "widget": "select",
+            "menu": {
+              "number": 101,
+              "code": "Beat Shift"
+            },
+            "description": "Shifts the radio's internal beat so a birdie moves off the frequency you are listening to. Measured index 0 is Type 1 through index 7 is Type 8.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "txInhibit",
       "seek": "0x1001",
       "fields": [
@@ -1243,6 +1326,32 @@
       ]
     },
     {
+      "id": "scanAutoBacklight",
+      "seek": "0x1012",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "scan",
+            "subgroup": "backlight",
+            "label": "Scan Auto Backlight",
+            "widget": "switch",
+            "menu": {
+              "number": 135,
+              "code": "Scan Auto Backlight"
+            },
+            "description": "Turns the backlight on when scan stops on a signal. 0 is Off and 1 is On.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "autoOffset",
       "seek": "0x1018",
       "fields": [
@@ -1262,6 +1371,269 @@
               "code": "Auto Offset"
             },
             "description": "Applies the standard repeater offset for the current band. Measured by switching the menu from On to Off: 0 is Off and 1 is On.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "callKey",
+      "seek": "0x1019",
+      "fields": [
+        {
+          "id": "mode",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "CALL",
+              "1750Hz"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "call",
+            "label": "CALL Key",
+            "widget": "select",
+            "menu": {
+              "number": 142,
+              "code": "CALL Key"
+            },
+            "description": "What the CALL key sends. 0 is CALL and 1 is 1750 Hz.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tone1750Hold",
+      "seek": "0x101A",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "call",
+            "label": "1750Hz TX Hold",
+            "widget": "switch",
+            "menu": {
+              "number": 143,
+              "code": "1750Hz TX Hold"
+            },
+            "description": "Keeps transmitting the 1750 Hz tone while the CALL key stays pressed. 0 is Off and 1 is On.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "vox",
+      "seek": "0x101B",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "vox",
+            "label": "VOX",
+            "widget": "switch",
+            "menu": {
+              "number": 150,
+              "code": "VOX"
+            },
+            "description": "Keys the transmitter from microphone audio. 0 is Off and 1 is On.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "voxGain",
+      "seek": "0x101C",
+      "fields": [
+        {
+          "id": "gain",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "vox",
+            "label": "VOX Gain",
+            "widget": "integer",
+            "menu": {
+              "number": 151,
+              "code": "VOX Gain"
+            },
+            "description": "How loud the microphone audio must be before VOX keys the transmitter. The byte is the level itself, 0 through 9.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "voxDelay",
+      "seek": "0x101D",
+      "fields": [
+        {
+          "id": "delay",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "250ms",
+              "500ms",
+              "750ms",
+              "1000ms",
+              "1500ms",
+              "2000ms",
+              "3000ms"
+            ]
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "vox",
+            "label": "VOX Delay",
+            "widget": "select",
+            "menu": {
+              "number": 152,
+              "code": "VOX Delay"
+            },
+            "description": "How long the radio stays keyed after you stop talking. Measured index 0 is 250 ms through 3000 ms.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "txOnBusy",
+      "seek": "0x101E",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "transmit",
+            "subgroup": "busy",
+            "label": "TX on Busy",
+            "widget": "switch",
+            "menu": {
+              "number": 153,
+              "code": "TX on Busy"
+            },
+            "description": "Allows transmit while the channel is busy. 0 is Off and 1 is On.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfSpeed",
+      "seek": "0x101F",
+      "fields": [
+        {
+          "id": "speed",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "50ms",
+              "100ms",
+              "150ms"
+            ]
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "speed",
+            "label": "DTMF Encode Speed",
+            "widget": "select",
+            "menu": {
+              "number": 160,
+              "code": "DTMF Encode Speed"
+            },
+            "description": "How long each DTMF digit is sent. 0 is 50 ms, 1 is 100 ms, and 2 is 150 ms.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfPause",
+      "seek": "0x1020",
+      "fields": [
+        {
+          "id": "pause",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "100ms",
+              "250ms",
+              "500ms",
+              "750ms",
+              "1000ms",
+              "1500ms",
+              "2000ms"
+            ]
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "pause",
+            "label": "Pause Time",
+            "widget": "select",
+            "menu": {
+              "number": 161,
+              "code": "Pause Time"
+            },
+            "description": "Pause between DTMF digits. Index 0 is 100 ms through 2000 ms.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfHold",
+      "seek": "0x1021",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "dtmf",
+            "subgroup": "hold",
+            "label": "DTMF TX Hold",
+            "widget": "switch",
+            "menu": {
+              "number": 162,
+              "code": "DTMF TX Hold"
+            },
+            "description": "Holds the transmitter after the DTMF string. 0 is Off and 1 is On.",
             "section": "TX/RX",
             "sectionOrder": 1
           }
@@ -1297,6 +1669,62 @@
               "code": "Pitch Frequency"
             },
             "description": "CW sidetone pitch. Clone images confirm 0x01 = 500 Hz, 0x04 = 800 Hz, and 0x06 = 1000 Hz. Those measurements confirm 100 Hz steps from 400 Hz at 0x00. The remaining steps follow that confirmed pattern.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "cwReverse",
+      "seek": "0x1026",
+      "fields": [
+        {
+          "id": "mode",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Normal",
+              "Reverse"
+            ]
+          },
+          "ui": {
+            "group": "cw",
+            "subgroup": "reverse",
+            "label": "CW Reverse",
+            "widget": "select",
+            "menu": {
+              "number": 171,
+              "code": "CW Reverse"
+            },
+            "description": "Swaps the CW sideband. 0 is Normal and 1 is Reverse.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "qsoLog",
+      "seek": "0x1027",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "log",
+            "subgroup": "qso",
+            "label": "QSO Log",
+            "widget": "switch",
+            "menu": {
+              "number": 180,
+              "code": "QSO Log"
+            },
+            "description": "Records QSOs in the radio log. 0 is Off and 1 is On.",
             "section": "TX/RX",
             "sectionOrder": 1
           }

@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.18.1');
-    expect(memoryMap.version).toBe('1.5.1');
+    expect(version).toBe('1.19.0');
+    expect(memoryMap.version).toBe('1.6.0');
   });
 
   it('names each menu setting with the manual section for that hundred', () => {
@@ -81,7 +81,10 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(141)).toBe('TX/RX');
     expect(seen.get(501)).toBe('APRS');
     expect(seen.get(551)).toBe('APRS');
-    expect(seen.size).toBe(33);
+    expect(seen.get(101)).toBe('TX/RX');
+    expect(seen.get(180)).toBe('TX/RX');
+    expect(seen.has(104)).toBe(false);
+    expect(seen.size).toBe(46);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -161,7 +164,7 @@ describe('TH-D74 menu settings', () => {
     });
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
-    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
       contents[offset] = 0;
     }
 
@@ -223,7 +226,7 @@ describe('TH-D74 menu settings', () => {
     });
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
-    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365, 0x1366]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365, 0x1366]) {
       contents[offset] = 0;
     }
     contents.fill(0, 0x1367, 0x1369);
@@ -343,6 +346,65 @@ describe('TH-D74 menu settings', () => {
     expect(writtenBulletin.contents[0x38c]).toBe(0xff);
   });
 
+  it('round-trips each measured TX/RX byte from the latest image diffs', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088]) {
+      contents[offset] = 0;
+    }
+
+    const samples: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x1000, raw: 0, structId: 'beatShift', field: 'type', expected: 'Type 1' },
+      { offset: 0x1000, raw: 7, structId: 'beatShift', field: 'type', expected: 'Type 8' },
+      { offset: 0x1012, raw: 0, structId: 'scanAutoBacklight', field: 'enabled', expected: 'false' },
+      { offset: 0x1012, raw: 1, structId: 'scanAutoBacklight', field: 'enabled', expected: 'true' },
+      { offset: 0x1019, raw: 0, structId: 'callKey', field: 'mode', expected: 'CALL' },
+      { offset: 0x1019, raw: 1, structId: 'callKey', field: 'mode', expected: '1750Hz' },
+      { offset: 0x101a, raw: 0, structId: 'tone1750Hold', field: 'enabled', expected: 'false' },
+      { offset: 0x101a, raw: 1, structId: 'tone1750Hold', field: 'enabled', expected: 'true' },
+      { offset: 0x101b, raw: 0, structId: 'vox', field: 'enabled', expected: 'false' },
+      { offset: 0x101b, raw: 1, structId: 'vox', field: 'enabled', expected: 'true' },
+      { offset: 0x101c, raw: 0, structId: 'voxGain', field: 'gain', expected: '0' },
+      { offset: 0x101c, raw: 9, structId: 'voxGain', field: 'gain', expected: '9' },
+      { offset: 0x101d, raw: 0, structId: 'voxDelay', field: 'delay', expected: '250ms' },
+      { offset: 0x101d, raw: 3, structId: 'voxDelay', field: 'delay', expected: '1000ms' },
+      { offset: 0x101d, raw: 6, structId: 'voxDelay', field: 'delay', expected: '3000ms' },
+      { offset: 0x101e, raw: 0, structId: 'txOnBusy', field: 'enabled', expected: 'false' },
+      { offset: 0x101e, raw: 1, structId: 'txOnBusy', field: 'enabled', expected: 'true' },
+      { offset: 0x101f, raw: 0, structId: 'dtmfSpeed', field: 'speed', expected: '50ms' },
+      { offset: 0x101f, raw: 1, structId: 'dtmfSpeed', field: 'speed', expected: '100ms' },
+      { offset: 0x101f, raw: 2, structId: 'dtmfSpeed', field: 'speed', expected: '150ms' },
+      { offset: 0x1020, raw: 0, structId: 'dtmfPause', field: 'pause', expected: '100ms' },
+      { offset: 0x1020, raw: 4, structId: 'dtmfPause', field: 'pause', expected: '1000ms' },
+      { offset: 0x1020, raw: 6, structId: 'dtmfPause', field: 'pause', expected: '2000ms' },
+      { offset: 0x1021, raw: 0, structId: 'dtmfHold', field: 'enabled', expected: 'false' },
+      { offset: 0x1021, raw: 1, structId: 'dtmfHold', field: 'enabled', expected: 'true' },
+      { offset: 0x1026, raw: 0, structId: 'cwReverse', field: 'mode', expected: 'Normal' },
+      { offset: 0x1026, raw: 1, structId: 'cwReverse', field: 'mode', expected: 'Reverse' },
+      { offset: 0x1027, raw: 0, structId: 'qsoLog', field: 'enabled', expected: 'false' },
+      { offset: 0x1027, raw: 1, structId: 'qsoLog', field: 'enabled', expected: 'true' },
+    ];
+
+    for (const sample of samples) {
+      contents[sample.offset] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      const settings = asRecord(decoded.settings);
+      expect(String(asRecord(settings[sample.structId])[sample.field]), `${sample.structId}.${sample.field}`).toBe(sample.expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[sample.offset]).toBe(sample.raw);
+      expect(encoded.contents[0x38c]).toBe(0xff);
+    }
+
+    const menus = new Set(samples.map((sample) => sample.structId));
+    expect(menus.size).toBe(13);
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -353,7 +415,7 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1018, 0x1024, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365]) {
       contents[offset] = 0;
     }
     contents.fill(0, 0x1367, 0x1369);
