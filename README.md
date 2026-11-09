@@ -27,6 +27,8 @@ yarn pack:beta kenwood-th-d74
 
 Clone configs (TH-D74, TM-D710A) set `minApiVersion` `18.3.0` for protocol `onError` cleanup ([ADR 0011](https://springfield-ham-radio.github.io/ham-radio-docs/developer/adr/0011-protocol-onerror.html)); TH-F6 remains `18.0.1`. The repo `package.json` name stays `@springfield/radio-module-kenwood`.
 
+TM-D710A driver `1.14.0` sets `capabilities.aprsReceive` and `aprs.host` for the head COM jack ([ADR 0001](docs/adr/0001-tm-d710a-aprs-host.md)). TH-D74 and TH-F6 do not. HamBench uses the installed config and does not inject its D710 compatibility sequence once that flag is present. A local zip from `yarn pack:beta kenwood-tm-d710a` installs with Preferences → Drivers → Install from file. That does not publish a release.
+
 ## License
 
 MIT — Copyright (c) 2026 Bryan Hunt. See [LICENSE](LICENSE).

@@ -101,7 +101,7 @@ describe('pack-release-zip', () => {
     expect(packed.map((item) => item.zipName).sort()).toEqual([
       expectedZipName('kenwood-th-d74', '1.19.0'),
       expectedZipName('kenwood-th-f6', '1.14.0'),
-      expectedZipName('kenwood-tm-d710a', '1.13.0'),
+      expectedZipName('kenwood-tm-d710a', '1.14.0'),
     ]);
 
     const catalogEntries = JSON.parse(readFileSync(catalogEntriesPath, 'utf8')) as unknown[];
@@ -138,7 +138,7 @@ describe('pack-release-zip', () => {
     const published = new Map([
       ['kenwood-th-d74', '1.19.0'],
       ['kenwood-th-f6', '1.14.0'],
-      ['kenwood-tm-d710a', '1.13.0'],
+      ['kenwood-tm-d710a', '1.14.0'],
     ]);
     const configs = listConfigDescriptors(rootDirectory);
 
@@ -168,7 +168,7 @@ describe('pack-release-zip', () => {
     expect(packed.map((item) => item.zipName).sort()).toEqual([
       'radio-module-kenwood-th-d74-1.19.0.zip',
       'radio-module-kenwood-th-f6-1.14.0.zip',
-      'radio-module-kenwood-tm-d710a-1.13.0.zip',
+      'radio-module-kenwood-tm-d710a-1.14.0.zip',
     ]);
 
     const validation = validateModuleCatalog({ schemaVersion: 3, modules: entries });

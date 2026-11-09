@@ -6,6 +6,14 @@ The TM-D710G uses a different clone image and channel record. This module is the
 
 Outside clone mode, the same body **PC** port speaks Kenwood CAT. The config sets `capabilities.liveControl` and a `cat` block (`protocol: kenwood`, `vfoChannel`, `FO`, High/Medium/Low) so HamBench can drive VFOs without model-specific code.
 
+## APRS COM
+
+`capabilities.aprsReceive` and the `aprs` block describe the operation-panel **COM** jack, not this PC port and not `serialConfig`. HamBench reads that JSON from the installed module. See [ADR 0001](adr/0001-tm-d710a-aprs-host.md).
+
+The tested A radio uses menu 528 for COM baud, menu 529 PACKET data band B to hear 144.390 on the host path, and menu 604 OUTPUT only for the passive monitor. Connect sends nothing. The host steps are three Ctrl+C, then `KISS ON` after `cmd:`, then `RESTART` after another `cmd:`. The block does not send `XFLOW`. Software flow stays the default. Hardware RTS/CTS is the choice when the TNC already shows `XFLOW OFF`; the driver handles RTS and does not force it low. Recovery copy does not treat a power cycle as an alternating toggle or a guaranteed KISS exit.
+
+TH-D74 and TH-F6 do not set `aprsReceive`. This module has no TM-D710G config, so it does not publish menu 929.
+
 ## Serial
 
 - PC port on the **TX/RX body**, not the head Com port

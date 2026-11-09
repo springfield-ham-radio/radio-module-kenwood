@@ -69,6 +69,7 @@
     "@springfield/ham-radio-registry": "^2.1.0",
     "@springfield/ham-radio-utils": "^4.19.0",
     "@types/node": "26.6.6",
+    "ajv": "8.20.0",
     "husky": "9.1.7",
     "loglayer": "^9.4.0",
     "oxfmt": "^0.75.0",
