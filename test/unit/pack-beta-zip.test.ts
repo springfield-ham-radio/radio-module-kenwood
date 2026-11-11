@@ -52,8 +52,20 @@ describe('pack:beta Kenwood configs', () => {
         encoding: 'utf8',
       });
       expect(extracted.status).toBe(0);
-      const packedConfig = JSON.parse(extracted.stdout) as { version: string };
+      const packedConfig = JSON.parse(extracted.stdout) as {
+        version: string;
+        capabilities?: { aprsReceive?: boolean };
+        aprs?: { host?: { enter?: Array<{ text: string }> } };
+      };
       expect(packedConfig.version).toBe(result.packedVersion);
+
+      if (modelId === 'kenwood-tm-d710a') {
+        expect(packedConfig.capabilities?.aprsReceive).toBe(true);
+        expect(packedConfig.aprs?.host?.enter?.map((step) => step.text)).toEqual(['KISS ON\r', 'RESTART\r']);
+      } else {
+        expect(packedConfig.capabilities?.aprsReceive).toBeUndefined();
+        expect(packedConfig.aprs).toBeUndefined();
+      }
     },
   );
 });

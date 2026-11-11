@@ -5,7 +5,7 @@
     "name": "Kenwood TM-D710A",
     "manufacturer": "Kenwood"
   },
-  "version": "1.13.0",
+  "version": "1.15.1",
   "minApiVersion": "18.3.0",
   "description": "TM-D710A clone-mode programming (256-byte R/W blocks after 0M PROGRAM; skips radio block 0x7F)",
   "capabilities": {
@@ -13,7 +13,8 @@
     "memoryWrite": true,
     "channelProgramming": true,
     "settingsProgramming": true,
-    "liveControl": true
+    "liveControl": true,
+    "aprsReceive": true
   },
   "bands": ["2m", "70cm"],
   "cat": {
@@ -55,6 +56,38 @@
     "stopBits": 1,
     "parity": "none",
     "rtscts": false
+  },
+  "aprs": {
+    "mode": "monitor",
+    "baudRate": 9600,
+    "baudRates": [9600, 19200, 38400, 57600],
+    "help": "Control-head COM jack, not the body PC memory or CAT port. Match menu 528 to this baud. HamBench does not change radio menus.",
+    "monitorNote": "Passive monitor only. Menu 604 OUTPUT ON copies heard APRS while the radio is showing APRS. COM baud is menu 528. HamBench does not change that menu.",
+    "host": {
+      "interrupt": [3, 3, 3],
+      "prompt": "cmd:",
+      "errorReply": "?EH",
+      "waitMs": 5000,
+      "listenMs": 3000,
+      "kissExit": [192, 255, 192],
+      "promptNudge": [13],
+      "enter": [
+        { "text": "KISS ON\r", "label": "KISS ON" },
+        { "text": "RESTART\r", "label": "RESTART" }
+      ],
+      "flows": ["software", "none", "hardware"],
+      "defaultFlow": "software",
+      "flowHelp": "Software is the default and keeps RTS and DTR low, as does Off. Hardware (RTS/CTS) is required when the TNC already shows XFLOW OFF. The driver handles RTS. It does not force RTS low and it does not send XFLOW.",
+      "setup": [
+        "Connect listens, then enters KISS on its own. A cmd: runs KISS ON, then RESTART after another cmd:. Monitor text without cmd: sends three Ctrl+C once. If text continues without cmd:, Connect writes one carriage return after that interrupt and waits. Silence sends three Ctrl+C once, then the KISS exit frame once if it stays silent. Connect does not transmit RF: no beacon, HB, RESET, XFLOW, or KISS OFF.",
+        "Head COM is not the CAT or memory port. Menu 528 is the COM baud. The tested host path is menu 529 PACKET data band B on 144.390. Menu 604 OUTPUT is the passive monitor only. HamBench does not change those menus."
+      ],
+      "recovery": [
+        "On this radio KISS did not persist across a power cycle. After the radio was off overnight on 11 Nov 2026, the TNC came up in command mode, emitted TNC2 monitor text and cmd:, and replied KISS was OFF.",
+        "kissExit is the KISS specification return-from-KISS frame C0 FF C0. The Kenwood manuals have not verified that frame on the TM-D710. It is not a manual-verified exit. The A/E KISS sentence says power OFF then ON causes the TNC to enter (or exit) KISS when the parameter is ON. The G sentence uses RESTART for that wording. Neither says the result alternates. A startup banner is not proof of PACKET mode.",
+        "promptNudge is one carriage return (byte 13). Connect writes it at most once, only after the three Ctrl+C interrupt, and only when printable command text arrived after that interrupt without cmd:. It is not written on silence, before the interrupt, or after a KISS data frame. A terminal session observed a fresh cmd: after a carriage return at an existing prompt. The manuals do not document that reply. SENDPAC $0D sends a packet only in Converse. With MONITOR on, this TNC streamed TNC2 lines and did not answer three Ctrl+C with cmd:."
+      ]
+    }
   },
   "memoryConfig": {
     "chunkSize": 256,
