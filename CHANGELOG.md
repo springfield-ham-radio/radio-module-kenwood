@@ -1,3 +1,9 @@
+## [2.11.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.10.0...v2.11.0) (2026-11-11)
+
+### Features
+
+* **tm-d710a:** publish the APRS host procedure in the driver ([#49](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/49)) ([6607a7c](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/6607a7c3b29dd66977afa5b733fe86162f8ec088))
+
 ## [2.10.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.9.0...v2.10.0) (2026-11-01)
 
 ### Features
