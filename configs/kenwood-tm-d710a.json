@@ -68,7 +68,7 @@
       "prompt": "cmd:",
       "errorReply": "?EH",
       "waitMs": 5000,
-      "detectListenMs": 3000,
+      "listenMs": 3000,
       "kissExit": [192, 255, 192],
       "enter": [
         { "text": "KISS ON\r", "label": "KISS ON" },

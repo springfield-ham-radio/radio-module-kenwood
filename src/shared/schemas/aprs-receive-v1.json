@@ -34,11 +34,11 @@
         "prompt": { "type": "string", "minLength": 1, "maxLength": 16, "pattern": "^[\\u0020-\\u007e]+$" },
         "errorReply": { "type": "string", "minLength": 1, "maxLength": 16, "pattern": "^[\\u0020-\\u007e]+$" },
         "waitMs": { "type": "integer", "minimum": 1000, "maximum": 60000 },
-        "detectListenMs": {
-          "description": "How long Connect listens, in milliseconds, before treating the TNC as silent. Command text in this window starts the enter steps. Silence sends the interrupt once, then kissExit once if this block declares it.",
+        "listenMs": {
+          "description": "How long Connect listens, in milliseconds, before treating the TNC as silent. HamBench reads aprs.host.listenMs, default 3000, range 500 to 15000. Command text in this window starts the enter steps. Silence sends the interrupt once, then kissExit once if this block declares it.",
           "type": "integer",
-          "minimum": 1000,
-          "maximum": 10000
+          "minimum": 500,
+          "maximum": 15000
         },
         "kissExit": {
           "description": "Optional bytes sent once when Connect is still silent after the interrupt. The TM-D710A value is the KISS specification return-from-KISS frame 0xC0 0xFF 0xC0. The Kenwood manuals have not verified that frame on this radio.",

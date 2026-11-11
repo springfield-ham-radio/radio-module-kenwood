@@ -16,7 +16,7 @@ type AprsHost = {
   prompt: string;
   errorReply: string;
   waitMs: number;
-  detectListenMs?: number;
+  listenMs?: number;
   kissExit?: number[];
   enter: AprsEnterStep[];
   flows: string[];
@@ -107,7 +107,7 @@ describe('Kenwood radio configs (schema)', () => {
         prompt: 'cmd:',
         errorReply: '?EH',
         waitMs: 5000,
-        detectListenMs: 3000,
+        listenMs: 3000,
         kissExit: [192, 255, 192],
         enter: [
           { text: 'KISS ON\r', label: 'KISS ON' },
@@ -142,7 +142,7 @@ describe('Kenwood radio configs (schema)', () => {
 
     const withoutDetection = structuredClone(tmD710a.aprs);
     delete withoutDetection?.host.kissExit;
-    delete withoutDetection?.host.detectListenMs;
+    delete withoutDetection?.host.listenMs;
     expect(aprsReceiveValidator(withoutDetection), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
 
     for (const fileName of ['kenwood-th-d74.json', 'kenwood-th-f6.json']) {
