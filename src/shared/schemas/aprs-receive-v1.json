@@ -47,6 +47,13 @@
           "maxItems": 16,
           "items": { "type": "integer", "minimum": 0, "maximum": 255 }
         },
+        "promptNudge": {
+          "description": "Optional bytes written at most once per detection pass, only after interrupt was written, and only when printable command text arrived after that interrupt without the prompt. Connect then waits waitMs for a fresh prompt. Not written on silence, before the interrupt, or after a KISS data frame. The TM-D710A value is a carriage return (13). A terminal session observed a fresh cmd: after a carriage return at an existing prompt. The Kenwood manuals do not document that reply. SENDPAC $0D sends a packet only in Converse.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+        },
         "enter": {
           "type": "array",
           "minItems": 1,
