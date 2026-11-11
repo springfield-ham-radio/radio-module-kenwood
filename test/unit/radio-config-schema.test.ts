@@ -16,6 +16,8 @@ type AprsHost = {
   prompt: string;
   errorReply: string;
   waitMs: number;
+  detectListenMs?: number;
+  kissExit?: number[];
   enter: AprsEnterStep[];
   flows: string[];
   defaultFlow: string;
@@ -89,7 +91,7 @@ describe('Kenwood radio configs (schema)', () => {
 
   it('publishes the tested TM-D710A APRS host procedure and leaves other models without it', () => {
     const tmD710a = loadConfig('kenwood-tm-d710a.json');
-    expect(tmD710a.version).toBe('1.14.0');
+    expect(tmD710a.version).toBe('1.15.0');
     expect(tmD710a.capabilities?.aprsReceive).toBe(true);
     expect(tmD710a.serialConfig?.rtscts).toBe(false);
     expect(aprsReceiveValidator(tmD710a.aprs), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
@@ -105,6 +107,8 @@ describe('Kenwood radio configs (schema)', () => {
         prompt: 'cmd:',
         errorReply: '?EH',
         waitMs: 5000,
+        detectListenMs: 3000,
+        kissExit: [192, 255, 192],
         enter: [
           { text: 'KISS ON\r', label: 'KISS ON' },
           { text: 'RESTART\r', label: 'RESTART' },
@@ -114,21 +118,32 @@ describe('Kenwood radio configs (schema)', () => {
         flowHelp:
           'Software is the default and keeps RTS and DTR low, as does Off. Hardware (RTS/CTS) is required when the TNC already shows XFLOW OFF. The driver handles RTS. It does not force RTS low and it does not send XFLOW.',
         setup: [
-          'Connect writes nothing. Request writes three Ctrl+C only when this connection has no cmd:. Enter host KISS writes KISS ON only after that cmd:, then RESTART only after another cmd:. An ?EH reply stops the sequence before RESTART. cmd: is not proof of PACKET mode.',
-          'Head COM is not the CAT or memory port. Menu 528 is the COM baud. The tested host path is menu 529 PACKET data band B on 144.390. Menu 604 OUTPUT is the passive monitor only. HamBench does not change those menus and does not send XFLOW.',
+          'Connect listens, then enters KISS on its own. Command text such as cmd: runs KISS ON, then RESTART after another cmd:. Silence sends three Ctrl+C once. If it is still silent, Connect sends the KISS exit frame once and waits for cmd:. It stops if that stays silent. Connect does not transmit RF: no beacon, HB, RESET, XFLOW, or KISS OFF.',
+          'Head COM is not the CAT or memory port. Menu 528 is the COM baud. The tested host path is menu 529 PACKET data band B on 144.390. Menu 604 OUTPUT is the passive monitor only. HamBench does not change those menus.',
         ],
         recovery: [
-          'The A/E KISS sentence says power OFF then ON causes the TNC to enter (or exit) KISS when the parameter is ON. The G sentence uses RESTART for that wording. Neither says the result alternates, and different editions do not prove that repeating a power cycle alternates. One cycle with the COM port still open and hardware RTS ready can show the startup banner. That banner is not a guaranteed reset or exit, and cmd: in it is not proof of PACKET mode. No binary KISS exit is manual-verified. HamBench does not send KISS OFF, XFLOW, Ctrl+C, or a carriage return to probe an unknown mode.',
+          'On this radio KISS did not persist across a power cycle. After the radio was off overnight on 11 Nov 2026, the TNC came up in command mode, emitted TNC2 monitor text and cmd:, and replied KISS was OFF.',
+          'kissExit is the KISS specification return-from-KISS frame C0 FF C0. The Kenwood manuals have not verified that frame on the TM-D710. It is not a manual-verified exit. The A/E KISS sentence says power OFF then ON causes the TNC to enter (or exit) KISS when the parameter is ON. The G sentence uses RESTART for that wording. Neither says the result alternates. A startup banner is not proof of PACKET mode.',
         ],
       },
     });
 
     const recovery = tmD710a.aprs?.host.recovery.join('\n') ?? '';
+    const setup = tmD710a.aprs?.host.setup.join('\n') ?? '';
     expect(recovery).not.toMatch(/second cycle|toggles again|successive/i);
     expect(recovery).toContain('Neither says the result alternates');
-    expect(recovery).toContain('not a guaranteed reset or exit');
-    expect(recovery).toContain('No binary KISS exit is manual-verified');
+    expect(recovery).toContain('did not persist across a power cycle');
+    expect(recovery).toContain('KISS was OFF');
+    expect(recovery).toContain('not a manual-verified exit');
+    expect(setup).not.toMatch(/Connect writes nothing/);
+    expect(setup).toContain('does not transmit RF');
+    expect(tmD710a.aprs?.host.kissExit).toEqual([0xc0, 0xff, 0xc0]);
     expect(tmD710a.aprs?.host.enter.map((step) => step.text).join('')).not.toMatch(/XFLOW/);
+
+    const withoutDetection = structuredClone(tmD710a.aprs);
+    delete withoutDetection?.host.kissExit;
+    delete withoutDetection?.host.detectListenMs;
+    expect(aprsReceiveValidator(withoutDetection), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
 
     for (const fileName of ['kenwood-th-d74.json', 'kenwood-th-f6.json']) {
       const config = loadConfig(fileName);

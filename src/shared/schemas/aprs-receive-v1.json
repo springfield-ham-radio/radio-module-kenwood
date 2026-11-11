@@ -34,6 +34,19 @@
         "prompt": { "type": "string", "minLength": 1, "maxLength": 16, "pattern": "^[\\u0020-\\u007e]+$" },
         "errorReply": { "type": "string", "minLength": 1, "maxLength": 16, "pattern": "^[\\u0020-\\u007e]+$" },
         "waitMs": { "type": "integer", "minimum": 1000, "maximum": 60000 },
+        "detectListenMs": {
+          "description": "How long Connect listens, in milliseconds, before treating the TNC as silent. Command text in this window starts the enter steps. Silence sends the interrupt once, then kissExit once if this block declares it.",
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 10000
+        },
+        "kissExit": {
+          "description": "Optional bytes sent once when Connect is still silent after the interrupt. The TM-D710A value is the KISS specification return-from-KISS frame 0xC0 0xFF 0xC0. The Kenwood manuals have not verified that frame on this radio.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+        },
         "enter": {
           "type": "array",
           "minItems": 1,
