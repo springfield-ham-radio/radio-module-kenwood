@@ -1,3 +1,9 @@
+## [2.12.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.11.0...v2.12.0) (2026-11-14)
+
+### Features
+
+* **tm-d710a:** declare hardware flow control for host KISS ([#51](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/51)) ([1746471](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/1746471220fdcd1cea6c21bf9387ab2049807254))
+
 ## [2.11.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.10.0...v2.11.0) (2026-11-11)
 
 ### Features
