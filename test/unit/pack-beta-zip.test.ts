@@ -55,13 +55,14 @@ describe('pack:beta Kenwood configs', () => {
       const packedConfig = JSON.parse(extracted.stdout) as {
         version: string;
         capabilities?: { aprsReceive?: boolean };
-        aprs?: { host?: { enter?: Array<{ text: string }> } };
+        aprs?: { host?: { enter?: Array<{ text: string }>; flowControl?: string } };
       };
       expect(packedConfig.version).toBe(result.packedVersion);
 
       if (modelId === 'kenwood-tm-d710a') {
         expect(packedConfig.capabilities?.aprsReceive).toBe(true);
         expect(packedConfig.aprs?.host?.enter?.map((step) => step.text)).toEqual(['KISS ON\r', 'RESTART\r']);
+        expect(packedConfig.aprs?.host?.flowControl).toBe('hardware');
       } else {
         expect(packedConfig.capabilities?.aprsReceive).toBeUndefined();
         expect(packedConfig.aprs).toBeUndefined();
