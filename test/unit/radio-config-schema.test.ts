@@ -20,6 +20,7 @@ type AprsHost = {
   kissExit?: number[];
   promptNudge?: number[];
   enter: AprsEnterStep[];
+  flowControl?: 'hardware' | 'software' | 'none';
   flows: string[];
   defaultFlow: string;
   flowHelp: string;
@@ -92,7 +93,7 @@ describe('Kenwood radio configs (schema)', () => {
 
   it('publishes the tested TM-D710A APRS host procedure and leaves other models without it', () => {
     const tmD710a = loadConfig('kenwood-tm-d710a.json');
-    expect(tmD710a.version).toBe('1.15.1');
+    expect(tmD710a.version).toBe('1.16.0');
     expect(tmD710a.capabilities?.aprsReceive).toBe(true);
     expect(tmD710a.serialConfig?.rtscts).toBe(false);
     expect(aprsReceiveValidator(tmD710a.aprs), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
@@ -115,10 +116,11 @@ describe('Kenwood radio configs (schema)', () => {
           { text: 'KISS ON\r', label: 'KISS ON' },
           { text: 'RESTART\r', label: 'RESTART' },
         ],
+        flowControl: 'hardware',
         flows: ['software', 'none', 'hardware'],
         defaultFlow: 'software',
         flowHelp:
-          'Software is the default and keeps RTS and DTR low, as does Off. Hardware (RTS/CTS) is required when the TNC already shows XFLOW OFF. The driver handles RTS. It does not force RTS low and it does not send XFLOW.',
+          'flowControl is hardware: host/KISS on this COM jack requires RTS/CTS. KISS receive was verified only with Hardware RTS/CTS after XFLOW OFF. Software is the flows default and keeps RTS and DTR low, as does Off. The driver handles RTS. It does not force RTS low and it does not send XFLOW.',
         setup: [
           'Connect listens, then enters KISS on its own. A cmd: runs KISS ON, then RESTART after another cmd:. Monitor text without cmd: sends three Ctrl+C once. If text continues without cmd:, Connect writes one carriage return after that interrupt and waits. Silence sends three Ctrl+C once, then the KISS exit frame once if it stays silent. Connect does not transmit RF: no beacon, HB, RESET, XFLOW, or KISS OFF.',
           'Head COM is not the CAT or memory port. Menu 528 is the COM baud. The tested host path is menu 529 PACKET data band B on 144.390. Menu 604 OUTPUT is the passive monitor only. HamBench does not change those menus.',
@@ -140,6 +142,7 @@ describe('Kenwood radio configs (schema)', () => {
     expect(recovery).toContain('not a manual-verified exit');
     expect(setup).not.toMatch(/Connect writes nothing/);
     expect(setup).toContain('does not transmit RF');
+    expect(tmD710a.aprs?.host.flowControl).toBe('hardware');
     expect(tmD710a.aprs?.host.kissExit).toEqual([0xc0, 0xff, 0xc0]);
     expect(tmD710a.aprs?.host.promptNudge).toEqual([0x0d]);
     expect(recovery).toContain('only after the three Ctrl+C interrupt');
@@ -150,7 +153,14 @@ describe('Kenwood radio configs (schema)', () => {
     delete withoutDetection?.host.kissExit;
     delete withoutDetection?.host.listenMs;
     delete withoutDetection?.host.promptNudge;
+    delete withoutDetection?.host.flowControl;
     expect(aprsReceiveValidator(withoutDetection), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
+
+    const invalidFlow = structuredClone(tmD710a.aprs) as { host: { flowControl: string } } | undefined;
+    if (invalidFlow) {
+      invalidFlow.host.flowControl = 'rtscts';
+    }
+    expect(aprsReceiveValidator(invalidFlow)).toBe(false);
 
     for (const fileName of ['kenwood-th-d74.json', 'kenwood-th-f6.json']) {
       const config = loadConfig(fileName);

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://springfield-ham-radio.com/schemas/aprs-receive-v1.json",
   "title": "APRS receive block",
-  "description": "Shape HamBench reads from an installed module when capabilities.aprsReceive is true. Matches parseAprsHostProfile and aprsReceiveProfile in ham-radio-ui at 9b24bc65de51ddd411166045ffda43550e020076. This file is the module contract check. radio-config-v1 does not define aprs; the protocol schema leaves the key through as an additional property.",
+  "description": "Shape HamBench reads from an installed module when capabilities.aprsReceive is true. This file is the module contract check. radio-config-v1 does not define aprs; the protocol schema leaves the key through as an additional property. flowControl is the serial mode HamBench applies for host/KISS. flows and defaultFlow remain the older choice list.",
   "type": "object",
   "additionalProperties": false,
   "required": ["mode", "baudRate", "baudRates", "help", "monitorNote", "host"],
@@ -67,6 +67,10 @@
               "label": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^[\\u0020-\\u007e]+$" }
             }
           }
+        },
+        "flowControl": {
+          "description": "Serial flow control HamBench applies for host/KISS on this TNC port. hardware is RTS/CTS, software is XON/XOFF, and none leaves both off. Omit when that port's flow control is not known. This key is separate from flows and defaultFlow.",
+          "enum": ["hardware", "software", "none"]
         },
         "flows": {
           "type": "array",
