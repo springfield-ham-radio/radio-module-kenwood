@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -160,6 +160,11 @@
           "id": "identity",
           "label": "Identity",
           "description": "Menu 500 stores the callsign and SSID as separate text. The callsign is 6 bytes at 0x1200, NUL-padded. The SSID is the literal suffix, including the hyphen (for example -7), in 3 NUL-padded bytes at 0x1206. It is not a 0-15 index. A shorter callsign does not shift the SSID."
+        },
+        {
+          "id": "data",
+          "label": "Data",
+          "description": "Menus 505 through 509. Packet speed, data band, DCD, transmit delay, and the APRS lock checkboxes."
         },
         {
           "id": "icon",
@@ -2395,6 +2400,211 @@
               "code": "Icon"
             },
             "description": "APRS symbol, stored as the table character and the symbol code. Radio is \\Y and RV is /R. The list is the TH-D74 manual icon names mapped to the public APRS symbol table (symbolsX.txt and symbols-new.txt). A symbol that is not in the list is left as those two characters. Edited text is NUL-padded.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsDataSpeed",
+      "seek": "0x120C",
+      "fields": [
+        {
+          "id": "speed",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "1200 bps",
+              "9600 bps"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "Data Speed",
+            "widget": "select",
+            "menu": {
+              "number": 505,
+              "code": "Data Speed"
+            },
+            "description": "APRS packet speed. Measured on the radio: 0 is 1200 bps and 1 is 9600 bps.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsDataBand",
+      "seek": "0x120B",
+      "fields": [
+        {
+          "id": "band",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Band A",
+              "Band B"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "Data Band",
+            "widget": "select",
+            "menu": {
+              "number": 506,
+              "code": "Data Band"
+            },
+            "description": "Band used for APRS data. Measured on the radio: 0 is Band A and 1 is Band B.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsDcdSense",
+      "seek": "0x120D",
+      "fields": [
+        {
+          "id": "sense",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Busy",
+              "Detect Data",
+              "Off"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "DCD Sense",
+            "widget": "select",
+            "menu": {
+              "number": 507,
+              "code": "DCD Sense"
+            },
+            "description": "How the radio decides the channel is busy before an APRS transmission. Measured on the radio: 0 is Busy, 1 is Detect Data, and 2 is Off.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsTxDelay",
+      "seek": "0x120F",
+      "fields": [
+        {
+          "id": "delay",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "100ms",
+              "150ms",
+              "200ms",
+              "300ms",
+              "400ms",
+              "500ms",
+              "750ms",
+              "1000ms"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "TX Delay",
+            "widget": "select",
+            "menu": {
+              "number": 508,
+              "code": "TX Delay"
+            },
+            "description": "Delay after keying before the APRS packet. Index 0 is 100 ms, then 150, 200, 300, 400, 500, 750, and 1000 ms. Measured 200 ms is index 2 and 500 ms is index 5.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsLock",
+      "seek": "0x120A",
+      "fields": [
+        {
+          "id": "_unused",
+          "type": "bits",
+          "width": 5,
+          "reserved": true
+        },
+        {
+          "id": "aprsKey",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "APRS Key",
+            "widget": "switch",
+            "order": 3,
+            "menu": {
+              "number": 509,
+              "code": "APRS Lock"
+            },
+            "description": "Locks the APRS key. Bit 2 (0x04). Bits 3-7 of this byte stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        },
+        {
+          "id": "ptt",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "PTT",
+            "widget": "switch",
+            "order": 2,
+            "menu": {
+              "number": 509,
+              "code": "APRS Lock"
+            },
+            "description": "Locks PTT. Bit 1 (0x02). The other bits in this byte stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        },
+        {
+          "id": "frequency",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "data",
+            "label": "Frequency",
+            "widget": "switch",
+            "order": 1,
+            "menu": {
+              "number": 509,
+              "code": "APRS Lock"
+            },
+            "description": "Locks the APRS frequency. Bit 0 (0x01). The other bits in this byte stay as they were.",
             "section": "APRS",
             "sectionOrder": 5
           }

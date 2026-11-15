@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.19.0');
+    expect(radioConfig.version).toBe('1.20.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -264,6 +264,12 @@ describe('Kenwood TH-D74 module', () => {
     writeAscii(contents, 0x10c0, 'HELLO !!', 16, 0);
     writeAscii(contents, 0x1200, 'W1AW', 6, 0);
     writeAscii(contents, 0x1206, '-7', 3, 0);
+    // 0x1209 and 0x120E stay 0xFF. They are not menu fields.
+    contents[0x120a] = 0xa5;
+    contents[0x120b] = 1;
+    contents[0x120c] = 1;
+    contents[0x120d] = 1;
+    contents[0x120f] = 5;
     writeAscii(contents, 0x02b1, 'W1AW', 8, 0x20);
     writeAscii(contents, 0x02b9, 'HT', 4, 0x20);
 
@@ -307,6 +313,11 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.speedDistance).unit).toBe('knots');
     expect(asRecord(settings.powerOnMessage).message).toBe('HELLO !!');
     expect(asRecord(settings.aprsMyCall)).toMatchObject({ callsign: 'W1AW', ssid: '-7' });
+    expect(asRecord(settings.aprsDataSpeed).speed).toBe('9600 bps');
+    expect(asRecord(settings.aprsDataBand).band).toBe('Band B');
+    expect(asRecord(settings.aprsDcdSense).sense).toBe('Detect Data');
+    expect(asRecord(settings.aprsTxDelay).delay).toBe('500ms');
+    expect(asRecord(settings.aprsLock)).toMatchObject({ frequency: true, ptt: false, aprsKey: true });
     expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
@@ -353,6 +364,8 @@ describe('Kenwood TH-D74 module', () => {
       [0x1088, 1],
       [0x10c0, 16],
       [0x1200, 9],
+      [0x120a, 4],
+      [0x120f, 1],
       [0x1213, 1],
       [0x1363, 6],
       [0x1370, 1],

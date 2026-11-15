@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.19.0');
-    expect(memoryMap.version).toBe('1.6.0');
+    expect(version).toBe('1.20.0');
+    expect(memoryMap.version).toBe('1.7.0');
   });
 
   it('names each menu setting with the manual section for that hundred', () => {
@@ -80,11 +80,17 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(500)).toBe('APRS');
     expect(seen.get(141)).toBe('TX/RX');
     expect(seen.get(501)).toBe('APRS');
+    expect(seen.get(505)).toBe('APRS');
+    expect(seen.get(506)).toBe('APRS');
+    expect(seen.get(507)).toBe('APRS');
+    expect(seen.get(508)).toBe('APRS');
+    expect(seen.get(509)).toBe('APRS');
     expect(seen.get(551)).toBe('APRS');
     expect(seen.get(101)).toBe('TX/RX');
     expect(seen.get(180)).toBe('TX/RX');
     expect(seen.has(104)).toBe(false);
-    expect(seen.size).toBe(46);
+    expect(seen.has(510)).toBe(false);
+    expect(seen.size).toBe(51);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -405,6 +411,106 @@ describe('TH-D74 menu settings', () => {
     expect(menus.size).toBe(13);
   });
 
+  it('encodes and decodes measured APRS menus 505 through 509', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1363, 0x1364, 0x1365]) {
+      contents[offset] = 0;
+    }
+    contents.fill(0, 0x1367, 0x1369);
+    contents.fill(0, 0x183b, 0x183b + 35);
+    contents[0x1209] = 0x3c;
+    contents[0x120e] = 0x5a;
+
+    const samples: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x120c, raw: 0, structId: 'aprsDataSpeed', field: 'speed', expected: '1200 bps' },
+      { offset: 0x120c, raw: 1, structId: 'aprsDataSpeed', field: 'speed', expected: '9600 bps' },
+      { offset: 0x120b, raw: 0, structId: 'aprsDataBand', field: 'band', expected: 'Band A' },
+      { offset: 0x120b, raw: 1, structId: 'aprsDataBand', field: 'band', expected: 'Band B' },
+      { offset: 0x120d, raw: 0, structId: 'aprsDcdSense', field: 'sense', expected: 'Busy' },
+      { offset: 0x120d, raw: 1, structId: 'aprsDcdSense', field: 'sense', expected: 'Detect Data' },
+      { offset: 0x120d, raw: 2, structId: 'aprsDcdSense', field: 'sense', expected: 'Off' },
+      { offset: 0x120f, raw: 0, structId: 'aprsTxDelay', field: 'delay', expected: '100ms' },
+      { offset: 0x120f, raw: 1, structId: 'aprsTxDelay', field: 'delay', expected: '150ms' },
+      { offset: 0x120f, raw: 2, structId: 'aprsTxDelay', field: 'delay', expected: '200ms' },
+      { offset: 0x120f, raw: 3, structId: 'aprsTxDelay', field: 'delay', expected: '300ms' },
+      { offset: 0x120f, raw: 4, structId: 'aprsTxDelay', field: 'delay', expected: '400ms' },
+      { offset: 0x120f, raw: 5, structId: 'aprsTxDelay', field: 'delay', expected: '500ms' },
+      { offset: 0x120f, raw: 6, structId: 'aprsTxDelay', field: 'delay', expected: '750ms' },
+      { offset: 0x120f, raw: 7, structId: 'aprsTxDelay', field: 'delay', expected: '1000ms' },
+    ];
+
+    for (const sample of samples) {
+      contents[sample.offset] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      const settings = asRecord(decoded.settings);
+      expect(String(asRecord(settings[sample.structId])[sample.field]), `${sample.structId}.${sample.field}`).toBe(sample.expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[sample.offset]).toBe(sample.raw);
+      expect(encoded.contents[0x1209]).toBe(0x3c);
+      expect(encoded.contents[0x120e]).toBe(0x5a);
+      expect(encoded.contents[0x38c]).toBe(0xff);
+    }
+
+    const lockCases: Array<{ raw: number; frequency: boolean; ptt: boolean; aprsKey: boolean }> = [
+      { raw: 0xa8, frequency: false, ptt: false, aprsKey: false },
+      { raw: 0xa9, frequency: true, ptt: false, aprsKey: false },
+      { raw: 0xaa, frequency: false, ptt: true, aprsKey: false },
+      { raw: 0xac, frequency: false, ptt: false, aprsKey: true },
+      { raw: 0xaf, frequency: true, ptt: true, aprsKey: true },
+      { raw: 0xff, frequency: true, ptt: true, aprsKey: true },
+    ];
+
+    for (const lockCase of lockCases) {
+      contents[0x120a] = lockCase.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsLock)).toMatchObject({
+        frequency: lockCase.frequency,
+        ptt: lockCase.ptt,
+        aprsKey: lockCase.aprsKey,
+      });
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x120a]).toBe(lockCase.raw);
+      expect(encoded.contents[0x1209]).toBe(0x3c);
+      expect(encoded.contents[0x120e]).toBe(0x5a);
+    }
+
+    contents[0x120a] = 0xa9;
+    const frequencyOnly = codec.decode({ contents, radioModel: modelId });
+    const withPtt = codec.encode(
+      {
+        ...frequencyOnly,
+        settings: {
+          ...frequencyOnly.settings,
+          aprsLock: { frequency: true, ptt: true, aprsKey: false },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    // Frequency 0x01 and PTT 0x02, with the measured high bits 0xA8 left in place.
+    expect(withPtt.contents[0x120a]).toBe(0xab);
+    expect(withPtt.contents[0x1209]).toBe(0x3c);
+    expect(withPtt.contents[0x120e]).toBe(0x5a);
+
+    const cleared = codec.encode(
+      {
+        ...frequencyOnly,
+        settings: {
+          ...frequencyOnly.settings,
+          aprsLock: { frequency: false, ptt: false, aprsKey: false },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(cleared.contents[0x120a]).toBe(0xa8);
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -415,7 +521,7 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x1213, 0x1363, 0x1364, 0x1365]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1363, 0x1364, 0x1365]) {
       contents[offset] = 0;
     }
     contents.fill(0, 0x1367, 0x1369);
