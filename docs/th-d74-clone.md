@@ -90,6 +90,11 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 500 APRS My Callsign | APRS | `0x1200` | 6 ASCII, NUL-padded |
 | 500 APRS SSID | APRS | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
 | 501 Icon | APRS | `0x1367` | 2 ASCII, table character then symbol code. The choice list shows the manual icon name. Radio is `\Y` and RV is `/R`. A code that is not in the list is left unchanged |
+| 505 Data Speed | APRS | `0x120C` | `0` 1200 bps, `1` 9600 bps |
+| 506 Data Band | APRS | `0x120B` | `0` Band A, `1` Band B |
+| 507 DCD Sense | APRS | `0x120D` | `0` Busy, `1` Detect Data, `2` Off |
+| 508 TX Delay | APRS | `0x120F` | index `0..7` = 100, 150, 200, 300, 400, 500, 750, 1000 ms. Measured 200 ms = 2 and 500 ms = 5 |
+| 509 APRS Lock | APRS | `0x120A` | Frequency `0x01`, PTT `0x02`, APRS Key `0x04`. Bits 3–7 stay as they were. See the bit table below |
 | 522 Shift/Offset | APRS | `0x1363` | `0` Off, `1` On |
 | 523 QSY Limit Distance | APRS | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
 | 531 Slow Rate | APRS | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
@@ -97,6 +102,17 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 550 Position Limit | APRS | `0x1365` | Tens of miles. `0` Off, `248` = 2480 mi. Manual steps Off, then 10 through 2500 |
 | 551 Filter Type | APRS | `0x1366` | Seven checkboxes in bits 0–6. All on is `0x7F`. Bit 7 is unused. See the bit table below |
 | 585 Bulletin Group Code | APRS | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
+
+`0x120E`, the byte between DCD Sense (`0x120D`) and TX Delay (`0x120F`), stays unmapped. Menu 510 Beacon Method is not mapped.
+
+Menu 509 bits. Each checkbox was measured on its own. Bits 3–7 are left unchanged.
+
+| Bit | Mask | Lock |
+| --- | --- | --- |
+| 0 | `0x01` | Frequency |
+| 1 | `0x02` | PTT |
+| 2 | `0x04` | APRS Key |
+| 3–7 | `0xF8` | Unused. Left unchanged |
 
 Menu 551 bits, from the manual list Weather, Digipeater, Mobile, Object, NAVITRA, 1-WAY, Others. Turning Mobile and 1-WAY off cleared `0x04` and `0x20`. That list order from bit 0 puts Mobile on `0x04` and 1-WAY on `0x20`. The other five masks follow the same order and were not measured on their own. Bit 7 stays as it was.
 
