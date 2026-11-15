@@ -1,3 +1,9 @@
+## [2.13.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.12.0...v2.13.0) (2026-11-15)
+
+### Features
+
+* **th-d74:** map measured APRS menus 505 through 509 ([#52](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/52)) ([0d04f11](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/0d04f1118e015f94dbfd312d16c23fe9ae406bd9))
+
 ## [2.12.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.11.0...v2.12.0) (2026-11-14)
 
 ### Features
