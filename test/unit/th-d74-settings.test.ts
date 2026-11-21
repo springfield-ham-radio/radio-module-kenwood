@@ -33,7 +33,7 @@ describe('TH-D74 menu settings', () => {
 
   it('bumps the driver config for the added menus', () => {
     expect(version).toBe('1.21.0');
-    expect(memoryMap.version).toBe('1.7.0');
+    expect(memoryMap.version).toBe('1.7.1');
   });
 
   it('names each menu setting with the radio category and group', () => {
@@ -645,6 +645,68 @@ describe('TH-D74 menu settings', () => {
     expect(oneMinute.contents[0x1369]).toBe(0xa5);
   });
 
+  it('groups menu 516 objects for the settings layout', () => {
+    const expectedOrder = [
+      ['name', 51601],
+      ['type', 51602],
+      ['method', 51603],
+      ['latitudeDegrees', 51604],
+      ['latitudeMinutes', 51605],
+      ['latitudeFraction', 51606],
+      ['longitudeDegrees', 51607],
+      ['longitudeMinutes', 51608],
+      ['longitudeFraction', 51609],
+      ['icon', 51610],
+      ['comment', 51611],
+    ] as const;
+
+    for (const index of [1, 2, 3]) {
+      const struct = memoryMap.structs.find((entry) => entry.id === `aprsObject${index}`);
+      expect(struct?.seek).toBe(`0x${(0x1900 + (index - 1) * 0x40).toString(16).toUpperCase()}`);
+      expect(struct?.count).toBeUndefined();
+      expect(struct?.fields.some((field) => field.id === '_hemisphere' && field.reserved === true)).toBe(true);
+
+      const visible = (struct?.fields ?? []).filter((field) => field.ui);
+      const byOrder = [...visible].sort((left, right) => (left.ui?.order ?? 0) - (right.ui?.order ?? 0));
+      expect(byOrder.map((field) => [field.id, field.ui?.order])).toEqual(expectedOrder.map(([id, order]) => [id, order]));
+      expect(byOrder.map((field) => field.ui?.label)).toEqual([
+        'Name',
+        'Type',
+        'Method',
+        'Latitude Degrees',
+        'Latitude Minutes',
+        'Latitude Fraction',
+        'Longitude Degrees',
+        'Longitude Minutes',
+        'Longitude Fraction',
+        'Icon',
+        'Comment',
+      ]);
+
+      for (const field of visible) {
+        expect(field.ui?.record).toEqual({ id: 'aprs-object', index, label: `Object ${index}` });
+      }
+
+      expect(visible.find((field) => field.id === 'latitudeFraction')?.ui?.composite).toEqual({
+        id: `obj${index}-lat`,
+        kind: 'coordinate',
+        axis: 'lat',
+        part: 'fraction',
+        fractionScale: 10000,
+        label: 'Latitude',
+      });
+      expect(visible.find((field) => field.id === 'longitudeDegrees')?.ui?.composite).toEqual({
+        id: `obj${index}-lon`,
+        kind: 'coordinate',
+        axis: 'lon',
+        part: 'degrees',
+        fractionScale: 10000,
+        label: 'Longitude',
+      });
+      expect(visible.find((field) => field.id === 'name')?.ui?.composite).toBeUndefined();
+    }
+  });
+
   it('encodes and decodes measured APRS menu 516 object bytes', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -671,11 +733,13 @@ describe('TH-D74 menu settings', () => {
     contents[0x1908] = 0xa5;
 
     const iconChoices = (memoryMap.structs.find((struct) => struct.id === 'aprsIcon')?.fields[0]?.value as { choices?: Array<{ label: string; value: string }> } | undefined)?.choices ?? [];
-    const objectIcon = memoryMap.structs.find((struct) => struct.id === 'aprsObject')?.fields.find((field) => field.id === 'icon');
-    const objectChoices = (objectIcon?.value as { choices?: Array<{ label: string; value: string }> } | undefined)?.choices ?? [];
-    expect(objectChoices).toEqual(iconChoices);
-    expect(objectChoices.find((choice) => choice.label === 'Eyeball')?.value).toBe('/E');
-    expect(objectChoices.find((choice) => choice.label === 'Satellite')?.value).toBe('\\S');
+    for (const structId of ['aprsObject1', 'aprsObject2', 'aprsObject3']) {
+      const objectIcon = memoryMap.structs.find((struct) => struct.id === structId)?.fields.find((field) => field.id === 'icon');
+      const objectChoices = (objectIcon?.value as { choices?: Array<{ label: string; value: string }> } | undefined)?.choices ?? [];
+      expect(objectChoices, structId).toEqual(iconChoices);
+      expect(objectChoices.find((choice) => choice.label === 'Eyeball')?.value).toBe('/E');
+      expect(objectChoices.find((choice) => choice.label === 'Satellite')?.value).toBe('\\S');
+    }
 
     const factoryObject = {
       latitudeDegrees: 0,
@@ -691,11 +755,11 @@ describe('TH-D74 menu settings', () => {
       comment: '',
     };
     const oldObject = codec.decode({ contents, radioModel: modelId });
-    const oldObjects = oldObject.settings.aprsObject as unknown[];
-    expect(oldObjects).toHaveLength(3);
-    expect(asRecord(oldObjects[0])).toMatchObject(factoryObject);
-    expect(asRecord(oldObjects[1])).toMatchObject(factoryObject);
-    expect(asRecord(oldObjects[2])).toMatchObject(factoryObject);
+    const oldSettings = asRecord(oldObject.settings);
+    const oldObjects = [1, 2, 3].map((index) => asRecord(oldSettings[`aprsObject${index}`]));
+    expect(oldObjects[0]).toMatchObject(factoryObject);
+    expect(oldObjects[1]).toMatchObject(factoryObject);
+    expect(oldObjects[2]).toMatchObject(factoryObject);
     const encodedOld = codec.encode(oldObject, { contents: Uint8Array.from(contents), radioModel: modelId });
     expect(encodedOld.contents[0x1908]).toBe(0xa5);
     expect(encodedOld.contents[0x1948]).toBe(0x0b);
@@ -719,8 +783,8 @@ describe('TH-D74 menu settings', () => {
     Buffer.from('ABCD', 'ascii').copy(measured, 0x1916);
 
     const newObject = codec.decode({ contents: measured, radioModel: modelId });
-    const newObjects = newObject.settings.aprsObject as unknown[];
-    expect(asRecord(newObjects[0])).toMatchObject({
+    const newSettings = asRecord(newObject.settings);
+    expect(asRecord(newSettings.aprsObject1)).toMatchObject({
       latitudeDegrees: 30,
       latitudeMinutes: 12,
       latitudeFraction: 3400,
@@ -733,8 +797,8 @@ describe('TH-D74 menu settings', () => {
       icon: '\\S',
       comment: 'ABCD',
     });
-    expect(asRecord(newObjects[1])).toMatchObject(factoryObject);
-    expect(asRecord(newObjects[2])).toMatchObject(factoryObject);
+    expect(asRecord(newSettings.aprsObject2)).toMatchObject(factoryObject);
+    expect(asRecord(newSettings.aprsObject3)).toMatchObject(factoryObject);
     const encodedNew = codec.encode(newObject, { contents: Uint8Array.from(measured), radioModel: modelId });
     expect(encodedNew.contents[0x1908]).toBe(0x00);
     expect(encodedNew.contents[0x1948]).toBe(0x0b);
@@ -747,26 +811,24 @@ describe('TH-D74 menu settings', () => {
         ...oldObject,
         settings: {
           ...oldObject.settings,
-          aprsObject: [
-            {
-              latitudeDegrees: 30,
-              latitudeMinutes: 12,
-              latitudeFraction: 3400,
-              longitudeDegrees: 97,
-              longitudeMinutes: 45,
-              longitudeFraction: 6700,
-              name: 'TESTOBJ1',
-              type: 'Killed Object',
-              method: 'Off',
-              icon: '\\S',
-              comment: 'ABCD',
-            },
-            oldObjects[1],
-            {
-              ...factoryObject,
-              name: 'OBJ2',
-            },
-          ],
+          aprsObject1: {
+            latitudeDegrees: 30,
+            latitudeMinutes: 12,
+            latitudeFraction: 3400,
+            longitudeDegrees: 97,
+            longitudeMinutes: 45,
+            longitudeFraction: 6700,
+            name: 'TESTOBJ1',
+            type: 'Killed Object',
+            method: 'Off',
+            icon: '\\S',
+            comment: 'ABCD',
+          },
+          aprsObject2: oldObjects[1],
+          aprsObject3: {
+            ...factoryObject,
+            name: 'OBJ2',
+          },
         },
       },
       { contents: Uint8Array.from(contents), radioModel: modelId },
@@ -799,7 +861,7 @@ describe('TH-D74 menu settings', () => {
     for (const sample of inferred) {
       measured[sample.offset] = sample.raw;
       const decoded = codec.decode({ contents: measured, radioModel: modelId });
-      expect(asRecord((decoded.settings.aprsObject as unknown[])[0])[sample.field]).toBe(sample.expected);
+      expect(asRecord(asRecord(decoded.settings)[`aprsObject1`])[sample.field]).toBe(sample.expected);
       const encoded = codec.encode(decoded, { contents: Uint8Array.from(measured), radioModel: modelId });
       expect(encoded.contents[sample.offset]).toBe(sample.raw);
       expect(encoded.contents[0x1908]).toBe(0x00);

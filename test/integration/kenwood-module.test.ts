@@ -351,10 +351,9 @@ describe('Kenwood TH-D74 module', () => {
       icon: '/E',
       comment: '',
     };
-    expect(asList(settings.aprsObject)).toHaveLength(3);
-    expect(asRecord(asList(settings.aprsObject)[0])).toMatchObject(factoryObject);
-    expect(asRecord(asList(settings.aprsObject)[1])).toMatchObject(factoryObject);
-    expect(asRecord(asList(settings.aprsObject)[2])).toMatchObject(factoryObject);
+    expect(asRecord(settings.aprsObject1)).toMatchObject(factoryObject);
+    expect(asRecord(settings.aprsObject2)).toMatchObject(factoryObject);
+    expect(asRecord(settings.aprsObject3)).toMatchObject(factoryObject);
     expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
