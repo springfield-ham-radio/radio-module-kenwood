@@ -1,3 +1,9 @@
+## [2.15.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.14.0...v2.15.0) (2026-11-21)
+
+### Features
+
+* **th-d74:** map APRS QSY menus 520 and 521 ([#55](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/55)) ([4927677](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/49276777690ea12e2cf65570d55581c470310328))
+
 ## [2.14.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.13.0...v2.14.0) (2026-11-21)
 
 ### Features
