@@ -3,230 +3,45 @@
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
-      "id": "transmit",
-      "label": "Transmit",
+      "id": "tx-rx",
+      "label": "TX/RX",
       "icon": "i-lucide-radio-tower",
       "groups": [
         {
-          "id": "inhibit",
-          "label": "Inhibit"
+          "id": "rx",
+          "label": "RX"
         },
         {
-          "id": "timer",
-          "label": "Timer"
+          "id": "tx",
+          "label": "TX"
         },
         {
-          "id": "microphone",
-          "label": "Microphone"
+          "id": "rx-filter",
+          "label": "RX Filter"
         },
         {
-          "id": "offset",
-          "label": "Offset"
+          "id": "scan",
+          "label": "Scan"
         },
         {
-          "id": "beat",
-          "label": "Beat Shift"
-        },
-        {
-          "id": "call",
-          "label": "CALL"
+          "id": "repeater",
+          "label": "Repeater"
         },
         {
           "id": "vox",
           "label": "VOX"
         },
         {
-          "id": "busy",
-          "label": "Busy"
-        }
-      ]
-    },
-    {
-      "id": "filter",
-      "label": "Receive Filter",
-      "icon": "i-lucide-sliders-horizontal",
-      "groups": [
-        {
-          "id": "ssb",
-          "label": "SSB"
+          "id": "dtmf",
+          "label": "DTMF"
         },
         {
           "id": "cw",
           "label": "CW"
         },
         {
-          "id": "am",
-          "label": "AM"
-        }
-      ]
-    },
-    {
-      "id": "cw",
-      "label": "CW",
-      "icon": "i-lucide-activity",
-      "groups": [
-        {
-          "id": "pitch",
-          "label": "Pitch"
-        },
-        {
-          "id": "reverse",
-          "label": "Reverse"
-        }
-      ]
-    },
-    {
-      "id": "scan",
-      "label": "Scan",
-      "icon": "i-lucide-scan",
-      "groups": [
-        {
-          "id": "resume",
-          "label": "Resume"
-        },
-        {
-          "id": "digital",
-          "label": "Digital"
-        },
-        {
-          "id": "restart",
-          "label": "Restart"
-        },
-        {
-          "id": "backlight",
-          "label": "Backlight"
-        }
-      ]
-    },
-    {
-      "id": "display",
-      "label": "Display",
-      "icon": "i-lucide-monitor",
-      "groups": [
-        {
-          "id": "backlight",
-          "label": "Backlight"
-        },
-        {
-          "id": "brightness",
-          "label": "Brightness"
-        },
-        {
-          "id": "power-on",
-          "label": "Power On"
-        },
-        {
-          "id": "cursor",
-          "label": "Cursor"
-        }
-      ]
-    },
-    {
-      "id": "audio",
-      "label": "Audio",
-      "icon": "i-lucide-volume-2",
-      "groups": [
-        {
-          "id": "beep",
-          "label": "Beep"
-        },
-        {
-          "id": "monitor",
-          "label": "Monitor"
-        }
-      ]
-    },
-    {
-      "id": "battery",
-      "label": "Battery",
-      "icon": "i-lucide-battery-medium",
-      "groups": [
-        {
-          "id": "saver",
-          "label": "Battery Saver"
-        },
-        {
-          "id": "power-off",
-          "label": "Auto Power Off"
-        }
-      ]
-    },
-    {
-      "id": "aprs",
-      "label": "APRS",
-      "icon": "i-lucide-map-pinned",
-      "groups": [
-        {
-          "id": "identity",
-          "label": "Identity",
-          "description": "Menu 500 stores the callsign and SSID as separate text. The callsign is 6 bytes at 0x1200, NUL-padded. The SSID is the literal suffix, including the hyphen (for example -7), in 3 NUL-padded bytes at 0x1206. It is not a 0-15 index. A shorter callsign does not shift the SSID."
-        },
-        {
-          "id": "data",
-          "label": "Data",
-          "description": "Menus 505 through 509. Packet speed, data band, DCD, transmit delay, and the APRS lock checkboxes."
-        },
-        {
-          "id": "beacon-tx",
-          "label": "Beacon TX Control",
-          "description": "Menus 510 through 515. Beacon method, initial interval, decay algorithm, proportional pathing, and whether the beacon includes speed and altitude."
-        },
-        {
-          "id": "object",
-          "label": "Object",
-          "description": "Menu 516 holds three objects. Object 1 is at 0x1900, object 2 at 0x1940, and object 3 at 0x1980. Each record is 64 bytes with the same fields. The byte at base+0x08 is left unchanged. The byte at 0x19C0 is not mapped."
-        },
-        {
-          "id": "icon",
-          "label": "Icon"
-        },
-        {
-          "id": "qsy",
-          "label": "QSY"
-        },
-        {
-          "id": "beacon",
-          "label": "SmartBeaconing"
-        },
-        {
-          "id": "waypoint",
-          "label": "Waypoint"
-        },
-        {
-          "id": "filter",
-          "label": "Packet Filter"
-        },
-        {
-          "id": "bulletin",
-          "label": "Bulletin"
-        }
-      ]
-    },
-    {
-      "id": "dstar",
-      "label": "D-STAR",
-      "icon": "i-lucide-satellite",
-      "groups": [
-        {
-          "id": "identity",
-          "label": "Identity",
-          "description": "Menu 610 is an 8-character callsign at 0x2B1 and a 4-character memo at 0x2B9, both space-padded. The radio shows them as CALL/MEMO."
-        }
-      ]
-    },
-    {
-      "id": "groups",
-      "label": "Memory Groups",
-      "icon": "i-lucide-folder"
-    },
-    {
-      "id": "log",
-      "label": "QSO Log",
-      "icon": "i-lucide-notebook-pen",
-      "groups": [
-        {
-          "id": "qso",
-          "label": "Log"
+          "id": "others",
+          "label": "Others"
         }
       ]
     },
@@ -236,42 +51,99 @@
       "icon": "i-lucide-database",
       "groups": [
         {
-          "id": "recall",
-          "label": "Recall"
+          "id": "memory-channel",
+          "label": "Memory Channel"
         }
       ]
     },
     {
-      "id": "dtmf",
-      "label": "DTMF",
-      "icon": "i-lucide-hash",
+      "id": "audio-file",
+      "label": "Audio File",
+      "icon": "i-lucide-audio-lines",
       "groups": [
+        {
+          "id": "voice-message",
+          "label": "Voice Message"
+        }
+      ]
+    },
+    {
+      "id": "aprs",
+      "label": "APRS",
+      "icon": "i-lucide-map-pinned",
+      "groups": [
+        {
+          "id": "basic-settings",
+          "label": "Basic Settings",
+          "description": "Menu 500 stores the callsign and SSID as separate text. The callsign is 6 bytes at 0x1200, NUL-padded. The SSID is the literal suffix, including the hyphen (for example -7), in 3 NUL-padded bytes at 0x1206. It is not a 0-15 index. A shorter callsign does not shift the SSID."
+        },
+        {
+          "id": "beacon-tx",
+          "label": "Beacon TX Control",
+          "description": "Menus 510 through 516. Beacon method, interval, decay, proportional pathing, speed, altitude, and three object records at 0x1900, 0x1940, and 0x1980. The byte at each object base+0x08 is left unchanged. The byte at 0x19C0 is not mapped."
+        },
+        {
+          "id": "qsy",
+          "label": "QSY Information"
+        },
+        {
+          "id": "smartbeaconing",
+          "label": "SmartBeaconing"
+        },
+        {
+          "id": "waypoint",
+          "label": "Waypoint"
+        },
+        {
+          "id": "packet-filter",
+          "label": "Packet Filter"
+        },
+        {
+          "id": "others",
+          "label": "Others"
+        }
+      ]
+    },
+    {
+      "id": "digital",
+      "label": "Digital",
+      "icon": "i-lucide-satellite",
+      "groups": [
+        {
+          "id": "tx-rx",
+          "label": "TX/RX",
+          "description": "Menu 610 is an 8-character callsign at 0x2B1 and a 4-character memo at 0x2B9, both space-padded. The radio shows them as CALL/MEMO."
+        }
+      ]
+    },
+    {
+      "id": "configuration",
+      "label": "Configuration",
+      "icon": "i-lucide-settings",
+      "groups": [
+        {
+          "id": "display",
+          "label": "Display"
+        },
+        {
+          "id": "audio",
+          "label": "Audio"
+        },
+        {
+          "id": "battery",
+          "label": "Battery"
+        },
+        {
+          "id": "auxiliary",
+          "label": "Auxiliary"
+        },
         {
           "id": "lock",
           "label": "Lock"
         },
         {
-          "id": "speed",
-          "label": "Speed"
-        },
-        {
-          "id": "pause",
-          "label": "Pause"
-        },
-        {
-          "id": "hold",
-          "label": "Hold"
-        }
-      ]
-    },
-    {
-      "id": "units",
-      "label": "Units",
-      "icon": "i-lucide-gauge",
-      "groups": [
-        {
-          "id": "speed",
-          "label": "Speed"
+          "id": "units",
+          "label": "Units"
         }
       ]
     }
@@ -938,8 +810,8 @@
             ]
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "beat",
+            "group": "tx-rx",
+            "subgroup": "rx",
             "label": "Beat Shift",
             "widget": "select",
             "menu": {
@@ -947,8 +819,9 @@
               "code": "Beat Shift"
             },
             "description": "Shifts the radio's internal beat so a birdie moves off the frequency you are listening to. Measured index 0 is Type 1 through index 7 is Type 8.",
-            "section": "TX/RX - RX",
-            "sectionOrder": 101
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 10100
           }
         }
       ]
@@ -964,8 +837,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "inhibit",
+            "group": "tx-rx",
+            "subgroup": "tx",
             "label": "TX Inhibit",
             "widget": "switch",
             "menu": {
@@ -973,8 +846,9 @@
               "code": "TX Inhibit"
             },
             "description": "Blocks the transmitter so the radio cannot be keyed. Receive still works.",
-            "section": "TX/RX - TX",
-            "sectionOrder": 110
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 11000
           }
         }
       ]
@@ -1003,8 +877,8 @@
             ]
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "timer",
+            "group": "tx-rx",
+            "subgroup": "tx",
             "label": "Time-Out Timer",
             "widget": "select",
             "menu": {
@@ -1012,8 +886,9 @@
               "code": "Time-out Timer"
             },
             "description": "Ends a transmission that stays keyed longer than this. The steps run from 0.5 minutes to 5.0 minutes in half-minute steps, then 10 minutes. Clone images confirm index 0x09 is 5.0 min and 0x0A is 10 min, which matches this list.",
-            "section": "TX/RX - TX",
-            "sectionOrder": 111
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 11100
           }
         }
       ]
@@ -1034,8 +909,8 @@
             ]
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "microphone",
+            "group": "tx-rx",
+            "subgroup": "tx",
             "label": "Mic Sensitivity",
             "widget": "select",
             "menu": {
@@ -1043,8 +918,9 @@
               "code": "Mic. Sensitivity"
             },
             "description": "Microphone sensitivity. Clone images confirm 0x00 High, 0x01 Medium, and 0x02 Low.",
-            "section": "TX/RX - TX",
-            "sectionOrder": 112
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 11200
           }
         }
       ]
@@ -1067,8 +943,8 @@
             ]
           },
           "ui": {
-            "group": "filter",
-            "subgroup": "ssb",
+            "group": "tx-rx",
+            "subgroup": "rx-filter",
             "label": "SSB High Cut",
             "widget": "select",
             "menu": {
@@ -1076,8 +952,9 @@
               "code": "SSB High Cut"
             },
             "description": "SSB receive high-cut frequency. Clone images confirm 0x00 = 2.2 kHz, 0x01 = 2.4 kHz, 0x02 = 2.6 kHz, 0x03 = 2.8 kHz, and 0x04 = 3.0 kHz.",
-            "section": "TX/RX - RX Filter",
-            "sectionOrder": 120
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 12000
           }
         }
       ]
@@ -1100,8 +977,8 @@
             ]
           },
           "ui": {
-            "group": "filter",
-            "subgroup": "cw",
+            "group": "tx-rx",
+            "subgroup": "rx-filter",
             "label": "CW Width",
             "widget": "select",
             "menu": {
@@ -1109,8 +986,9 @@
               "code": "CW Width"
             },
             "description": "CW receive filter width. Measured on the radio: 0x00 = 0.3 kHz, 0x01 = 0.5 kHz, 0x02 = 1.0 kHz, 0x03 = 1.5 kHz, and 0x04 = 2.0 kHz.",
-            "section": "TX/RX - RX Filter",
-            "sectionOrder": 121
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 12100
           }
         }
       ]
@@ -1132,8 +1010,8 @@
             ]
           },
           "ui": {
-            "group": "filter",
-            "subgroup": "am",
+            "group": "tx-rx",
+            "subgroup": "rx-filter",
             "label": "AM High Cut",
             "widget": "select",
             "menu": {
@@ -1141,8 +1019,9 @@
               "code": "AM High Cut"
             },
             "description": "AM receive high-cut frequency. Measured on the radio: 0x00 = 3.0 kHz, 0x01 = 4.5 kHz, 0x02 = 6.0 kHz, and 0x03 = 7.5 kHz.",
-            "section": "TX/RX - RX Filter",
-            "sectionOrder": 122
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 12200
           }
         }
       ]
@@ -1163,8 +1042,8 @@
             ]
           },
           "ui": {
-            "group": "scan",
-            "subgroup": "resume",
+            "group": "tx-rx",
+            "subgroup": "scan",
             "label": "Scan Resume",
             "widget": "select",
             "menu": {
@@ -1172,8 +1051,9 @@
               "code": "Resume"
             },
             "description": "What analog scan does after it stops on a signal. Time resumes after the restart timer. Carrier resumes when the signal drops. Seek stops and stays. Digital scan resume is menu 131.",
-            "section": "TX/RX - Scan",
-            "sectionOrder": 130
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13000
           }
         }
       ]
@@ -1194,8 +1074,8 @@
             ]
           },
           "ui": {
-            "group": "scan",
-            "subgroup": "digital",
+            "group": "tx-rx",
+            "subgroup": "scan",
             "label": "Resume (Digital)",
             "widget": "select",
             "menu": {
@@ -1203,8 +1083,9 @@
               "code": "Resume (Digital)"
             },
             "description": "What digital scan does after it stops on a signal. Measured on the radio: 0 = Time, 1 = Carrier, 2 = Seek.",
-            "section": "TX/RX - Scan",
-            "sectionOrder": 131
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13100
           }
         }
       ]
@@ -1222,8 +1103,8 @@
             "max": 10
           },
           "ui": {
-            "group": "scan",
-            "subgroup": "restart",
+            "group": "tx-rx",
+            "subgroup": "scan",
             "label": "Time Restart",
             "widget": "integer",
             "menu": {
@@ -1231,8 +1112,9 @@
               "code": "Time Restart"
             },
             "description": "How long Time scan stays on a signal before it resumes, in seconds. The radio stores the number itself, 1 through 10. The manual default is 5.",
-            "section": "TX/RX - Scan",
-            "sectionOrder": 132
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13200
           }
         }
       ]
@@ -1250,8 +1132,8 @@
             "max": 10
           },
           "ui": {
-            "group": "scan",
-            "subgroup": "restart",
+            "group": "tx-rx",
+            "subgroup": "scan",
             "label": "Carrier Restart",
             "widget": "integer",
             "menu": {
@@ -1259,8 +1141,9 @@
               "code": "Carrier Restart"
             },
             "description": "How long Carrier scan waits after the signal drops before it resumes, in seconds. The radio stores the number itself, 1 through 10. The manual default is 2.",
-            "section": "TX/RX - Scan",
-            "sectionOrder": 133
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13300
           }
         }
       ]
@@ -1276,8 +1159,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "scan",
-            "subgroup": "backlight",
+            "group": "tx-rx",
+            "subgroup": "scan",
             "label": "Scan Auto Backlight",
             "widget": "switch",
             "menu": {
@@ -1285,8 +1168,9 @@
               "code": "Scan Auto Backlight"
             },
             "description": "Turns the backlight on when scan stops on a signal. 0 is Off and 1 is On.",
-            "section": "TX/RX - Scan",
-            "sectionOrder": 135
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13500
           }
         }
       ]
@@ -1302,8 +1186,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "offset",
+            "group": "tx-rx",
+            "subgroup": "repeater",
             "label": "Auto Offset",
             "widget": "switch",
             "menu": {
@@ -1311,8 +1195,9 @@
               "code": "Auto Offset"
             },
             "description": "Applies the standard repeater offset for the current band. Measured by switching the menu from On to Off: 0 is Off and 1 is On.",
-            "section": "TX/RX - Repeater",
-            "sectionOrder": 141
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 14100
           }
         }
       ]
@@ -1332,8 +1217,8 @@
             ]
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "call",
+            "group": "tx-rx",
+            "subgroup": "repeater",
             "label": "CALL Key",
             "widget": "select",
             "menu": {
@@ -1341,8 +1226,9 @@
               "code": "CALL Key"
             },
             "description": "What the CALL key sends. 0 is CALL and 1 is 1750 Hz.",
-            "section": "TX/RX - Repeater",
-            "sectionOrder": 142
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 14200
           }
         }
       ]
@@ -1358,8 +1244,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "call",
+            "group": "tx-rx",
+            "subgroup": "repeater",
             "label": "1750Hz TX Hold",
             "widget": "switch",
             "menu": {
@@ -1367,8 +1253,9 @@
               "code": "1750Hz TX Hold"
             },
             "description": "Keeps transmitting the 1750 Hz tone while the CALL key stays pressed. 0 is Off and 1 is On.",
-            "section": "TX/RX - Repeater",
-            "sectionOrder": 143
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 14300
           }
         }
       ]
@@ -1384,7 +1271,7 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "transmit",
+            "group": "tx-rx",
             "subgroup": "vox",
             "label": "VOX",
             "widget": "switch",
@@ -1393,8 +1280,9 @@
               "code": "VOX"
             },
             "description": "Keys the transmitter from microphone audio. 0 is Off and 1 is On.",
-            "section": "TX/RX - VOX",
-            "sectionOrder": 150
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 15000
           }
         }
       ]
@@ -1412,7 +1300,7 @@
             "max": 9
           },
           "ui": {
-            "group": "transmit",
+            "group": "tx-rx",
             "subgroup": "vox",
             "label": "VOX Gain",
             "widget": "integer",
@@ -1421,8 +1309,9 @@
               "code": "VOX Gain"
             },
             "description": "How loud the microphone audio must be before VOX keys the transmitter. The byte is the level itself, 0 through 9.",
-            "section": "TX/RX - VOX",
-            "sectionOrder": 151
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 15100
           }
         }
       ]
@@ -1447,7 +1336,7 @@
             ]
           },
           "ui": {
-            "group": "transmit",
+            "group": "tx-rx",
             "subgroup": "vox",
             "label": "VOX Delay",
             "widget": "select",
@@ -1456,8 +1345,9 @@
               "code": "VOX Delay"
             },
             "description": "How long the radio stays keyed after you stop talking. Measured index 0 is 250 ms through 3000 ms.",
-            "section": "TX/RX - VOX",
-            "sectionOrder": 152
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 15200
           }
         }
       ]
@@ -1473,8 +1363,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "transmit",
-            "subgroup": "busy",
+            "group": "tx-rx",
+            "subgroup": "vox",
             "label": "TX on Busy",
             "widget": "switch",
             "menu": {
@@ -1482,8 +1372,9 @@
               "code": "TX on Busy"
             },
             "description": "Allows transmit while the channel is busy. 0 is Off and 1 is On.",
-            "section": "TX/RX - VOX",
-            "sectionOrder": 153
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 15300
           }
         }
       ]
@@ -1504,8 +1395,8 @@
             ]
           },
           "ui": {
-            "group": "dtmf",
-            "subgroup": "speed",
+            "group": "tx-rx",
+            "subgroup": "dtmf",
             "label": "DTMF Encode Speed",
             "widget": "select",
             "menu": {
@@ -1513,8 +1404,9 @@
               "code": "DTMF Encode Speed"
             },
             "description": "How long each DTMF digit is sent. 0 is 50 ms, 1 is 100 ms, and 2 is 150 ms.",
-            "section": "TX/RX - DTMF",
-            "sectionOrder": 160
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16000
           }
         }
       ]
@@ -1539,8 +1431,8 @@
             ]
           },
           "ui": {
-            "group": "dtmf",
-            "subgroup": "pause",
+            "group": "tx-rx",
+            "subgroup": "dtmf",
             "label": "Pause Time",
             "widget": "select",
             "menu": {
@@ -1548,8 +1440,9 @@
               "code": "Pause Time"
             },
             "description": "Pause between DTMF digits. Index 0 is 100 ms through 2000 ms.",
-            "section": "TX/RX - DTMF",
-            "sectionOrder": 161
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16100
           }
         }
       ]
@@ -1565,8 +1458,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "dtmf",
-            "subgroup": "hold",
+            "group": "tx-rx",
+            "subgroup": "dtmf",
             "label": "DTMF TX Hold",
             "widget": "switch",
             "menu": {
@@ -1574,8 +1467,9 @@
               "code": "DTMF TX Hold"
             },
             "description": "Holds the transmitter after the DTMF string. 0 is Off and 1 is On.",
-            "section": "TX/RX - DTMF",
-            "sectionOrder": 162
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16200
           }
         }
       ]
@@ -1600,8 +1494,8 @@
             ]
           },
           "ui": {
-            "group": "cw",
-            "subgroup": "pitch",
+            "group": "tx-rx",
+            "subgroup": "cw",
             "label": "CW Pitch",
             "widget": "select",
             "menu": {
@@ -1609,8 +1503,9 @@
               "code": "Pitch Frequency"
             },
             "description": "CW sidetone pitch. Clone images confirm 0x01 = 500 Hz, 0x04 = 800 Hz, and 0x06 = 1000 Hz. Those measurements confirm 100 Hz steps from 400 Hz at 0x00. The remaining steps follow that confirmed pattern.",
-            "section": "TX/RX - CW",
-            "sectionOrder": 170
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 17000
           }
         }
       ]
@@ -1630,8 +1525,8 @@
             ]
           },
           "ui": {
-            "group": "cw",
-            "subgroup": "reverse",
+            "group": "tx-rx",
+            "subgroup": "cw",
             "label": "CW Reverse",
             "widget": "select",
             "menu": {
@@ -1639,8 +1534,9 @@
               "code": "CW Reverse"
             },
             "description": "Swaps the CW sideband. 0 is Normal and 1 is Reverse.",
-            "section": "TX/RX - CW",
-            "sectionOrder": 171
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 17100
           }
         }
       ]
@@ -1656,8 +1552,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "log",
-            "subgroup": "qso",
+            "group": "tx-rx",
+            "subgroup": "others",
             "label": "QSO Log",
             "widget": "switch",
             "menu": {
@@ -1665,8 +1561,9 @@
               "code": "QSO Log"
             },
             "description": "Records QSOs in the radio log. 0 is Off and 1 is On.",
-            "section": "TX/RX - Others",
-            "sectionOrder": 180
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 18000
           }
         }
       ]
@@ -1686,12 +1583,12 @@
             "pad": 32
           },
           "ui": {
-            "group": "groups",
+            "group": "memory",
             "label": "Group name",
             "widget": "text",
             "description": "Name shown for this memory group.",
             "section": "Memory",
-            "sectionOrder": 201
+            "sectionOrder": 2
           }
         }
       ]
@@ -1712,7 +1609,7 @@
           },
           "ui": {
             "group": "memory",
-            "subgroup": "recall",
+            "subgroup": "memory-channel",
             "label": "Recall Method",
             "widget": "select",
             "menu": {
@@ -1720,8 +1617,9 @@
               "code": "Recall Method"
             },
             "description": "Which memories the channel knob walks through. 0 is All Bands. 1 is Current Band.",
-            "section": "Memory - Memory Channel",
-            "sectionOrder": 202
+            "section": "Memory",
+            "sectionOrder": 2,
+            "order": 20200
           }
         }
       ]
@@ -1737,8 +1635,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "audio",
-            "subgroup": "monitor",
+            "group": "audio-file",
+            "subgroup": "voice-message",
             "label": "TX Monitor",
             "widget": "switch",
             "menu": {
@@ -1746,8 +1644,9 @@
               "code": "TX Monitor"
             },
             "description": "Lets you hear your own transmitted audio. Stored as 1 On and 0 Off.",
-            "section": "Audio File - Voice Message",
-            "sectionOrder": 311
+            "section": "Audio File",
+            "sectionOrder": 3,
+            "order": 31100
           }
         }
       ]
@@ -1766,7 +1665,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "identity",
+            "subgroup": "basic-settings",
             "label": "My Callsign",
             "widget": "text",
             "menu": {
@@ -1774,8 +1673,9 @@
               "code": "My Callsign"
             },
             "description": "APRS callsign, up to 6 characters, NUL-padded. The SSID is the next field and does not move when this callsign is shorter than 6 characters.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 500
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50000
           }
         },
         {
@@ -1788,7 +1688,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "identity",
+            "subgroup": "basic-settings",
             "label": "SSID",
             "widget": "text",
             "menu": {
@@ -1796,8 +1696,9 @@
               "code": "My Callsign"
             },
             "description": "APRS SSID as stored text, including the hyphen, for example -7 or -15. This is not a 0-15 index. Three bytes, NUL-padded. Together with the 6-character callsign this fills menu 500, which allows 9 characters.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 500
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50000
           }
         }
       ]
@@ -2082,7 +1983,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "icon",
+            "subgroup": "basic-settings",
             "label": "Icon",
             "widget": "select",
             "menu": {
@@ -2090,8 +1991,9 @@
               "code": "Icon"
             },
             "description": "APRS symbol, stored as the table character and the symbol code. Radio is \\Y and RV is /R. The list is the TH-D74 manual icon names mapped to the public APRS symbol table (symbolsX.txt and symbols-new.txt). A symbol that is not in the list is left as those two characters. Edited text is NUL-padded.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 501
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50100
           }
         }
       ]
@@ -2112,7 +2014,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "Data Speed",
             "widget": "select",
             "menu": {
@@ -2120,8 +2022,9 @@
               "code": "Data Speed"
             },
             "description": "APRS packet speed. Measured on the radio: 0 is 1200 bps and 1 is 9600 bps.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 505
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50500
           }
         }
       ]
@@ -2142,7 +2045,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "Data Band",
             "widget": "select",
             "menu": {
@@ -2150,8 +2053,9 @@
               "code": "Data Band"
             },
             "description": "Band used for APRS data. Measured on the radio: 0 is Band A and 1 is Band B.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 506
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50600
           }
         }
       ]
@@ -2173,7 +2077,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "DCD Sense",
             "widget": "select",
             "menu": {
@@ -2181,8 +2085,9 @@
               "code": "DCD Sense"
             },
             "description": "How the radio decides the channel is busy before an APRS transmission. Measured on the radio: 0 is Busy, 1 is Detect Data, and 2 is Off.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 507
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50700
           }
         }
       ]
@@ -2209,7 +2114,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "TX Delay",
             "widget": "select",
             "menu": {
@@ -2217,8 +2122,9 @@
               "code": "TX Delay"
             },
             "description": "Delay after keying before the APRS packet. Index 0 is 100 ms, then 150, 200, 300, 400, 500, 750, and 1000 ms. Measured 200 ms is index 2 and 500 ms is index 5.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 508
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50800
           }
         }
       ]
@@ -2242,17 +2148,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "APRS Key",
             "widget": "switch",
-            "order": 3,
+            "order": 50903,
             "menu": {
               "number": 509,
               "code": "APRS Lock"
             },
             "description": "Locks the APRS key. Bit 2 (0x04). Bits 3-7 of this byte stay as they were.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 509
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2264,17 +2170,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "PTT",
             "widget": "switch",
-            "order": 2,
+            "order": 50902,
             "menu": {
               "number": 509,
               "code": "APRS Lock"
             },
             "description": "Locks PTT. Bit 1 (0x02). The other bits in this byte stay as they were.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 509
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2286,17 +2192,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "data",
+            "subgroup": "basic-settings",
             "label": "Frequency",
             "widget": "switch",
-            "order": 1,
+            "order": 50901,
             "menu": {
               "number": 509,
               "code": "APRS Lock"
             },
             "description": "Locks the APRS frequency. Bit 0 (0x01). The other bits in this byte stay as they were.",
-            "section": "APRS - Basic Settings",
-            "sectionOrder": 509
+            "section": "APRS",
+            "sectionOrder": 5
           }
         }
       ]
@@ -2327,8 +2233,9 @@
               "code": "Method"
             },
             "description": "Beacon transmit method. Measured on the radio: 0 is Manual and 1 is PTT. The manual also lists Auto and SmartBeaconing. 2 and 3 follow that order and were not measured.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 510
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 51000
           }
         }
       ]
@@ -2365,8 +2272,9 @@
               "code": "Initial Interval"
             },
             "description": "Initial beacon interval. Index into 0.2, 0.5, 1, 2, 3, 5, 10, 20, 30, and 60 minutes. Measured 1 min is index 2 and 10 min is index 6.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 511
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 51100
           }
         }
       ]
@@ -2391,8 +2299,9 @@
               "code": "Decay Algorithm"
             },
             "description": "Decay algorithm for the beacon interval. Measured on the radio: 0 is Off and 1 is On.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 512
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 51200
           }
         }
       ]
@@ -2417,8 +2326,9 @@
               "code": "Prop. Pathing"
             },
             "description": "Proportional pathing. Measured on the radio: 0 is Off and 1 is On.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 513
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 51300
           }
         }
       ]
@@ -2443,8 +2353,9 @@
               "code": "Speed"
             },
             "description": "Includes speed in the beacon. Measured on the radio: 0 is Off and 1 is On. The manual groups this with altitude under Beacon TX Control.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 514
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 51400
           }
         }
       ]
@@ -2469,8 +2380,9 @@
               "code": "Altitude"
             },
             "description": "Includes altitude in the beacon. Measured on the radio: 0 is Off and 1 is On.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 515
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 51500
           }
         }
       ]
@@ -2489,17 +2401,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Latitude Degrees",
             "widget": "integer",
-            "order": 1,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object latitude degrees. Measured on the radio: 30 is stored as 0x1E.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2512,17 +2424,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Latitude Minutes",
             "widget": "integer",
-            "order": 2,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Whole minutes of object latitude. Measured on the radio: 12.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2535,17 +2447,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Latitude Fraction",
             "widget": "integer",
-            "order": 3,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Fractional minutes of object latitude, in 1/10000 minute, stored as a little-endian uint16. Measured 0x0D48 is 3400, which is 0.34 minute.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2558,17 +2470,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Longitude Degrees",
             "widget": "integer",
-            "order": 4,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object longitude degrees. Measured on the radio: 97 is stored as 0x61.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2581,17 +2493,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Longitude Minutes",
             "widget": "integer",
-            "order": 5,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Whole minutes of object longitude. Measured on the radio: 45.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2604,17 +2516,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Longitude Fraction",
             "widget": "integer",
-            "order": 6,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Fractional minutes of object longitude, in 1/10000 minute, stored as a little-endian uint16. Measured 0x1A2C is 6700, which is 0.67 minute.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2632,17 +2544,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Name",
             "widget": "text",
-            "order": 7,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object name, up to 9 characters. Edited text is NUL-padded. Empty storage is 9 zero bytes.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2659,17 +2571,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Type",
             "widget": "select",
-            "order": 8,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object type. Measured on the radio: 0 is Live Object and 1 is Killed Object. The manual also lists Live Item and Killed Item. 2 and 3 follow that order and were not measured.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2687,17 +2599,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Method",
             "widget": "select",
-            "order": 9,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object transmit method. Measured on the radio: 0 is Off and 1 is Temp. The manual also lists Auto (15 min), Auto (30 min), and Auto (60 min). 2, 3, and 4 follow that order and were not measured.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2976,17 +2888,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Icon",
             "widget": "select",
-            "order": 10,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object symbol, stored as the table character and the symbol code, the same list as menu 501. Measured /E is Eyeball and \\S is Satellite. A symbol that is not in the list is left as those two characters. Edited text is NUL-padded.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -2999,17 +2911,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "object",
+            "subgroup": "beacon-tx",
             "label": "Comment",
             "widget": "text",
-            "order": 11,
+            "order": 51600,
             "menu": {
               "number": 516,
               "code": "Object"
             },
             "description": "Object comment, up to 42 characters. Edited text is NUL-padded. Empty storage is 42 zero bytes.",
-            "section": "APRS - Beacon TX Control",
-            "sectionOrder": 516
+            "section": "APRS",
+            "sectionOrder": 5
           }
         }
       ],
@@ -3036,8 +2948,9 @@
               "code": "Shift/Offset"
             },
             "description": "Includes the repeater shift and offset in APRS QSY information. 0 is Off and 1 is On.",
-            "section": "APRS - QSY Information",
-            "sectionOrder": 522
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 52200
           }
         }
       ]
@@ -3315,8 +3228,9 @@
               "code": "QSY Limit Distance"
             },
             "description": "Farthest station the radio will tune from QSY data. The manual steps are Off, then 10 through 2500. The byte stores that distance in tens of miles: 0 is Off and 246 is 2460 mi. The choices are shown in miles.",
-            "section": "APRS - QSY Information",
-            "sectionOrder": 523
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 52300
           }
         }
       ]
@@ -3335,7 +3249,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "beacon",
+            "subgroup": "smartbeaconing",
             "label": "Slow Rate",
             "widget": "integer",
             "menu": {
@@ -3343,8 +3257,9 @@
               "code": "Slow Rate"
             },
             "description": "SmartBeaconing transmit interval at low speed, in minutes. The manual range is 1 to 100. The default in the manual is 30. The byte is the number of minutes.",
-            "section": "APRS - SmartBeaconing",
-            "sectionOrder": 531
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53100
           }
         }
       ]
@@ -3374,8 +3289,9 @@
               "code": "Format"
             },
             "description": "Waypoint sentence format. Measured bytes are 0 NMEA and 2 KENWOOD. MAGELLAN is 1 from the manual order between those two.",
-            "section": "APRS - Waypoint",
-            "sectionOrder": 540
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 54000
           }
         }
       ]
@@ -3645,7 +3561,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "Position Limit",
             "widget": "select",
             "menu": {
@@ -3653,8 +3569,9 @@
               "code": "Position Limit"
             },
             "description": "Ignores stations farther than this. The manual steps are Off, then 10 through 2500. The byte stores that distance in tens of miles: 0 is Off and 248 is 2480 mi. The choices are shown in miles.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 550
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 55000
           }
         }
       ]
@@ -3678,17 +3595,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "Others",
             "widget": "switch",
-            "order": 7,
+            "order": 55107,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives other packet types. Bit 6 (0x40), assumed from the manual list. Bit 7 is unused and is left unchanged.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -3700,17 +3617,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "1-WAY",
             "widget": "switch",
-            "order": 6,
+            "order": 55106,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives one-way trackers. Bit 5 (0x20). Manual order places 1-WAY on this bit of the measured 0x20 and 0x04 pair.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -3722,17 +3639,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "NAVITRA",
             "widget": "switch",
-            "order": 5,
+            "order": 55105,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives NAVITRA stations. Bit 4 (0x10), assumed from the manual list.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -3744,17 +3661,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "Object",
             "widget": "switch",
-            "order": 4,
+            "order": 55104,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives object packets. Bit 3 (0x08), assumed from the manual list.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -3766,17 +3683,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "Mobile",
             "widget": "switch",
-            "order": 3,
+            "order": 55103,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives mobile stations. Bit 2 (0x04). Manual order places Mobile on this bit of the measured 0x20 and 0x04 pair.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -3788,17 +3705,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "Digipeater",
             "widget": "switch",
-            "order": 2,
+            "order": 55102,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives digipeaters. Bit 1 (0x02), assumed from the manual list.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         },
         {
@@ -3810,17 +3727,17 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "filter",
+            "subgroup": "packet-filter",
             "label": "Weather",
             "widget": "switch",
-            "order": 1,
+            "order": 55101,
             "menu": {
               "number": 551,
               "code": "Filter Type"
             },
             "description": "Receives weather stations. Bit 0 (0x01), assumed from the manual list.",
-            "section": "APRS - Packet Filter",
-            "sectionOrder": 551
+            "section": "APRS",
+            "sectionOrder": 5
           }
         }
       ]
@@ -3839,7 +3756,7 @@
           },
           "ui": {
             "group": "aprs",
-            "subgroup": "bulletin",
+            "subgroup": "others",
             "label": "Bulletin Group Code",
             "widget": "text",
             "menu": {
@@ -3847,8 +3764,9 @@
               "code": "Bulletin Group Code"
             },
             "description": "Bulletin group codes, up to 6 codes of 5 characters, separated by commas. The manual allows 0-9, A-Z, comma, and hyphen. The field is 35 bytes, which holds 6 codes plus the commas between them. Empty storage is 35 zero bytes. Edited text is NUL-padded.",
-            "section": "APRS - Others",
-            "sectionOrder": 585
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 58500
           }
         }
       ]
@@ -3866,8 +3784,8 @@
             "pad": 32
           },
           "ui": {
-            "group": "dstar",
-            "subgroup": "identity",
+            "group": "digital",
+            "subgroup": "tx-rx",
             "label": "My Callsign",
             "widget": "text",
             "menu": {
@@ -3875,8 +3793,9 @@
               "code": "My Callsign"
             },
             "description": "D-STAR My Callsign, up to 8 characters. Stored space-padded. The radio shows it with the memo as CALL/MEMO.",
-            "section": "Digital - TX/RX",
-            "sectionOrder": 610
+            "section": "Digital",
+            "sectionOrder": 6,
+            "order": 61000
           }
         },
         {
@@ -3888,8 +3807,8 @@
             "pad": 32
           },
           "ui": {
-            "group": "dstar",
-            "subgroup": "identity",
+            "group": "digital",
+            "subgroup": "tx-rx",
             "label": "Callsign memo",
             "widget": "text",
             "menu": {
@@ -3897,8 +3816,9 @@
               "code": "My Callsign"
             },
             "description": "Four-character note stored immediately after My Callsign. The radio shows the pair as CALL/MEMO. Edited text is space-padded.",
-            "section": "Digital - TX/RX",
-            "sectionOrder": 610
+            "section": "Digital",
+            "sectionOrder": 6,
+            "order": 61000
           }
         }
       ]
@@ -3920,8 +3840,8 @@
             ]
           },
           "ui": {
-            "group": "display",
-            "subgroup": "backlight",
+            "group": "configuration",
+            "subgroup": "display",
             "label": "Backlight Control",
             "widget": "select",
             "menu": {
@@ -3929,8 +3849,9 @@
               "code": "Backlight Control"
             },
             "description": "When the display backlight turns on. Manual follows the backlight key. On stays lit. Auto lights while you operate the radio, then follows the backlight timer. Auto (DC-IN) stays lit on external power and follows Auto on the battery.",
-            "section": "Configuration - Display",
-            "sectionOrder": 900
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 90000
           }
         }
       ]
@@ -3951,8 +3872,8 @@
             ]
           },
           "ui": {
-            "group": "display",
-            "subgroup": "brightness",
+            "group": "configuration",
+            "subgroup": "display",
             "label": "LCD Brightness",
             "widget": "select",
             "menu": {
@@ -3960,8 +3881,9 @@
               "code": "LCD Brightness"
             },
             "description": "Display brightness. Clone images confirm 0x00 Low, 0x01 Medium, and 0x02 High.",
-            "section": "Configuration - Display",
-            "sectionOrder": 902
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 90200
           }
         }
       ]
@@ -3979,8 +3901,8 @@
             "pad": 0
           },
           "ui": {
-            "group": "display",
-            "subgroup": "power-on",
+            "group": "configuration",
+            "subgroup": "display",
             "label": "Power-on Message",
             "widget": "text",
             "menu": {
@@ -3988,8 +3910,9 @@
               "code": "Power-on Message"
             },
             "description": "Text shown for a couple of seconds when the radio is turned on. Up to 16 characters. Edited text is NUL-padded.",
-            "section": "Configuration - Display",
-            "sectionOrder": 903
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 90300
           }
         }
       ]
@@ -4005,8 +3928,8 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "audio",
-            "subgroup": "beep",
+            "group": "configuration",
+            "subgroup": "audio",
             "label": "Key Beep",
             "widget": "switch",
             "menu": {
@@ -4014,8 +3937,9 @@
               "code": "Beep"
             },
             "description": "Beeps when a key is pressed.",
-            "section": "Configuration - Audio",
-            "sectionOrder": 914
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 91400
           }
         }
       ]
@@ -4043,8 +3967,8 @@
             ]
           },
           "ui": {
-            "group": "battery",
-            "subgroup": "saver",
+            "group": "configuration",
+            "subgroup": "battery",
             "label": "Battery Saver",
             "widget": "select",
             "menu": {
@@ -4052,8 +3976,9 @@
               "code": "Battery Saver"
             },
             "description": "How long the receiver sleeps between checks while the squelch is closed. Off keeps it awake. Longer times save more battery and can miss the start of a short call.",
-            "section": "Configuration - Battery",
-            "sectionOrder": 920
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 92000
           }
         },
         {
@@ -4069,8 +3994,8 @@
             ]
           },
           "ui": {
-            "group": "battery",
-            "subgroup": "power-off",
+            "group": "configuration",
+            "subgroup": "battery",
             "label": "Auto Power Off",
             "widget": "select",
             "menu": {
@@ -4078,8 +4003,9 @@
               "code": "APO"
             },
             "description": "Turns the radio off after this long with no keypress or tuning. Off disables it. Scanning keeps the radio awake.",
-            "section": "Configuration - Battery",
-            "sectionOrder": 921
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 92100
           }
         }
       ]
@@ -4101,8 +4027,8 @@
             ]
           },
           "ui": {
-            "group": "display",
-            "subgroup": "cursor",
+            "group": "configuration",
+            "subgroup": "auxiliary",
             "label": "Cursor Shift",
             "widget": "select",
             "menu": {
@@ -4110,8 +4036,9 @@
               "code": "Cursor Shift"
             },
             "description": "How long the radio waits before moving the text cursor. Clone images confirm 0x00 Off, 0x01 = 1.0 s, 0x02 = 1.5 s, and 0x03 = 2.0 s.",
-            "section": "Configuration - Auxiliary",
-            "sectionOrder": 945
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 94500
           }
         }
       ]
@@ -4127,7 +4054,7 @@
             "kind": "boolean"
           },
           "ui": {
-            "group": "dtmf",
+            "group": "configuration",
             "subgroup": "lock",
             "label": "DTMF Keys Lock",
             "widget": "switch",
@@ -4136,8 +4063,9 @@
               "code": "DTMF Keys Lock"
             },
             "description": "Stops the keypad from sending DTMF tones while transmitting. Clone images confirm 0 is Off and 1 is On.",
-            "section": "Configuration - Lock",
-            "sectionOrder": 961
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 96100
           }
         }
       ]
@@ -4158,8 +4086,8 @@
             ]
           },
           "ui": {
-            "group": "units",
-            "subgroup": "speed",
+            "group": "configuration",
+            "subgroup": "units",
             "label": "Speed/Distance",
             "widget": "select",
             "menu": {
@@ -4167,8 +4095,9 @@
               "code": "Speed, Distance"
             },
             "description": "Units for speed and distance. Clone images confirm 0x00 = mi/h, 0x01 = km/h, and 0x02 = knots. The manual's printed order depends on the region and does not match these bytes.",
-            "section": "Configuration - Units",
-            "sectionOrder": 970
+            "section": "Configuration",
+            "sectionOrder": 9,
+            "order": 97000
           }
         }
       ]

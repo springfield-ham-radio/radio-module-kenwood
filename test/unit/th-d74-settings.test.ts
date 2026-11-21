@@ -36,36 +36,52 @@ describe('TH-D74 menu settings', () => {
     expect(memoryMap.version).toBe('1.7.0');
   });
 
-  it('names each menu setting with the radio menu group', () => {
-    function sectionFor(menu: number): string {
-      if (menu >= 100 && menu <= 105) return 'TX/RX - RX';
-      if (menu >= 110 && menu <= 119) return 'TX/RX - TX';
-      if (menu >= 120 && menu <= 129) return 'TX/RX - RX Filter';
-      if (menu >= 130 && menu <= 139) return 'TX/RX - Scan';
-      if (menu >= 140 && menu <= 149) return 'TX/RX - Repeater';
-      if (menu >= 150 && menu <= 159) return 'TX/RX - VOX';
-      if (menu >= 160 && menu <= 169) return 'TX/RX - DTMF';
-      if (menu >= 170 && menu <= 179) return 'TX/RX - CW';
-      if (menu >= 180 && menu <= 189) return 'TX/RX - Others';
-      if (menu >= 200 && menu <= 209) return 'Memory - Memory Channel';
-      if (menu >= 310 && menu <= 319) return 'Audio File - Voice Message';
-      if (menu >= 500 && menu <= 509) return 'APRS - Basic Settings';
-      if (menu >= 510 && menu <= 516) return 'APRS - Beacon TX Control';
-      if (menu >= 520 && menu <= 529) return 'APRS - QSY Information';
-      if (menu >= 530 && menu <= 539) return 'APRS - SmartBeaconing';
-      if (menu >= 540 && menu <= 549) return 'APRS - Waypoint';
-      if (menu >= 550 && menu <= 559) return 'APRS - Packet Filter';
-      if (menu >= 580 && menu <= 589) return 'APRS - Others';
-      if (menu >= 610 && menu <= 619) return 'Digital - TX/RX';
-      if (menu >= 900 && menu <= 909) return 'Configuration - Display';
-      if (menu >= 910 && menu <= 919) return 'Configuration - Audio';
-      if (menu >= 920 && menu <= 929) return 'Configuration - Battery';
-      if (menu >= 940 && menu <= 949) return 'Configuration - Auxiliary';
-      if (menu >= 960 && menu <= 969) return 'Configuration - Lock';
-      if (menu >= 970 && menu <= 979) return 'Configuration - Units';
-      throw new Error(`unmapped menu ${menu}`);
+  it('names each menu setting with the radio category and group', () => {
+    function place(menu: number): { section: string; order: number; subgroup: string; label: string } {
+      const rows: Array<{ from: number; to: number; section: string; order: number; subgroup: string; label: string }> = [
+        { from: 100, to: 105, section: 'TX/RX', order: 1, subgroup: 'rx', label: 'RX' },
+        { from: 110, to: 119, section: 'TX/RX', order: 1, subgroup: 'tx', label: 'TX' },
+        { from: 120, to: 129, section: 'TX/RX', order: 1, subgroup: 'rx-filter', label: 'RX Filter' },
+        { from: 130, to: 139, section: 'TX/RX', order: 1, subgroup: 'scan', label: 'Scan' },
+        { from: 140, to: 149, section: 'TX/RX', order: 1, subgroup: 'repeater', label: 'Repeater' },
+        { from: 150, to: 159, section: 'TX/RX', order: 1, subgroup: 'vox', label: 'VOX' },
+        { from: 160, to: 169, section: 'TX/RX', order: 1, subgroup: 'dtmf', label: 'DTMF' },
+        { from: 170, to: 179, section: 'TX/RX', order: 1, subgroup: 'cw', label: 'CW' },
+        { from: 180, to: 189, section: 'TX/RX', order: 1, subgroup: 'others', label: 'Others' },
+        { from: 200, to: 209, section: 'Memory', order: 2, subgroup: 'memory-channel', label: 'Memory Channel' },
+        { from: 310, to: 319, section: 'Audio File', order: 3, subgroup: 'voice-message', label: 'Voice Message' },
+        { from: 500, to: 509, section: 'APRS', order: 5, subgroup: 'basic-settings', label: 'Basic Settings' },
+        { from: 510, to: 516, section: 'APRS', order: 5, subgroup: 'beacon-tx', label: 'Beacon TX Control' },
+        { from: 520, to: 529, section: 'APRS', order: 5, subgroup: 'qsy', label: 'QSY Information' },
+        { from: 530, to: 539, section: 'APRS', order: 5, subgroup: 'smartbeaconing', label: 'SmartBeaconing' },
+        { from: 540, to: 549, section: 'APRS', order: 5, subgroup: 'waypoint', label: 'Waypoint' },
+        { from: 550, to: 559, section: 'APRS', order: 5, subgroup: 'packet-filter', label: 'Packet Filter' },
+        { from: 580, to: 589, section: 'APRS', order: 5, subgroup: 'others', label: 'Others' },
+        { from: 610, to: 619, section: 'Digital', order: 6, subgroup: 'tx-rx', label: 'TX/RX' },
+        { from: 900, to: 909, section: 'Configuration', order: 9, subgroup: 'display', label: 'Display' },
+        { from: 910, to: 919, section: 'Configuration', order: 9, subgroup: 'audio', label: 'Audio' },
+        { from: 920, to: 929, section: 'Configuration', order: 9, subgroup: 'battery', label: 'Battery' },
+        { from: 940, to: 949, section: 'Configuration', order: 9, subgroup: 'auxiliary', label: 'Auxiliary' },
+        { from: 960, to: 969, section: 'Configuration', order: 9, subgroup: 'lock', label: 'Lock' },
+        { from: 970, to: 979, section: 'Configuration', order: 9, subgroup: 'units', label: 'Units' },
+      ];
+      const match = rows.find((row) => menu >= row.from && menu <= row.to);
+      if (!match) {
+        throw new Error(`unmapped menu ${menu}`);
+      }
+      return match;
     }
 
+    const declared = new Map<string, Map<string, string>>();
+    for (const group of memoryMap.groups ?? []) {
+      const nested = new Map<string, string>();
+      for (const subgroup of group.groups ?? []) {
+        nested.set(subgroup.id, subgroup.label);
+      }
+      declared.set(group.id, nested);
+    }
+
+    const subgroupMenus = new Map<string, number>();
     const seen = new Map<number, string>();
     let previousMenu = 0;
 
@@ -81,15 +97,17 @@ describe('TH-D74 menu settings', () => {
       }
 
       for (const field of struct.fields) {
-        const ui = field.ui as { section?: string; sectionOrder?: number; menu?: { number: number }; group?: string; label?: string } | undefined;
+        const ui = field.ui as { section?: string; sectionOrder?: number; subgroup?: string; menu?: { number: number }; group?: string; order?: number } | undefined;
 
         if (!ui) {
           continue;
         }
 
-        if (ui.group === 'groups') {
+        if (struct.id === 'groupNames') {
+          expect(ui.group).toBe('memory');
           expect(ui.section).toBe('Memory');
-          expect(ui.sectionOrder).toBe(201);
+          expect(ui.sectionOrder).toBe(2);
+          expect(ui.subgroup).toBeUndefined();
           expect(ui.menu).toBeUndefined();
           continue;
         }
@@ -100,23 +118,41 @@ describe('TH-D74 menu settings', () => {
           continue;
         }
 
-        expect(ui.section, `${struct.id}.${field.id}`).toBe(sectionFor(ui.menu.number));
-        expect(ui.sectionOrder, `${struct.id}.${field.id}`).toBe(ui.menu.number);
-        seen.set(ui.menu.number, ui.section ?? '');
+        const expected = place(ui.menu.number);
+        expect(ui.section, `${struct.id}.${field.id}`).toBe(expected.section);
+        expect(ui.sectionOrder, `${struct.id}.${field.id}`).toBe(expected.order);
+        expect(ui.subgroup, `${struct.id}.${field.id}`).toBe(expected.subgroup);
+        expect(declared.get(ui.group)?.get(ui.subgroup ?? ''), `${struct.id}.${field.id}`).toBe(expected.label);
+        expect(ui.order, `${struct.id}.${field.id}`).toBeGreaterThanOrEqual(ui.menu.number * 100);
+        const firstMenu = subgroupMenus.get(`${ui.group}/${ui.subgroup}`);
+        if (firstMenu === undefined || ui.menu.number < firstMenu) {
+          subgroupMenus.set(`${ui.group}/${ui.subgroup}`, ui.menu.number);
+        }
+        seen.set(ui.menu.number, `${ui.section} / ${expected.label}`);
       }
     }
 
-    expect(seen.get(101)).toBe('TX/RX - RX');
-    expect(seen.get(141)).toBe('TX/RX - Repeater');
-    expect(seen.get(180)).toBe('TX/RX - Others');
-    expect(seen.get(500)).toBe('APRS - Basic Settings');
-    expect(seen.get(510)).toBe('APRS - Beacon TX Control');
-    expect(seen.get(516)).toBe('APRS - Beacon TX Control');
-    expect(seen.get(522)).toBe('APRS - QSY Information');
-    expect(seen.get(551)).toBe('APRS - Packet Filter');
-    expect(seen.get(585)).toBe('APRS - Others');
-    expect(seen.get(610)).toBe('Digital - TX/RX');
-    expect(seen.get(903)).toBe('Configuration - Display');
+    for (const group of memoryMap.groups ?? []) {
+      let previous = 0;
+      for (const subgroup of group.groups ?? []) {
+        const menu = subgroupMenus.get(`${group.id}/${subgroup.id}`);
+        expect(menu, `${group.id}/${subgroup.id}`).toBeTypeOf('number');
+        expect(menu ?? 0, subgroup.label).toBeGreaterThan(previous);
+        previous = menu ?? 0;
+      }
+    }
+
+    expect(seen.get(101)).toBe('TX/RX / RX');
+    expect(seen.get(141)).toBe('TX/RX / Repeater');
+    expect(seen.get(180)).toBe('TX/RX / Others');
+    expect(seen.get(500)).toBe('APRS / Basic Settings');
+    expect(seen.get(510)).toBe('APRS / Beacon TX Control');
+    expect(seen.get(516)).toBe('APRS / Beacon TX Control');
+    expect(seen.get(522)).toBe('APRS / QSY Information');
+    expect(seen.get(551)).toBe('APRS / Packet Filter');
+    expect(seen.get(585)).toBe('APRS / Others');
+    expect(seen.get(610)).toBe('Digital / TX/RX');
+    expect(seen.get(903)).toBe('Configuration / Display');
     expect(seen.has(104)).toBe(false);
     expect(seen.size).toBe(58);
   });
