@@ -101,6 +101,7 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 513 Prop. Pathing | APRS | `0x136D` | `0` Off, `1` On |
 | 514 Speed | APRS | `0x1220` | `0` Off, `1` On. Includes speed in the beacon |
 | 515 Altitude | APRS | `0x1221` | `0` Off, `1` On. Includes altitude in the beacon |
+| 516 Object | APRS | `0x1900` | Latitude and longitude as degrees, whole minutes, and fractional minutes. Name, type, method, icon, and comment follow. `0x1908` is not mapped. See below |
 | 522 Shift/Offset | APRS | `0x1363` | `0` Off, `1` On |
 | 523 QSY Limit Distance | APRS | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
 | 531 Slow Rate | APRS | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
@@ -110,6 +111,10 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 585 Bulletin Group Code | APRS | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
 
 `0x120E`, the byte between DCD Sense (`0x120D`) and TX Delay (`0x120F`), stays unmapped.
+
+Menu 516 Object starts at `0x1900`. Latitude is degrees at `0x1900`, whole minutes at `0x1901`, and fractional minutes at `0x1902`–`0x1903`. Longitude is degrees at `0x1904`, whole minutes at `0x1905`, and fractional minutes at `0x1906`–`0x1907`. Each fraction is a little-endian uint16 in units of 1/10000 minute. Measured latitude 30° 12.34' is `1E 0C 48 0D` (`0x0D48` = 3400). Measured longitude 97° 45.67' is `61 2D 2C 1A` (`0x1A2C` = 6700). The name is 9 ASCII at `0x1909`, NUL-padded. Empty is 9 zero bytes. Type at `0x1912` is `0` Live Object and `1` Killed Object, both measured. `2` Live Item and `3` Killed Item follow the manual order and were not measured. Method at `0x1913` is `0` Off and `1` Temp., both measured. `2` Auto (15 min), `3` Auto (30 min), and `4` Auto (60 min) follow the manual order and were not measured. The icon is 2 ASCII at `0x1914`, table character then symbol code, the same list as menu 501. Measured `/E` is Eyeball and `\S` is Satellite. The comment is 42 ASCII at `0x1916`, NUL-padded. Empty is 42 zero bytes.
+
+`0x1908`, the byte between the longitude fraction and the name, stays unmapped. A clone read stored `0` there for an N/W position. It is probably the N/S and E/W flags, and that was not verified. Writes leave that byte as it was.
 
 Menu 509 bits. Each checkbox was measured on its own. Bits 3–7 are left unchanged.
 

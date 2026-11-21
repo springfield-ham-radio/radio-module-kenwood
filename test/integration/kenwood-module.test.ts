@@ -276,6 +276,11 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x136b] = 2;
     contents[0x136c] = 1;
     contents[0x136d] = 0;
+    contents.fill(0, 0x1900, 0x1940);
+    contents[0x1908] = 0xa5;
+    contents[0x1913] = 1;
+    contents[0x1914] = '/'.charCodeAt(0);
+    contents[0x1915] = 'E'.charCodeAt(0);
     writeAscii(contents, 0x02b1, 'W1AW', 8, 0x20);
     writeAscii(contents, 0x02b9, 'HT', 4, 0x20);
 
@@ -330,6 +335,19 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.aprsProportionalPathing).enabled).toBe(false);
     expect(asRecord(settings.aprsBeaconSpeed).enabled).toBe(true);
     expect(asRecord(settings.aprsBeaconAltitude).enabled).toBe(false);
+    expect(asRecord(settings.aprsObject)).toMatchObject({
+      latitudeDegrees: 0,
+      latitudeMinutes: 0,
+      latitudeFraction: 0,
+      longitudeDegrees: 0,
+      longitudeMinutes: 0,
+      longitudeFraction: 0,
+      name: '',
+      type: 'Live Object',
+      method: 'Temp.',
+      icon: '/E',
+      comment: '',
+    });
     expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
@@ -382,6 +400,8 @@ describe('Kenwood TH-D74 module', () => {
       [0x1220, 2],
       [0x1363, 6],
       [0x136a, 4],
+      [0x1900, 8],
+      [0x1909, 55],
       [0x1370, 1],
       [0x183b, 35],
     ];
@@ -398,6 +418,7 @@ describe('Kenwood TH-D74 module', () => {
     expect(changedOutsideMap).toEqual([]);
     expect(encoded.contents[0x01ea]).toBe(0x01);
     expect(encoded.contents[0x038c]).toBe(0x5a);
+    expect(encoded.contents[0x1908]).toBe(0xa5);
     expect(encoded.contents[0x1002]).toBe(0x22);
     expect(encoded.contents).toEqual(original);
 
