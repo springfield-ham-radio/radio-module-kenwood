@@ -95,6 +95,12 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 507 DCD Sense | APRS | `0x120D` | `0` Busy, `1` Detect Data, `2` Off |
 | 508 TX Delay | APRS | `0x120F` | index `0..7` = 100, 150, 200, 300, 400, 500, 750, 1000 ms. Measured 200 ms = 2 and 500 ms = 5 |
 | 509 APRS Lock | APRS | `0x120A` | Frequency `0x01`, PTT `0x02`, APRS Key `0x04`. Bits 3–7 stay as they were. See the bit table below |
+| 510 Method | APRS | `0x136A` | `0` Manual, `1` PTT. The manual also lists Auto and SmartBeaconing; `2` and `3` follow that order and were not measured |
+| 511 Initial Interval | APRS | `0x136B` | index `0..9` = 0.2, 0.5, 1, 2, 3, 5, 10, 20, 30, 60 min. Measured 1 min = 2 and 10 min = 6 |
+| 512 Decay Algorithm | APRS | `0x136C` | `0` Off, `1` On |
+| 513 Prop. Pathing | APRS | `0x136D` | `0` Off, `1` On |
+| 514 Speed | APRS | `0x1220` | `0` Off, `1` On. Includes speed in the beacon |
+| 515 Altitude | APRS | `0x1221` | `0` Off, `1` On. Includes altitude in the beacon |
 | 522 Shift/Offset | APRS | `0x1363` | `0` Off, `1` On |
 | 523 QSY Limit Distance | APRS | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
 | 531 Slow Rate | APRS | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
@@ -103,7 +109,7 @@ Each settings field has an optional `section` string and `sectionOrder` number. 
 | 551 Filter Type | APRS | `0x1366` | Seven checkboxes in bits 0–6. All on is `0x7F`. Bit 7 is unused. See the bit table below |
 | 585 Bulletin Group Code | APRS | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
 
-`0x120E`, the byte between DCD Sense (`0x120D`) and TX Delay (`0x120F`), stays unmapped. Menu 510 Beacon Method is not mapped.
+`0x120E`, the byte between DCD Sense (`0x120D`) and TX Delay (`0x120F`), stays unmapped.
 
 Menu 509 bits. Each checkbox was measured on its own. Bits 3–7 are left unchanged.
 

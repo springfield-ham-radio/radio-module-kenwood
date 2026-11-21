@@ -32,7 +32,7 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.20.0');
+    expect(version).toBe('1.21.0');
     expect(memoryMap.version).toBe('1.7.0');
   });
 
@@ -85,12 +85,18 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(507)).toBe('APRS');
     expect(seen.get(508)).toBe('APRS');
     expect(seen.get(509)).toBe('APRS');
+    expect(seen.get(510)).toBe('APRS');
+    expect(seen.get(511)).toBe('APRS');
+    expect(seen.get(512)).toBe('APRS');
+    expect(seen.get(513)).toBe('APRS');
+    expect(seen.get(514)).toBe('APRS');
+    expect(seen.get(515)).toBe('APRS');
     expect(seen.get(551)).toBe('APRS');
     expect(seen.get(101)).toBe('TX/RX');
     expect(seen.get(180)).toBe('TX/RX');
     expect(seen.has(104)).toBe(false);
-    expect(seen.has(510)).toBe(false);
-    expect(seen.size).toBe(51);
+    expect(seen.has(516)).toBe(false);
+    expect(seen.size).toBe(57);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -511,6 +517,76 @@ describe('TH-D74 menu settings', () => {
     expect(cleared.contents[0x120a]).toBe(0xa8);
   });
 
+  it('encodes and decodes measured APRS beacon menus 510 through 515', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x100e, 0x100f, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
+      contents[offset] = 0;
+    }
+    contents.fill(0, 0x1367, 0x1369);
+    contents.fill(0, 0x183b, 0x183b + 35);
+    contents[0x038c] = 0x5a;
+    contents[0x1369] = 0xa5;
+
+    const samples: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [
+      { offset: 0x136a, raw: 0, structId: 'aprsBeaconMethod', field: 'method', expected: 'Manual' },
+      { offset: 0x136a, raw: 1, structId: 'aprsBeaconMethod', field: 'method', expected: 'PTT' },
+      { offset: 0x136a, raw: 2, structId: 'aprsBeaconMethod', field: 'method', expected: 'Auto' },
+      { offset: 0x136a, raw: 3, structId: 'aprsBeaconMethod', field: 'method', expected: 'SmartBeaconing' },
+      { offset: 0x136b, raw: 0, structId: 'aprsInitialInterval', field: 'interval', expected: '0.2 min' },
+      { offset: 0x136b, raw: 1, structId: 'aprsInitialInterval', field: 'interval', expected: '0.5 min' },
+      { offset: 0x136b, raw: 2, structId: 'aprsInitialInterval', field: 'interval', expected: '1 min' },
+      { offset: 0x136b, raw: 3, structId: 'aprsInitialInterval', field: 'interval', expected: '2 min' },
+      { offset: 0x136b, raw: 4, structId: 'aprsInitialInterval', field: 'interval', expected: '3 min' },
+      { offset: 0x136b, raw: 5, structId: 'aprsInitialInterval', field: 'interval', expected: '5 min' },
+      { offset: 0x136b, raw: 6, structId: 'aprsInitialInterval', field: 'interval', expected: '10 min' },
+      { offset: 0x136b, raw: 7, structId: 'aprsInitialInterval', field: 'interval', expected: '20 min' },
+      { offset: 0x136b, raw: 8, structId: 'aprsInitialInterval', field: 'interval', expected: '30 min' },
+      { offset: 0x136b, raw: 9, structId: 'aprsInitialInterval', field: 'interval', expected: '60 min' },
+      { offset: 0x136c, raw: 0, structId: 'aprsDecayAlgorithm', field: 'enabled', expected: 'false' },
+      { offset: 0x136c, raw: 1, structId: 'aprsDecayAlgorithm', field: 'enabled', expected: 'true' },
+      { offset: 0x136d, raw: 0, structId: 'aprsProportionalPathing', field: 'enabled', expected: 'false' },
+      { offset: 0x136d, raw: 1, structId: 'aprsProportionalPathing', field: 'enabled', expected: 'true' },
+      { offset: 0x1220, raw: 0, structId: 'aprsBeaconSpeed', field: 'enabled', expected: 'false' },
+      { offset: 0x1220, raw: 1, structId: 'aprsBeaconSpeed', field: 'enabled', expected: 'true' },
+      { offset: 0x1221, raw: 0, structId: 'aprsBeaconAltitude', field: 'enabled', expected: 'false' },
+      { offset: 0x1221, raw: 1, structId: 'aprsBeaconAltitude', field: 'enabled', expected: 'true' },
+    ];
+
+    for (const sample of samples) {
+      contents[sample.offset] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      const settings = asRecord(decoded.settings);
+      expect(String(asRecord(settings[sample.structId])[sample.field]), `${sample.structId}.${sample.field}`).toBe(sample.expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[sample.offset]).toBe(sample.raw);
+      expect(encoded.contents[0x038c]).toBe(0x5a);
+      expect(encoded.contents[0x1369]).toBe(0xa5);
+    }
+
+    contents[0x136b] = 6;
+    const tenMinutes = codec.decode({ contents, radioModel: modelId });
+    const oneMinute = codec.encode(
+      {
+        ...tenMinutes,
+        settings: {
+          ...tenMinutes.settings,
+          aprsInitialInterval: { interval: '1 min' },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(oneMinute.contents[0x136b]).toBe(2);
+    expect(oneMinute.contents[0x038c]).toBe(0x5a);
+    expect(oneMinute.contents[0x1369]).toBe(0xa5);
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -521,7 +597,7 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1363, 0x1364, 0x1365]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
       contents[offset] = 0;
     }
     contents.fill(0, 0x1367, 0x1369);

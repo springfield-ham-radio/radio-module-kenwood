@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.20.0');
+    expect(radioConfig.version).toBe('1.21.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -270,6 +270,12 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x120c] = 1;
     contents[0x120d] = 1;
     contents[0x120f] = 5;
+    contents[0x1220] = 1;
+    contents[0x1221] = 0;
+    contents[0x136a] = 1;
+    contents[0x136b] = 2;
+    contents[0x136c] = 1;
+    contents[0x136d] = 0;
     writeAscii(contents, 0x02b1, 'W1AW', 8, 0x20);
     writeAscii(contents, 0x02b9, 'HT', 4, 0x20);
 
@@ -318,6 +324,12 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.aprsDcdSense).sense).toBe('Detect Data');
     expect(asRecord(settings.aprsTxDelay).delay).toBe('500ms');
     expect(asRecord(settings.aprsLock)).toMatchObject({ frequency: true, ptt: false, aprsKey: true });
+    expect(asRecord(settings.aprsBeaconMethod).method).toBe('PTT');
+    expect(asRecord(settings.aprsInitialInterval).interval).toBe('1 min');
+    expect(asRecord(settings.aprsDecayAlgorithm).enabled).toBe(true);
+    expect(asRecord(settings.aprsProportionalPathing).enabled).toBe(false);
+    expect(asRecord(settings.aprsBeaconSpeed).enabled).toBe(true);
+    expect(asRecord(settings.aprsBeaconAltitude).enabled).toBe(false);
     expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
@@ -367,7 +379,9 @@ describe('Kenwood TH-D74 module', () => {
       [0x120a, 4],
       [0x120f, 1],
       [0x1213, 1],
+      [0x1220, 2],
       [0x1363, 6],
+      [0x136a, 4],
       [0x1370, 1],
       [0x183b, 35],
     ];

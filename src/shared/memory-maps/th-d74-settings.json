@@ -167,6 +167,11 @@
           "description": "Menus 505 through 509. Packet speed, data band, DCD, transmit delay, and the APRS lock checkboxes."
         },
         {
+          "id": "beacon-tx",
+          "label": "Beacon TX Control",
+          "description": "Menus 510 through 515. Beacon method, initial interval, decay algorithm, proportional pathing, and whether the beacon includes speed and altitude."
+        },
+        {
           "id": "icon",
           "label": "Icon"
         },
@@ -2605,6 +2610,180 @@
               "code": "APRS Lock"
             },
             "description": "Locks the APRS frequency. Bit 0 (0x01). The other bits in this byte stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsBeaconMethod",
+      "seek": "0x136A",
+      "fields": [
+        {
+          "id": "method",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Manual",
+              "PTT",
+              "Auto",
+              "SmartBeaconing"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Method",
+            "widget": "select",
+            "menu": {
+              "number": 510,
+              "code": "Method"
+            },
+            "description": "Beacon transmit method. Measured on the radio: 0 is Manual and 1 is PTT. The manual also lists Auto and SmartBeaconing. 2 and 3 follow that order and were not measured.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsInitialInterval",
+      "seek": "0x136B",
+      "fields": [
+        {
+          "id": "interval",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "0.2 min",
+              "0.5 min",
+              "1 min",
+              "2 min",
+              "3 min",
+              "5 min",
+              "10 min",
+              "20 min",
+              "30 min",
+              "60 min"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Initial Interval",
+            "widget": "select",
+            "menu": {
+              "number": 511,
+              "code": "Initial Interval"
+            },
+            "description": "Initial beacon interval. Index into 0.2, 0.5, 1, 2, 3, 5, 10, 20, 30, and 60 minutes. Measured 1 min is index 2 and 10 min is index 6.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsDecayAlgorithm",
+      "seek": "0x136C",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Decay Algorithm",
+            "widget": "switch",
+            "menu": {
+              "number": 512,
+              "code": "Decay Algorithm"
+            },
+            "description": "Decay algorithm for the beacon interval. Measured on the radio: 0 is Off and 1 is On.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsProportionalPathing",
+      "seek": "0x136D",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Prop. Pathing",
+            "widget": "switch",
+            "menu": {
+              "number": 513,
+              "code": "Prop. Pathing"
+            },
+            "description": "Proportional pathing. Measured on the radio: 0 is Off and 1 is On.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsBeaconSpeed",
+      "seek": "0x1220",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Speed",
+            "widget": "switch",
+            "menu": {
+              "number": 514,
+              "code": "Speed"
+            },
+            "description": "Includes speed in the beacon. Measured on the radio: 0 is Off and 1 is On. The manual groups this with altitude under Beacon TX Control.",
+            "section": "APRS",
+            "sectionOrder": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsBeaconAltitude",
+      "seek": "0x1221",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Altitude",
+            "widget": "switch",
+            "menu": {
+              "number": 515,
+              "code": "Altitude"
+            },
+            "description": "Includes altitude in the beacon. Measured on the radio: 0 is Off and 1 is On.",
             "section": "APRS",
             "sectionOrder": 5
           }
