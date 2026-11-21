@@ -45,76 +45,76 @@ This module maps regular memories **0–999**.
 
 These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped. Menu 104 is not mapped because the radio does not persist it.
 
-Each settings field has an optional `section` string and `sectionOrder` number. `section` is the manual's top-level menu group for that hundred (the name the radio shows for the 100s, 200s, and so on). `sectionOrder` is that hundred's digit: TX/RX 1, Memory 2, Audio File 3, APRS 5, Digital 6, Configuration 9. HamBench groups controls under the section name, sorts those groups by `sectionOrder`, and does not show the menu number in the group heading. Memory group names are menu 201 and use section Memory with order 2. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
+Each settings field has an optional `section` string and `sectionOrder` number. `section` is the radio menu group, written `Category - Group` (for example `APRS - Beacon TX Control`). `sectionOrder` is the menu number, and HamBench sorts sections by the smallest value in each section. It does not show the menu number in the group heading. Memory group names have no menu number on the field. Their section stays `Memory`, with `sectionOrder` 201 so they sit with the memory menus. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
 | Menu | Section | Offset | Storage |
 | --- | --- | --- | --- |
-| 610 D-STAR My Callsign | Digital | `0x2B1` | 8 ASCII, space-padded |
-| 610 callsign memo | Digital | `0x2B9` | 4 ASCII. Edited text is space-padded. A clone image stored NUL at `0x2BC`; an unchanged write keeps that byte. The radio shows `CALL/MEMO` |
-| 101 Beat Shift | TX/RX | `0x1000` | index `0..7` = Type 1 through Type 8 |
-| 110 TX Inhibit | TX/RX | `0x1001` | `0` Off, `1` On |
-| 111 Time-Out Timer | TX/RX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
-| 112 Mic Sensitivity | TX/RX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
-| 120 SSB High Cut | TX/RX | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
-| 121 CW Width | TX/RX | `0x1009` | `0x00` 0.3 kHz, `0x01` 0.5 kHz, `0x02` 1.0 kHz, `0x03` 1.5 kHz, `0x04` 2.0 kHz |
-| 122 AM High Cut | TX/RX | `0x100A` | `0x00` 3.0 kHz, `0x01` 4.5 kHz, `0x02` 6.0 kHz, `0x03` 7.5 kHz |
-| 130 Scan Resume (analog) | TX/RX | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
-| 131 Resume (Digital) | TX/RX | `0x100D` | `0` Time, `1` Carrier, `2` Seek |
-| 132 Time Restart | TX/RX | `0x100E` | Raw seconds, 1–10 |
-| 133 Carrier Restart | TX/RX | `0x100F` | Raw seconds, 1–10 |
-| 135 Scan Auto Backlight | TX/RX | `0x1012` | `0` Off, `1` On |
-| 141 Auto Offset | TX/RX | `0x1018` | `0` Off, `1` On. Measured by switching the menu from On to Off |
-| 142 CALL Key | TX/RX | `0x1019` | `0` CALL, `1` 1750 Hz |
-| 143 1750Hz TX Hold | TX/RX | `0x101A` | `0` Off, `1` On |
-| 150 VOX | TX/RX | `0x101B` | `0` Off, `1` On |
-| 151 VOX Gain | TX/RX | `0x101C` | Raw level, 0–9 |
-| 152 VOX Delay | TX/RX | `0x101D` | index `0..6` = 250, 500, 750, 1000, 1500, 2000, 3000 ms |
-| 153 TX on Busy | TX/RX | `0x101E` | `0` Off, `1` On |
-| 160 DTMF Encode Speed | TX/RX | `0x101F` | `0` 50 ms, `1` 100 ms, `2` 150 ms |
-| 161 Pause Time | TX/RX | `0x1020` | index `0..6` = 100, 250, 500, 750, 1000, 1500, 2000 ms |
-| 162 DTMF TX Hold | TX/RX | `0x1021` | `0` Off, `1` On |
-| 170 CW Pitch | TX/RX | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
-| 171 CW Reverse | TX/RX | `0x1026` | `0` Normal, `1` Reverse |
-| 180 QSO Log | TX/RX | `0x1027` | `0` Off, `1` On |
-| 202 Recall Method | Memory | `0x1030` | `0` All Bands, `1` Current Band |
-| 311 TX Monitor | Audio File | `0x1032` | `1` On, `0` Off |
-| 900 Backlight Control | Configuration | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |
-| 902 LCD Brightness | Configuration | `0x1062` | `0x00` Low, `0x01` Medium, `0x02` High |
-| 914 Beep | Configuration | `0x1071` | `0` Off, `1` On |
-| 920 Battery Saver | Configuration | `0x1076` | index `0..9` = Off, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0 s |
-| 921 Auto Power Off | Configuration | `0x1077` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min |
-| 945 Cursor Shift | Configuration | `0x107F` | `0x00` Off, `0x01` 1.0 s, `0x02` 1.5 s, `0x03` 2.0 s |
-| 961 DTMF Keys Lock | Configuration | `0x1085` | `0` Off, `1` On |
-| 970 Speed/Distance | Configuration | `0x1088` | `0x00` mi/h, `0x01` km/h, `0x02` knots. The manual's printed order depends on the region and does not match these bytes |
-| 903 Power-on Message | Configuration | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |
-| 500 APRS My Callsign | APRS | `0x1200` | 6 ASCII, NUL-padded |
-| 500 APRS SSID | APRS | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
-| 501 Icon | APRS | `0x1367` | 2 ASCII, table character then symbol code. The choice list shows the manual icon name. Radio is `\Y` and RV is `/R`. A code that is not in the list is left unchanged |
-| 505 Data Speed | APRS | `0x120C` | `0` 1200 bps, `1` 9600 bps |
-| 506 Data Band | APRS | `0x120B` | `0` Band A, `1` Band B |
-| 507 DCD Sense | APRS | `0x120D` | `0` Busy, `1` Detect Data, `2` Off |
-| 508 TX Delay | APRS | `0x120F` | index `0..7` = 100, 150, 200, 300, 400, 500, 750, 1000 ms. Measured 200 ms = 2 and 500 ms = 5 |
-| 509 APRS Lock | APRS | `0x120A` | Frequency `0x01`, PTT `0x02`, APRS Key `0x04`. Bits 3–7 stay as they were. See the bit table below |
-| 510 Method | APRS | `0x136A` | `0` Manual, `1` PTT. The manual also lists Auto and SmartBeaconing; `2` and `3` follow that order and were not measured |
-| 511 Initial Interval | APRS | `0x136B` | index `0..9` = 0.2, 0.5, 1, 2, 3, 5, 10, 20, 30, 60 min. Measured 1 min = 2 and 10 min = 6 |
-| 512 Decay Algorithm | APRS | `0x136C` | `0` Off, `1` On |
-| 513 Prop. Pathing | APRS | `0x136D` | `0` Off, `1` On |
-| 514 Speed | APRS | `0x1220` | `0` Off, `1` On. Includes speed in the beacon |
-| 515 Altitude | APRS | `0x1221` | `0` Off, `1` On. Includes altitude in the beacon |
-| 516 Object | APRS | `0x1900` | Latitude and longitude as degrees, whole minutes, and fractional minutes. Name, type, method, icon, and comment follow. `0x1908` is not mapped. See below |
-| 522 Shift/Offset | APRS | `0x1363` | `0` Off, `1` On |
-| 523 QSY Limit Distance | APRS | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
-| 531 Slow Rate | APRS | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
-| 540 Waypoint Format | APRS | `0x1213` | `0` NMEA, `1` MAGELLAN, `2` KENWOOD. `0` and `2` were measured; `1` follows the manual order |
-| 550 Position Limit | APRS | `0x1365` | Tens of miles. `0` Off, `248` = 2480 mi. Manual steps Off, then 10 through 2500 |
-| 551 Filter Type | APRS | `0x1366` | Seven checkboxes in bits 0–6. All on is `0x7F`. Bit 7 is unused. See the bit table below |
-| 585 Bulletin Group Code | APRS | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
+| 610 D-STAR My Callsign | Digital - TX/RX | `0x2B1` | 8 ASCII, space-padded |
+| 610 callsign memo | Digital - TX/RX | `0x2B9` | 4 ASCII. Edited text is space-padded. A clone image stored NUL at `0x2BC`; an unchanged write keeps that byte. The radio shows `CALL/MEMO` |
+| 101 Beat Shift | TX/RX - RX | `0x1000` | index `0..7` = Type 1 through Type 8 |
+| 110 TX Inhibit | TX/RX - TX | `0x1001` | `0` Off, `1` On |
+| 111 Time-Out Timer | TX/RX - TX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
+| 112 Mic Sensitivity | TX/RX - TX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
+| 120 SSB High Cut | TX/RX - RX Filter | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
+| 121 CW Width | TX/RX - RX Filter | `0x1009` | `0x00` 0.3 kHz, `0x01` 0.5 kHz, `0x02` 1.0 kHz, `0x03` 1.5 kHz, `0x04` 2.0 kHz |
+| 122 AM High Cut | TX/RX - RX Filter | `0x100A` | `0x00` 3.0 kHz, `0x01` 4.5 kHz, `0x02` 6.0 kHz, `0x03` 7.5 kHz |
+| 130 Scan Resume (analog) | TX/RX - Scan | `0x100C` | `0` Time, `1` Carrier, `2` Seek |
+| 131 Resume (Digital) | TX/RX - Scan | `0x100D` | `0` Time, `1` Carrier, `2` Seek |
+| 132 Time Restart | TX/RX - Scan | `0x100E` | Raw seconds, 1–10 |
+| 133 Carrier Restart | TX/RX - Scan | `0x100F` | Raw seconds, 1–10 |
+| 135 Scan Auto Backlight | TX/RX - Scan | `0x1012` | `0` Off, `1` On |
+| 141 Auto Offset | TX/RX - Repeater | `0x1018` | `0` Off, `1` On. Measured by switching the menu from On to Off |
+| 142 CALL Key | TX/RX - Repeater | `0x1019` | `0` CALL, `1` 1750 Hz |
+| 143 1750Hz TX Hold | TX/RX - Repeater | `0x101A` | `0` Off, `1` On |
+| 150 VOX | TX/RX - VOX | `0x101B` | `0` Off, `1` On |
+| 151 VOX Gain | TX/RX - VOX | `0x101C` | Raw level, 0–9 |
+| 152 VOX Delay | TX/RX - VOX | `0x101D` | index `0..6` = 250, 500, 750, 1000, 1500, 2000, 3000 ms |
+| 153 TX on Busy | TX/RX - VOX | `0x101E` | `0` Off, `1` On |
+| 160 DTMF Encode Speed | TX/RX - DTMF | `0x101F` | `0` 50 ms, `1` 100 ms, `2` 150 ms |
+| 161 Pause Time | TX/RX - DTMF | `0x1020` | index `0..6` = 100, 250, 500, 750, 1000, 1500, 2000 ms |
+| 162 DTMF TX Hold | TX/RX - DTMF | `0x1021` | `0` Off, `1` On |
+| 170 CW Pitch | TX/RX - CW | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
+| 171 CW Reverse | TX/RX - CW | `0x1026` | `0` Normal, `1` Reverse |
+| 180 QSO Log | TX/RX - Others | `0x1027` | `0` Off, `1` On |
+| 202 Recall Method | Memory - Memory Channel | `0x1030` | `0` All Bands, `1` Current Band |
+| 311 TX Monitor | Audio File - Voice Message | `0x1032` | `1` On, `0` Off |
+| 900 Backlight Control | Configuration - Display | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |
+| 902 LCD Brightness | Configuration - Display | `0x1062` | `0x00` Low, `0x01` Medium, `0x02` High |
+| 914 Beep | Configuration - Audio | `0x1071` | `0` Off, `1` On |
+| 920 Battery Saver | Configuration - Battery | `0x1076` | index `0..9` = Off, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0, 4.0, 5.0 s |
+| 921 Auto Power Off | Configuration - Battery | `0x1077` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min |
+| 945 Cursor Shift | Configuration - Auxiliary | `0x107F` | `0x00` Off, `0x01` 1.0 s, `0x02` 1.5 s, `0x03` 2.0 s |
+| 961 DTMF Keys Lock | Configuration - Lock | `0x1085` | `0` Off, `1` On |
+| 970 Speed/Distance | Configuration - Units | `0x1088` | `0x00` mi/h, `0x01` km/h, `0x02` knots. The manual's printed order depends on the region and does not match these bytes |
+| 903 Power-on Message | Configuration - Display | `0x10C0` | 16 ASCII. Edited text is NUL-padded. A clone image stored trailing spaces (`0x20`) at `0x10CA`–`0x10CB`; an unchanged write keeps those bytes |
+| 500 APRS My Callsign | APRS - Basic Settings | `0x1200` | 6 ASCII, NUL-padded |
+| 500 APRS SSID | APRS - Basic Settings | `0x1206` | 3 ASCII, NUL-padded, literal suffix such as `-7` |
+| 501 Icon | APRS - Basic Settings | `0x1367` | 2 ASCII, table character then symbol code. The choice list shows the manual icon name. Radio is `\Y` and RV is `/R`. A code that is not in the list is left unchanged |
+| 505 Data Speed | APRS - Basic Settings | `0x120C` | `0` 1200 bps, `1` 9600 bps |
+| 506 Data Band | APRS - Basic Settings | `0x120B` | `0` Band A, `1` Band B |
+| 507 DCD Sense | APRS - Basic Settings | `0x120D` | `0` Busy, `1` Detect Data, `2` Off |
+| 508 TX Delay | APRS - Basic Settings | `0x120F` | index `0..7` = 100, 150, 200, 300, 400, 500, 750, 1000 ms. Measured 200 ms = 2 and 500 ms = 5 |
+| 509 APRS Lock | APRS - Basic Settings | `0x120A` | Frequency `0x01`, PTT `0x02`, APRS Key `0x04`. Bits 3–7 stay as they were. See the bit table below |
+| 510 Method | APRS - Beacon TX Control | `0x136A` | `0` Manual, `1` PTT. The manual also lists Auto and SmartBeaconing; `2` and `3` follow that order and were not measured |
+| 511 Initial Interval | APRS - Beacon TX Control | `0x136B` | index `0..9` = 0.2, 0.5, 1, 2, 3, 5, 10, 20, 30, 60 min. Measured 1 min = 2 and 10 min = 6 |
+| 512 Decay Algorithm | APRS - Beacon TX Control | `0x136C` | `0` Off, `1` On |
+| 513 Prop. Pathing | APRS - Beacon TX Control | `0x136D` | `0` Off, `1` On |
+| 514 Speed | APRS - Beacon TX Control | `0x1220` | `0` Off, `1` On. Includes speed in the beacon |
+| 515 Altitude | APRS - Beacon TX Control | `0x1221` | `0` Off, `1` On. Includes altitude in the beacon |
+| 516 Object | APRS - Beacon TX Control | `0x1900` | Three 64-byte records at `0x1900`, `0x1940`, and `0x1980`. Same layout in each. `base+0x08` and `0x19C0` are not mapped. See below |
+| 522 Shift/Offset | APRS - QSY Information | `0x1363` | `0` Off, `1` On |
+| 523 QSY Limit Distance | APRS - QSY Information | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
+| 531 Slow Rate | APRS - SmartBeaconing | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
+| 540 Waypoint Format | APRS - Waypoint | `0x1213` | `0` NMEA, `1` MAGELLAN, `2` KENWOOD. `0` and `2` were measured; `1` follows the manual order |
+| 550 Position Limit | APRS - Packet Filter | `0x1365` | Tens of miles. `0` Off, `248` = 2480 mi. Manual steps Off, then 10 through 2500 |
+| 551 Filter Type | APRS - Packet Filter | `0x1366` | Seven checkboxes in bits 0–6. All on is `0x7F`. Bit 7 is unused. See the bit table below |
+| 585 Bulletin Group Code | APRS - Others | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
 
 `0x120E`, the byte between DCD Sense (`0x120D`) and TX Delay (`0x120F`), stays unmapped.
 
-Menu 516 Object starts at `0x1900`. Latitude is degrees at `0x1900`, whole minutes at `0x1901`, and fractional minutes at `0x1902`–`0x1903`. Longitude is degrees at `0x1904`, whole minutes at `0x1905`, and fractional minutes at `0x1906`–`0x1907`. Each fraction is a little-endian uint16 in units of 1/10000 minute. Measured latitude 30° 12.34' is `1E 0C 48 0D` (`0x0D48` = 3400). Measured longitude 97° 45.67' is `61 2D 2C 1A` (`0x1A2C` = 6700). The name is 9 ASCII at `0x1909`, NUL-padded. Empty is 9 zero bytes. Type at `0x1912` is `0` Live Object and `1` Killed Object, both measured. `2` Live Item and `3` Killed Item follow the manual order and were not measured. Method at `0x1913` is `0` Off and `1` Temp., both measured. `2` Auto (15 min), `3` Auto (30 min), and `4` Auto (60 min) follow the manual order and were not measured. The icon is 2 ASCII at `0x1914`, table character then symbol code, the same list as menu 501. Measured `/E` is Eyeball and `\S` is Satellite. The comment is 42 ASCII at `0x1916`, NUL-padded. Empty is 42 zero bytes.
+Menu 516 Object is three records of 64 bytes. Object 1 is at `0x1900`. Object 2 is at `0x1940` and object 3 is at `0x1980`. Those two offsets come from the same stride in a hardware dump: the records match, and objects 2 and 3 hold the factory pattern. Object 1 was verified by a clone diff. Offsets below are relative to each record. Latitude is degrees at `+0x00`, whole minutes at `+0x01`, and fractional minutes at `+0x02`–`+0x03`. Longitude is degrees at `+0x04`, whole minutes at `+0x05`, and fractional minutes at `+0x06`–`+0x07`. Each fraction is a little-endian uint16 in units of 1/10000 minute. Measured object 1 latitude 30° 12.34' is `1E 0C 48 0D` (`0x0D48` = 3400). Measured longitude 97° 45.67' is `61 2D 2C 1A` (`0x1A2C` = 6700). The name is 9 ASCII at `+0x09`, NUL-padded. Empty is 9 zero bytes. Type at `+0x12` is `0` Live Object and `1` Killed Object, both measured. `2` Live Item and `3` Killed Item follow the manual order and were not measured. Method at `+0x13` is `0` Off and `1` Temp., both measured. `2` Auto (15 min), `3` Auto (30 min), and `4` Auto (60 min) follow the manual order and were not measured. The icon is 2 ASCII at `+0x14`, table character then symbol code, the same list as menu 501. Measured `/E` is Eyeball and `\S` is Satellite. The comment is 42 ASCII at `+0x16`, through `+0x3F`, NUL-padded. Empty is 42 zero bytes. Objects 2 and 3 in the dump are all-zero position, empty name, type Live Object, method Temp., icon `/E`, and an empty comment.
 
-`0x1908`, the byte between the longitude fraction and the name, stays unmapped. A clone read stored `0` there for an N/W position. It is probably the N/S and E/W flags, and that was not verified. Writes leave that byte as it was.
+`+0x08`, the byte between the longitude fraction and the name, stays unmapped on every object. The dump stores `0x0B` there in all three records. An earlier object 1 read stored `0` for an N/W position. It is probably the N/S and E/W flags, and that was not verified. Writes leave that byte as it was. `0x19C0`, the byte after object 3, stays unmapped.
 
 Menu 509 bits. Each checkbox was measured on its own. Bits 3–7 are left unchanged.
 

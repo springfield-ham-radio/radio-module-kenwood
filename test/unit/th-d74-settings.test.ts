@@ -36,21 +36,50 @@ describe('TH-D74 menu settings', () => {
     expect(memoryMap.version).toBe('1.7.0');
   });
 
-  it('names each menu setting with the manual section for that hundred', () => {
-    const sections: Record<number, string> = {
-      1: 'TX/RX',
-      2: 'Memory',
-      3: 'Audio File',
-      4: 'GPS',
-      5: 'APRS',
-      6: 'Digital',
-      7: 'FM Broadcasting',
-      8: 'SD Card',
-      9: 'Configuration',
-    };
+  it('names each menu setting with the radio menu group', () => {
+    function sectionFor(menu: number): string {
+      if (menu >= 100 && menu <= 105) return 'TX/RX - RX';
+      if (menu >= 110 && menu <= 119) return 'TX/RX - TX';
+      if (menu >= 120 && menu <= 129) return 'TX/RX - RX Filter';
+      if (menu >= 130 && menu <= 139) return 'TX/RX - Scan';
+      if (menu >= 140 && menu <= 149) return 'TX/RX - Repeater';
+      if (menu >= 150 && menu <= 159) return 'TX/RX - VOX';
+      if (menu >= 160 && menu <= 169) return 'TX/RX - DTMF';
+      if (menu >= 170 && menu <= 179) return 'TX/RX - CW';
+      if (menu >= 180 && menu <= 189) return 'TX/RX - Others';
+      if (menu >= 200 && menu <= 209) return 'Memory - Memory Channel';
+      if (menu >= 310 && menu <= 319) return 'Audio File - Voice Message';
+      if (menu >= 500 && menu <= 509) return 'APRS - Basic Settings';
+      if (menu >= 510 && menu <= 516) return 'APRS - Beacon TX Control';
+      if (menu >= 520 && menu <= 529) return 'APRS - QSY Information';
+      if (menu >= 530 && menu <= 539) return 'APRS - SmartBeaconing';
+      if (menu >= 540 && menu <= 549) return 'APRS - Waypoint';
+      if (menu >= 550 && menu <= 559) return 'APRS - Packet Filter';
+      if (menu >= 580 && menu <= 589) return 'APRS - Others';
+      if (menu >= 610 && menu <= 619) return 'Digital - TX/RX';
+      if (menu >= 900 && menu <= 909) return 'Configuration - Display';
+      if (menu >= 910 && menu <= 919) return 'Configuration - Audio';
+      if (menu >= 920 && menu <= 929) return 'Configuration - Battery';
+      if (menu >= 940 && menu <= 949) return 'Configuration - Auxiliary';
+      if (menu >= 960 && menu <= 969) return 'Configuration - Lock';
+      if (menu >= 970 && menu <= 979) return 'Configuration - Units';
+      throw new Error(`unmapped menu ${menu}`);
+    }
+
     const seen = new Map<number, string>();
+    let previousMenu = 0;
 
     for (const struct of memoryMap.structs) {
+      const menus = struct.fields
+        .map((field) => (field.ui as { menu?: { number: number } } | undefined)?.menu?.number)
+        .filter((menu): menu is number => typeof menu === 'number');
+
+      if (menus.length > 0) {
+        const menu = Math.min(...menus);
+        expect(menu, struct.id).toBeGreaterThanOrEqual(previousMenu);
+        previousMenu = menu;
+      }
+
       for (const field of struct.fields) {
         const ui = field.ui as { section?: string; sectionOrder?: number; menu?: { number: number }; group?: string; label?: string } | undefined;
 
@@ -60,7 +89,8 @@ describe('TH-D74 menu settings', () => {
 
         if (ui.group === 'groups') {
           expect(ui.section).toBe('Memory');
-          expect(ui.sectionOrder).toBe(2);
+          expect(ui.sectionOrder).toBe(201);
+          expect(ui.menu).toBeUndefined();
           continue;
         }
 
@@ -70,31 +100,23 @@ describe('TH-D74 menu settings', () => {
           continue;
         }
 
-        const hundred = Math.floor(ui.menu.number / 100);
-        expect(ui.section, `${struct.id}.${field.id}`).toBe(sections[hundred]);
-        expect(ui.sectionOrder, `${struct.id}.${field.id}`).toBe(hundred);
+        expect(ui.section, `${struct.id}.${field.id}`).toBe(sectionFor(ui.menu.number));
+        expect(ui.sectionOrder, `${struct.id}.${field.id}`).toBe(ui.menu.number);
         seen.set(ui.menu.number, ui.section ?? '');
       }
     }
 
-    expect(seen.get(500)).toBe('APRS');
-    expect(seen.get(141)).toBe('TX/RX');
-    expect(seen.get(501)).toBe('APRS');
-    expect(seen.get(505)).toBe('APRS');
-    expect(seen.get(506)).toBe('APRS');
-    expect(seen.get(507)).toBe('APRS');
-    expect(seen.get(508)).toBe('APRS');
-    expect(seen.get(509)).toBe('APRS');
-    expect(seen.get(510)).toBe('APRS');
-    expect(seen.get(511)).toBe('APRS');
-    expect(seen.get(512)).toBe('APRS');
-    expect(seen.get(513)).toBe('APRS');
-    expect(seen.get(514)).toBe('APRS');
-    expect(seen.get(515)).toBe('APRS');
-    expect(seen.get(516)).toBe('APRS');
-    expect(seen.get(551)).toBe('APRS');
-    expect(seen.get(101)).toBe('TX/RX');
-    expect(seen.get(180)).toBe('TX/RX');
+    expect(seen.get(101)).toBe('TX/RX - RX');
+    expect(seen.get(141)).toBe('TX/RX - Repeater');
+    expect(seen.get(180)).toBe('TX/RX - Others');
+    expect(seen.get(500)).toBe('APRS - Basic Settings');
+    expect(seen.get(510)).toBe('APRS - Beacon TX Control');
+    expect(seen.get(516)).toBe('APRS - Beacon TX Control');
+    expect(seen.get(522)).toBe('APRS - QSY Information');
+    expect(seen.get(551)).toBe('APRS - Packet Filter');
+    expect(seen.get(585)).toBe('APRS - Others');
+    expect(seen.get(610)).toBe('Digital - TX/RX');
+    expect(seen.get(903)).toBe('Configuration - Display');
     expect(seen.has(104)).toBe(false);
     expect(seen.size).toBe(58);
   });
@@ -601,13 +623,16 @@ describe('TH-D74 menu settings', () => {
     }
     contents.fill(0, 0x1367, 0x1369);
     contents.fill(0, 0x183b, 0x183b + 35);
-    contents.fill(0, 0x1900, 0x1940);
+    contents.fill(0, 0x1900, 0x19c0);
     contents[0x038c] = 0x5a;
+    contents[0x19c0] = 0x5a;
+    for (const base of [0x1900, 0x1940, 0x1980]) {
+      contents[base + 0x08] = 0x0b;
+      contents[base + 0x13] = 0x01;
+      contents[base + 0x14] = '/'.charCodeAt(0);
+      contents[base + 0x15] = 'E'.charCodeAt(0);
+    }
     contents[0x1908] = 0xa5;
-    contents[0x1913] = 0x01;
-    contents[0x1914] = '/'.charCodeAt(0);
-    contents[0x1915] = 'E'.charCodeAt(0);
-    contents[0x1940] = 0x5a;
 
     const iconChoices = (memoryMap.structs.find((struct) => struct.id === 'aprsIcon')?.fields[0]?.value as { choices?: Array<{ label: string; value: string }> } | undefined)?.choices ?? [];
     const objectIcon = memoryMap.structs.find((struct) => struct.id === 'aprsObject')?.fields.find((field) => field.id === 'icon');
@@ -616,8 +641,7 @@ describe('TH-D74 menu settings', () => {
     expect(objectChoices.find((choice) => choice.label === 'Eyeball')?.value).toBe('/E');
     expect(objectChoices.find((choice) => choice.label === 'Satellite')?.value).toBe('\\S');
 
-    const oldObject = codec.decode({ contents, radioModel: modelId });
-    expect(asRecord(oldObject.settings).aprsObject).toMatchObject({
+    const factoryObject = {
       latitudeDegrees: 0,
       latitudeMinutes: 0,
       latitudeFraction: 0,
@@ -629,12 +653,20 @@ describe('TH-D74 menu settings', () => {
       method: 'Temp.',
       icon: '/E',
       comment: '',
-    });
+    };
+    const oldObject = codec.decode({ contents, radioModel: modelId });
+    const oldObjects = oldObject.settings.aprsObject as unknown[];
+    expect(oldObjects).toHaveLength(3);
+    expect(asRecord(oldObjects[0])).toMatchObject(factoryObject);
+    expect(asRecord(oldObjects[1])).toMatchObject(factoryObject);
+    expect(asRecord(oldObjects[2])).toMatchObject(factoryObject);
     const encodedOld = codec.encode(oldObject, { contents: Uint8Array.from(contents), radioModel: modelId });
     expect(encodedOld.contents[0x1908]).toBe(0xa5);
+    expect(encodedOld.contents[0x1948]).toBe(0x0b);
+    expect(encodedOld.contents[0x1988]).toBe(0x0b);
     expect(encodedOld.contents[0x038c]).toBe(0x5a);
-    expect(encodedOld.contents[0x1940]).toBe(0x5a);
-    expect(encodedOld.contents.subarray(0x1900, 0x1940)).toEqual(contents.subarray(0x1900, 0x1940));
+    expect(encodedOld.contents[0x19c0]).toBe(0x5a);
+    expect(encodedOld.contents.subarray(0x1900, 0x19c0)).toEqual(contents.subarray(0x1900, 0x19c0));
 
     const measured = Uint8Array.from(contents);
     const position = [0x1e, 0x0c, 0x48, 0x0d, 0x61, 0x2d, 0x2c, 0x1a];
@@ -651,7 +683,8 @@ describe('TH-D74 menu settings', () => {
     Buffer.from('ABCD', 'ascii').copy(measured, 0x1916);
 
     const newObject = codec.decode({ contents: measured, radioModel: modelId });
-    expect(asRecord(newObject.settings).aprsObject).toMatchObject({
+    const newObjects = newObject.settings.aprsObject as unknown[];
+    expect(asRecord(newObjects[0])).toMatchObject({
       latitudeDegrees: 30,
       latitudeMinutes: 12,
       latitudeFraction: 3400,
@@ -664,36 +697,53 @@ describe('TH-D74 menu settings', () => {
       icon: '\\S',
       comment: 'ABCD',
     });
+    expect(asRecord(newObjects[1])).toMatchObject(factoryObject);
+    expect(asRecord(newObjects[2])).toMatchObject(factoryObject);
     const encodedNew = codec.encode(newObject, { contents: Uint8Array.from(measured), radioModel: modelId });
     expect(encodedNew.contents[0x1908]).toBe(0x00);
-    expect(encodedNew.contents[0x1940]).toBe(0x5a);
-    expect(encodedNew.contents.subarray(0x1900, 0x1940)).toEqual(measured.subarray(0x1900, 0x1940));
+    expect(encodedNew.contents[0x1948]).toBe(0x0b);
+    expect(encodedNew.contents[0x1988]).toBe(0x0b);
+    expect(encodedNew.contents[0x19c0]).toBe(0x5a);
+    expect(encodedNew.contents.subarray(0x1900, 0x19c0)).toEqual(measured.subarray(0x1900, 0x19c0));
 
     const rewritten = codec.encode(
       {
         ...oldObject,
         settings: {
           ...oldObject.settings,
-          aprsObject: {
-            latitudeDegrees: 30,
-            latitudeMinutes: 12,
-            latitudeFraction: 3400,
-            longitudeDegrees: 97,
-            longitudeMinutes: 45,
-            longitudeFraction: 6700,
-            name: 'TESTOBJ1',
-            type: 'Killed Object',
-            method: 'Off',
-            icon: '\\S',
-            comment: 'ABCD',
-          },
+          aprsObject: [
+            {
+              latitudeDegrees: 30,
+              latitudeMinutes: 12,
+              latitudeFraction: 3400,
+              longitudeDegrees: 97,
+              longitudeMinutes: 45,
+              longitudeFraction: 6700,
+              name: 'TESTOBJ1',
+              type: 'Killed Object',
+              method: 'Off',
+              icon: '\\S',
+              comment: 'ABCD',
+            },
+            oldObjects[1],
+            {
+              ...factoryObject,
+              name: 'OBJ2',
+            },
+          ],
         },
       },
       { contents: Uint8Array.from(contents), radioModel: modelId },
     );
     expect(rewritten.contents[0x1908]).toBe(0xa5);
     expect(rewritten.contents[0x038c]).toBe(0x5a);
-    expect(rewritten.contents[0x1940]).toBe(0x5a);
+    expect(rewritten.contents[0x19c0]).toBe(0x5a);
+    expect(rewritten.contents.subarray(0x1940, 0x1980)).toEqual(contents.subarray(0x1940, 0x1980));
+    expect(Buffer.from(rewritten.contents.subarray(0x1989, 0x1992)).toString('ascii')).toBe('OBJ2\0\0\0\0\0');
+    expect(rewritten.contents[0x1988]).toBe(0x0b);
+    expect(rewritten.contents[0x1992]).toBe(0x00);
+    expect(rewritten.contents[0x1993]).toBe(0x01);
+    expect(Buffer.from(rewritten.contents.subarray(0x1994, 0x1996)).toString('ascii')).toBe('/E');
     expect([...rewritten.contents.subarray(0x1900, 0x1908)]).toEqual(position);
     expect(Buffer.from(rewritten.contents.subarray(0x1909, 0x1912)).toString('ascii')).toBe('TESTOBJ1\0');
     expect(rewritten.contents[0x1912]).toBe(0x01);
@@ -713,7 +763,7 @@ describe('TH-D74 menu settings', () => {
     for (const sample of inferred) {
       measured[sample.offset] = sample.raw;
       const decoded = codec.decode({ contents: measured, radioModel: modelId });
-      expect(asRecord(asRecord(decoded.settings).aprsObject)[sample.field]).toBe(sample.expected);
+      expect(asRecord((decoded.settings.aprsObject as unknown[])[0])[sample.field]).toBe(sample.expected);
       const encoded = codec.encode(decoded, { contents: Uint8Array.from(measured), radioModel: modelId });
       expect(encoded.contents[sample.offset]).toBe(sample.raw);
       expect(encoded.contents[0x1908]).toBe(0x00);
@@ -735,7 +785,9 @@ describe('TH-D74 menu settings', () => {
     }
     contents.fill(0, 0x1367, 0x1369);
     contents.fill(0, 0x183b, 0x183b + 35);
-    contents.fill(0, 0x1909, 0x1940);
+    for (const base of [0x1900, 0x1940, 0x1980]) {
+      contents.fill(0, base + 0x09, base + 0x40);
+    }
 
     const powerOn = Buffer.from('HELLO !!', 'ascii');
     powerOn.copy(contents, 0x10c0);
