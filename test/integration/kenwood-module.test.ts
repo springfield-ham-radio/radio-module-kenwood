@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.21.0');
+    expect(radioConfig.version).toBe('1.22.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -243,6 +243,8 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1026] = 1;
     contents[0x1027] = 1;
     contents[0x1213] = 2;
+    contents[0x1361] = 1;
+    contents[0x1362] = 1;
     contents[0x1363] = 1;
     contents[0x1364] = 246;
     contents[0x1365] = 248;
@@ -355,6 +357,8 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.aprsObject2)).toMatchObject(factoryObject);
     expect(asRecord(settings.aprsObject3)).toMatchObject(factoryObject);
     expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
+    expect(asRecord(settings.aprsQsyInfoInStatus).enabled).toBe(true);
+    expect(asRecord(settings.aprsToneNarrow).enabled).toBe(true);
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
     expect(asRecord(settings.aprsSlowRate).minutes).toBe(30);
@@ -404,7 +408,7 @@ describe('Kenwood TH-D74 module', () => {
       [0x120f, 1],
       [0x1213, 1],
       [0x1220, 2],
-      [0x1363, 6],
+      [0x1361, 8],
       [0x136a, 4],
       [0x1900, 8],
       [0x1909, 55],

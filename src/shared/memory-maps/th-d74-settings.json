@@ -1,5 +1,5 @@
 {
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -4309,6 +4309,60 @@
               "index": 3,
               "label": "Object 3"
             }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsQsyInfoInStatus",
+      "seek": "0x1361",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "qsy",
+            "label": "QSY Info. in Status",
+            "widget": "switch",
+            "menu": {
+              "number": 520,
+              "code": "QSY Info. in Status"
+            },
+            "description": "Shows QSY information in the status text. Measured on the radio: switching Off to On writes 1 at 0x1361. 0 is Off and 1 is On.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 52000
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsToneNarrow",
+      "seek": "0x1362",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "qsy",
+            "label": "Tone/Narrow",
+            "widget": "switch",
+            "menu": {
+              "number": 521,
+              "code": "Tone/Narrow"
+            },
+            "description": "Includes tone and narrow in APRS QSY information. Measured on the radio: switching Off to On writes 1 at 0x1362. 0 is Off and 1 is On.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 52100
           }
         }
       ]

@@ -102,6 +102,8 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 514 Speed | APRS - Beacon TX Control | `0x1220` | `0` Off, `1` On. Includes speed in the beacon |
 | 515 Altitude | APRS - Beacon TX Control | `0x1221` | `0` Off, `1` On. Includes altitude in the beacon |
 | 516 Object | APRS - Beacon TX Control | `0x1900` | Three 64-byte records at `0x1900`, `0x1940`, and `0x1980`. Same layout in each. `base+0x08` and `0x19C0` are not mapped. See below |
+| 520 QSY Info. in Status | APRS - QSY Information | `0x1361` | `0` Off, `1` On. Measured by switching the menu from Off to On |
+| 521 Tone/Narrow | APRS - QSY Information | `0x1362` | `0` Off, `1` On. Measured by switching the menu from Off to On |
 | 522 Shift/Offset | APRS - QSY Information | `0x1363` | `0` Off, `1` On |
 | 523 QSY Limit Distance | APRS - QSY Information | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
 | 531 Slow Rate | APRS - SmartBeaconing | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
