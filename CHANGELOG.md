@@ -1,3 +1,9 @@
+## [2.14.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.13.0...v2.14.0) (2026-11-21)
+
+### Features
+
+* **th-d74:** map APRS beacon menus 510 through 516 ([#54](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/54)) ([cd3ed5b](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/cd3ed5b1b440be0cbca5e0827ad87ac17e52fb21))
+
 ## [2.13.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.12.0...v2.13.0) (2026-11-15)
 
 ### Features
