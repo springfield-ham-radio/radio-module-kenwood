@@ -43,7 +43,7 @@ function schemaWithLayoutKeys(): AnySchema {
       id: { type: 'string', minLength: 1 },
       kind: { const: 'coordinate' },
       axis: { enum: ['lat', 'lon'] },
-      part: { enum: ['degrees', 'minutes', 'fraction'] },
+      part: { enum: ['degrees', 'minutes', 'fraction', 'hemisphere'] },
       fractionScale: { type: 'integer', minimum: 1 },
       label: { type: 'string', minLength: 1 },
     },

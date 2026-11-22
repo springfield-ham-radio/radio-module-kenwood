@@ -1,5 +1,5 @@
 {
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -80,7 +80,7 @@
         {
           "id": "beacon-tx",
           "label": "Beacon TX Control",
-          "description": "Menus 510 through 516. Beacon method, interval, decay, proportional pathing, speed, altitude, and three object records at 0x1900, 0x1940, and 0x1980. The byte at each object base+0x08 is left unchanged. The byte at 0x19C0 is not mapped."
+          "description": "Menus 510 through 516. Beacon method, interval, decay, proportional pathing, speed, altitude, and three object records at 0x1900, 0x1940, and 0x1980. Each object stores latitude and longitude hemispheres in the byte at base+0x08. The byte at 0x19C0 is not mapped."
         },
         {
           "id": "qsy",
@@ -3268,7 +3268,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Degrees",
             "widget": "integer",
-            "order": 51607,
+            "order": 51608,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3304,7 +3304,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Minutes",
             "widget": "integer",
-            "order": 51608,
+            "order": 51609,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3340,7 +3340,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Fraction",
             "widget": "integer",
-            "order": 51609,
+            "order": 51610,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3364,9 +3364,102 @@
           }
         },
         {
-          "id": "_hemisphere",
-          "type": "u8",
-          "reserved": true
+          "id": "_hemisphereHi",
+          "type": "bits",
+          "width": 4,
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 15
+          }
+        },
+        {
+          "id": "longitudeHemisphere",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "E",
+              "W"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Longitude Hemisphere",
+            "widget": "select",
+            "order": 51611,
+            "menu": {
+              "number": 516,
+              "code": "Object"
+            },
+            "description": "East or west longitude. Bit 0x08 (1 = W, 0 = E). Measured on object 1, Nov 2026. Bits 0x03 and 0xF0 stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-object",
+              "index": 1,
+              "label": "Object 1"
+            },
+            "composite": {
+              "id": "obj1-lon",
+              "kind": "coordinate",
+              "axis": "lon",
+              "part": "hemisphere",
+              "fractionScale": 10000,
+              "label": "Longitude"
+            }
+          }
+        },
+        {
+          "id": "latitudeHemisphere",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "N",
+              "S"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Latitude Hemisphere",
+            "widget": "select",
+            "order": 51607,
+            "menu": {
+              "number": 516,
+              "code": "Object"
+            },
+            "description": "North or south latitude. Bit 0x04 (1 = S, 0 = N). Measured on object 1, Nov 2026. Bits 0x03 and 0xF0 stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-object",
+              "index": 1,
+              "label": "Object 1"
+            },
+            "composite": {
+              "id": "obj1-lat",
+              "kind": "coordinate",
+              "axis": "lat",
+              "part": "hemisphere",
+              "fractionScale": 10000,
+              "label": "Latitude"
+            }
+          }
+        },
+        {
+          "id": "_hemisphereLo",
+          "type": "bits",
+          "width": 2,
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 3
+          }
         },
         {
           "id": "name",
@@ -3740,7 +3833,7 @@
             "subgroup": "beacon-tx",
             "label": "Icon",
             "widget": "select",
-            "order": 51610,
+            "order": 51612,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3768,7 +3861,7 @@
             "subgroup": "beacon-tx",
             "label": "Comment",
             "widget": "text",
-            "order": 51611,
+            "order": 51613,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3910,7 +4003,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Degrees",
             "widget": "integer",
-            "order": 51607,
+            "order": 51608,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3946,7 +4039,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Minutes",
             "widget": "integer",
-            "order": 51608,
+            "order": 51609,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -3982,7 +4075,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Fraction",
             "widget": "integer",
-            "order": 51609,
+            "order": 51610,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -4006,9 +4099,102 @@
           }
         },
         {
-          "id": "_hemisphere",
-          "type": "u8",
-          "reserved": true
+          "id": "_hemisphereHi",
+          "type": "bits",
+          "width": 4,
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 15
+          }
+        },
+        {
+          "id": "longitudeHemisphere",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "E",
+              "W"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Longitude Hemisphere",
+            "widget": "select",
+            "order": 51611,
+            "menu": {
+              "number": 516,
+              "code": "Object"
+            },
+            "description": "East or west longitude. Bit 0x08 (1 = W, 0 = E). Measured on object 1, Nov 2026. Bits 0x03 and 0xF0 stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-object",
+              "index": 2,
+              "label": "Object 2"
+            },
+            "composite": {
+              "id": "obj2-lon",
+              "kind": "coordinate",
+              "axis": "lon",
+              "part": "hemisphere",
+              "fractionScale": 10000,
+              "label": "Longitude"
+            }
+          }
+        },
+        {
+          "id": "latitudeHemisphere",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "N",
+              "S"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Latitude Hemisphere",
+            "widget": "select",
+            "order": 51607,
+            "menu": {
+              "number": 516,
+              "code": "Object"
+            },
+            "description": "North or south latitude. Bit 0x04 (1 = S, 0 = N). Measured on object 1, Nov 2026. Bits 0x03 and 0xF0 stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-object",
+              "index": 2,
+              "label": "Object 2"
+            },
+            "composite": {
+              "id": "obj2-lat",
+              "kind": "coordinate",
+              "axis": "lat",
+              "part": "hemisphere",
+              "fractionScale": 10000,
+              "label": "Latitude"
+            }
+          }
+        },
+        {
+          "id": "_hemisphereLo",
+          "type": "bits",
+          "width": 2,
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 3
+          }
         },
         {
           "id": "name",
@@ -4382,7 +4568,7 @@
             "subgroup": "beacon-tx",
             "label": "Icon",
             "widget": "select",
-            "order": 51610,
+            "order": 51612,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -4410,7 +4596,7 @@
             "subgroup": "beacon-tx",
             "label": "Comment",
             "widget": "text",
-            "order": 51611,
+            "order": 51613,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -4552,7 +4738,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Degrees",
             "widget": "integer",
-            "order": 51607,
+            "order": 51608,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -4588,7 +4774,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Minutes",
             "widget": "integer",
-            "order": 51608,
+            "order": 51609,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -4624,7 +4810,7 @@
             "subgroup": "beacon-tx",
             "label": "Longitude Fraction",
             "widget": "integer",
-            "order": 51609,
+            "order": 51610,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -4648,9 +4834,102 @@
           }
         },
         {
-          "id": "_hemisphere",
-          "type": "u8",
-          "reserved": true
+          "id": "_hemisphereHi",
+          "type": "bits",
+          "width": 4,
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 15
+          }
+        },
+        {
+          "id": "longitudeHemisphere",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "E",
+              "W"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Longitude Hemisphere",
+            "widget": "select",
+            "order": 51611,
+            "menu": {
+              "number": 516,
+              "code": "Object"
+            },
+            "description": "East or west longitude. Bit 0x08 (1 = W, 0 = E). Measured on object 1, Nov 2026. Bits 0x03 and 0xF0 stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-object",
+              "index": 3,
+              "label": "Object 3"
+            },
+            "composite": {
+              "id": "obj3-lon",
+              "kind": "coordinate",
+              "axis": "lon",
+              "part": "hemisphere",
+              "fractionScale": 10000,
+              "label": "Longitude"
+            }
+          }
+        },
+        {
+          "id": "latitudeHemisphere",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "enum",
+            "values": [
+              "N",
+              "S"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "beacon-tx",
+            "label": "Latitude Hemisphere",
+            "widget": "select",
+            "order": 51607,
+            "menu": {
+              "number": 516,
+              "code": "Object"
+            },
+            "description": "North or south latitude. Bit 0x04 (1 = S, 0 = N). Measured on object 1, Nov 2026. Bits 0x03 and 0xF0 stay as they were.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-object",
+              "index": 3,
+              "label": "Object 3"
+            },
+            "composite": {
+              "id": "obj3-lat",
+              "kind": "coordinate",
+              "axis": "lat",
+              "part": "hemisphere",
+              "fractionScale": 10000,
+              "label": "Latitude"
+            }
+          }
+        },
+        {
+          "id": "_hemisphereLo",
+          "type": "bits",
+          "width": 2,
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 3
+          }
         },
         {
           "id": "name",
@@ -5024,7 +5303,7 @@
             "subgroup": "beacon-tx",
             "label": "Icon",
             "widget": "select",
-            "order": 51610,
+            "order": 51612,
             "menu": {
               "number": 516,
               "code": "Object"
@@ -5052,7 +5331,7 @@
             "subgroup": "beacon-tx",
             "label": "Comment",
             "widget": "text",
-            "order": 51611,
+            "order": 51613,
             "menu": {
               "number": 516,
               "code": "Object"

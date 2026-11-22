@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.24.0');
+    expect(radioConfig.version).toBe('1.25.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -368,16 +368,22 @@ describe('Kenwood TH-D74 module', () => {
       latitudeDegrees: 0,
       latitudeMinutes: 0,
       latitudeFraction: 0,
+      latitudeHemisphere: 'N',
       longitudeDegrees: 0,
       longitudeMinutes: 0,
       longitudeFraction: 0,
+      longitudeHemisphere: 'W',
       name: '',
       type: 'Live Object',
       method: 'Temp.',
       icon: '/E',
       comment: '',
     };
-    expect(asRecord(settings.aprsObject1)).toMatchObject(factoryObject);
+    expect(asRecord(settings.aprsObject1)).toMatchObject({
+      ...factoryObject,
+      latitudeHemisphere: 'S',
+      longitudeHemisphere: 'E',
+    });
     expect(asRecord(settings.aprsObject2)).toMatchObject(factoryObject);
     expect(asRecord(settings.aprsObject3)).toMatchObject(factoryObject);
     expect(asRecord(settings.aprsIcon).symbol).toBe('/R');
@@ -447,11 +453,11 @@ describe('Kenwood TH-D74 module', () => {
       [0x1300, 43],
       [0x1361, 8],
       [0x136a, 4],
-      [0x1900, 8],
+      [0x1900, 9],
       [0x1909, 55],
-      [0x1940, 8],
+      [0x1940, 9],
       [0x1949, 55],
-      [0x1980, 8],
+      [0x1980, 9],
       [0x1989, 55],
       [0x1370, 1],
       [0x1375, 1],
