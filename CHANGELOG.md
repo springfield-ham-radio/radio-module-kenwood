@@ -1,3 +1,9 @@
+## [2.16.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.15.0...v2.16.0) (2026-11-22)
+
+### Features
+
+* **th-d74:** map APRS Menu 502 position comment and 503 status texts ([#56](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/56)) ([f16ddfa](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/f16ddfa2891df58115e873596dd0bf8d67cb1511))
+
 ## [2.15.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.14.0...v2.15.0) (2026-11-21)
 
 ### Features
