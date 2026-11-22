@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.22.0');
-    expect(memoryMap.version).toBe('1.8.0');
+    expect(version).toBe('1.23.0');
+    expect(memoryMap.version).toBe('1.9.0');
   });
 
   it('names each menu setting with the radio category and group', () => {
@@ -146,6 +146,8 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(141)).toBe('TX/RX / Repeater');
     expect(seen.get(180)).toBe('TX/RX / Others');
     expect(seen.get(500)).toBe('APRS / Basic Settings');
+    expect(seen.get(502)).toBe('APRS / Basic Settings');
+    expect(seen.get(503)).toBe('APRS / Basic Settings');
     expect(seen.get(510)).toBe('APRS / Beacon TX Control');
     expect(seen.get(516)).toBe('APRS / Beacon TX Control');
     expect(seen.get(520)).toBe('APRS / QSY Information');
@@ -156,7 +158,8 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(610)).toBe('Digital / TX/RX');
     expect(seen.get(903)).toBe('Configuration / Display');
     expect(seen.has(104)).toBe(false);
-    expect(seen.size).toBe(60);
+    expect(seen.has(504)).toBe(false);
+    expect(seen.size).toBe(62);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -874,6 +877,179 @@ describe('TH-D74 menu settings', () => {
     }
   });
 
+  it('groups menu 503 status texts for the settings layout', () => {
+    const bases = [0x1230, 0x1260, 0x1290, 0x12c0, 0x1300];
+
+    for (const index of [1, 2, 3, 4, 5]) {
+      const struct = memoryMap.structs.find((entry) => entry.id === `aprsStatusText${index}`);
+      expect(struct?.seek).toBe(`0x${bases[index - 1].toString(16).toUpperCase()}`);
+      expect(struct?.count).toBeUndefined();
+
+      const visible = (struct?.fields ?? []).filter((field) => field.ui);
+      const byOrder = [...visible].sort((left, right) => (left.ui?.order ?? 0) - (right.ui?.order ?? 0));
+      expect(byOrder.map((field) => [field.id, field.ui?.order, field.ui?.label])).toEqual([
+        ['text', 50301, 'Text'],
+        ['txRate', 50302, 'TX Rate'],
+      ]);
+
+      for (const field of visible) {
+        expect(field.ui?.record).toEqual({ id: 'aprs-status-text', index, label: `Status Text ${index}` });
+        expect(field.ui?.menu).toEqual({ number: 503, code: 'Status Text' });
+        expect(field.ui?.subgroup).toBe('basic-settings');
+        expect(field.ui?.section).toBe('APRS');
+      }
+    }
+
+    const selected = memoryMap.structs.find((entry) => entry.id === 'aprsStatusText');
+    expect(selected?.seek).toBe('0x122F');
+    expect(selected?.fields[0]?.ui?.label).toBe('Status Text');
+    expect(selected?.fields[0]?.ui?.order).toBe(50300);
+    expect(selected?.fields[0]?.ui?.record).toBeUndefined();
+    expect(selected?.fields[0]?.ui?.menu).toEqual({ number: 503, code: 'Status Text' });
+
+    const comment = memoryMap.structs.find((entry) => entry.id === 'aprsPositionComment');
+    expect(comment?.seek).toBe('0x1222');
+    expect(comment?.fields[0]?.ui?.label).toBe('Position Comment');
+    expect(comment?.fields[0]?.ui?.order).toBe(50200);
+    expect(comment?.fields[0]?.ui?.menu).toEqual({ number: 502, code: 'Position Comment' });
+  });
+
+  it('encodes and decodes measured APRS menus 502 and 503', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1361, 0x1362, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
+      contents[offset] = 0;
+    }
+    contents.fill(0, 0x1367, 0x1369);
+    contents.fill(0, 0x183b, 0x183b + 35);
+    contents.fill(0, 0x1900, 0x19c0);
+    for (const base of [0x1900, 0x1940, 0x1980]) {
+      contents[base + 0x08] = 0x0b;
+      contents[base + 0x13] = 0x01;
+      contents[base + 0x14] = '/'.charCodeAt(0);
+      contents[base + 0x15] = 'E'.charCodeAt(0);
+    }
+    contents[0x038c] = 0x5a;
+    contents[0x1223] = 0x44;
+    contents[0x122e] = 0x55;
+    contents.fill(0xff, 0x12f0, 0x1300);
+    const bases = [0x1230, 0x1260, 0x1290, 0x12c0, 0x1300];
+    for (const base of bases) {
+      contents[base + 0x2b] = 0xa5;
+      contents[base + 0x2c] = 0x5a;
+      contents[base + 0x2d] = 0x11;
+      contents[base + 0x2e] = 0x22;
+      contents[base + 0x2f] = 0x33;
+    }
+
+    const comments: Array<{ raw: number; expected: string }> = [
+      { raw: 0, expected: 'Off Duty' },
+      { raw: 1, expected: 'Enroute' },
+      { raw: 2, expected: 'In Service' },
+      { raw: 3, expected: 'Returning' },
+      { raw: 4, expected: 'Committed' },
+      { raw: 5, expected: 'Special' },
+      { raw: 6, expected: 'Priority' },
+      { raw: 7, expected: 'Custom 0' },
+      { raw: 8, expected: 'Custom 1' },
+      { raw: 9, expected: 'Custom 2' },
+      { raw: 10, expected: 'Custom 3' },
+      { raw: 11, expected: 'Custom 4' },
+      { raw: 12, expected: 'Custom 5' },
+      { raw: 13, expected: 'Custom 6' },
+      { raw: 14, expected: 'Emergency' },
+    ];
+    for (const sample of comments) {
+      contents[0x1222] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsPositionComment).comment).toBe(sample.expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x1222]).toBe(sample.raw);
+      expect(encoded.contents[0x038c]).toBe(0x5a);
+      expect(encoded.contents[0x1223]).toBe(0x44);
+      expect(encoded.contents[0x12f0]).toBe(0xff);
+    }
+
+    const slots = ['Text 1', 'Text 2', 'Text 3', 'Text 4', 'Text 5'];
+    for (const [raw, expected] of slots.entries()) {
+      contents[0x122f] = raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsStatusText).selected).toBe(expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x122f]).toBe(raw);
+      expect(encoded.contents[0x122e]).toBe(0x55);
+    }
+
+    const rates = ['Off', '1/1', '1/2', '1/3', '1/4', '1/5', '1/6', '1/7', '1/8'];
+    contents[0x1222] = 4;
+    contents[0x122f] = 0;
+    for (const [raw, expected] of rates.entries()) {
+      contents[0x128a] = raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsStatusText2).txRate).toBe(expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x128a]).toBe(raw);
+      expect(encoded.contents[0x128a + 1]).toBe(0xa5);
+    }
+
+    contents[0x122f] = 1;
+    contents[0x125a] = 0;
+    contents[0x128a] = 2;
+    contents[0x12ba] = 0;
+    contents[0x12ea] = 0;
+    contents[0x132a] = 4;
+    Buffer.from('ABCD', 'ascii').copy(contents, 0x1260);
+    Buffer.from('TEST5', 'ascii').copy(contents, 0x1300);
+
+    const measured = codec.decode({ contents, radioModel: modelId });
+    const measuredSettings = asRecord(measured.settings);
+    expect(asRecord(measuredSettings.aprsPositionComment).comment).toBe('Committed');
+    expect(asRecord(measuredSettings.aprsStatusText).selected).toBe('Text 2');
+    expect(asRecord(measuredSettings.aprsStatusText1)).toMatchObject({ text: '', txRate: 'Off' });
+    expect(asRecord(measuredSettings.aprsStatusText2)).toMatchObject({ text: 'ABCD', txRate: '1/2' });
+    expect(asRecord(measuredSettings.aprsStatusText3)).toMatchObject({ text: '', txRate: 'Off' });
+    expect(asRecord(measuredSettings.aprsStatusText4)).toMatchObject({ text: '', txRate: 'Off' });
+    expect(asRecord(measuredSettings.aprsStatusText5)).toMatchObject({ text: 'TEST5', txRate: '1/4' });
+
+    const unchanged = codec.encode(measured, { contents: Uint8Array.from(contents), radioModel: modelId });
+    expect(unchanged.contents.subarray(0x1230, 0x1330)).toEqual(contents.subarray(0x1230, 0x1330));
+    expect(unchanged.contents[0x038c]).toBe(0x5a);
+    expect(unchanged.contents[0x1223]).toBe(0x44);
+
+    const edited = codec.encode(
+      {
+        ...measured,
+        settings: {
+          ...measured.settings,
+          aprsPositionComment: { comment: 'In Service' },
+          aprsStatusText: { selected: 'Text 1' },
+          aprsStatusText2: { text: 'AB', txRate: '1/1' },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(edited.contents[0x1222]).toBe(2);
+    expect(edited.contents[0x122f]).toBe(0);
+    expect(edited.contents[0x1223]).toBe(0x44);
+    expect(edited.contents[0x122e]).toBe(0x55);
+    expect(Buffer.from(edited.contents.subarray(0x1260, 0x1262)).toString('ascii')).toBe('AB');
+    expect([...edited.contents.subarray(0x1262, 0x128a)].every((byte) => byte === 0x00)).toBe(true);
+    expect(edited.contents[0x128a]).toBe(1);
+    expect([...edited.contents.subarray(0x128b, 0x1290)]).toEqual([0xa5, 0x5a, 0x11, 0x22, 0x33]);
+    expect(Buffer.from(edited.contents.subarray(0x1300, 0x1305)).toString('ascii')).toBe('TEST5');
+    expect(edited.contents[0x132a]).toBe(4);
+    expect([...edited.contents.subarray(0x12f0, 0x1300)].every((byte) => byte === 0xff)).toBe(true);
+    expect([...edited.contents.subarray(0x132b, 0x1330)]).toEqual([0xa5, 0x5a, 0x11, 0x22, 0x33]);
+    expect(edited.contents[0x038c]).toBe(0x5a);
+    expect(edited.contents.subarray(0x1230, 0x125b)).toEqual(contents.subarray(0x1230, 0x125b));
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -884,7 +1060,7 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1361, 0x1362, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1222, 0x122f, 0x125a, 0x128a, 0x12ba, 0x12ea, 0x132a, 0x1361, 0x1362, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
       contents[offset] = 0;
     }
     contents.fill(0, 0x1367, 0x1369);
