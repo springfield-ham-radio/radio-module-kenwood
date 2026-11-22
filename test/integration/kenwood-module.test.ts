@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.23.0');
+    expect(radioConfig.version).toBe('1.24.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -252,6 +252,17 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1367] = '/'.charCodeAt(0);
     contents[0x1368] = 'R'.charCodeAt(0);
     contents[0x1370] = 30;
+    contents[0x1375] = 2;
+    contents[0x1376] = 1;
+    contents[0x1377] = 3;
+    // RELAY is inverted: 0 is On.
+    contents[0x1378] = 0;
+    contents[0x1379] = 5;
+    writeAscii(contents, 0x137a, 'TSTRG', 5, 0);
+    contents[0x137f] = 6;
+    writeAscii(contents, 0x1380, 'TSTP1', 79, 0);
+    writeAscii(contents, 0x13cf, 'TSTP2', 29, 0);
+    writeAscii(contents, 0x1400, 'TSTP3', 29, 0);
     writeAscii(contents, 0x183b, 'CQ,BLN1', 35, 0);
     contents[0x1030] = 0;
     contents[0x1032] = 1;
@@ -375,6 +386,13 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
     expect(asRecord(settings.aprsSlowRate).minutes).toBe(30);
+    expect(asRecord(settings.aprsPacketPath).type).toBe('Region');
+    expect(asRecord(settings.aprsPacketPathNewN)).toMatchObject({ wide11: true, totalHops: 3 });
+    expect(asRecord(settings.aprsPacketPathRelay)).toMatchObject({ relay: 'On', totalHops: 5 });
+    expect(asRecord(settings.aprsPacketPathRegion)).toMatchObject({ abbr: 'TSTRG', totalHops: 6 });
+    expect(asRecord(settings.aprsPacketPathOthers1).path).toBe('TSTP1');
+    expect(asRecord(settings.aprsPacketPathOthers2).path).toBe('TSTP2');
+    expect(asRecord(settings.aprsPacketPathOthers3).path).toBe('TSTP3');
     expect(asRecord(settings.aprsWaypointFormat).format).toBe('KENWOOD');
     expect(asRecord(settings.aprsPositionLimit).distance).toBe('2480 mi');
     expect(asRecord(settings.aprsFilterType)).toMatchObject({
@@ -436,6 +454,13 @@ describe('Kenwood TH-D74 module', () => {
       [0x1980, 8],
       [0x1989, 55],
       [0x1370, 1],
+      [0x1375, 1],
+      [0x1376, 2],
+      [0x1378, 2],
+      [0x137a, 6],
+      [0x1380, 79],
+      [0x13cf, 29],
+      [0x1400, 29],
       [0x183b, 35],
     ];
     const changedOutsideMap: string[] = [];
@@ -451,6 +476,8 @@ describe('Kenwood TH-D74 module', () => {
     expect(changedOutsideMap).toEqual([]);
     expect(encoded.contents[0x01ea]).toBe(0x01);
     expect(encoded.contents[0x038c]).toBe(0x5a);
+    expect(encoded.contents[0x13ec]).toBe(0xff);
+    expect(encoded.contents[0x141d]).toBe(0xff);
     expect(encoded.contents[0x12f0]).toBe(0xff);
     expect(encoded.contents[0x128b]).toBe(0xff);
     expect(encoded.contents[0x1908]).toBe(0xa5);

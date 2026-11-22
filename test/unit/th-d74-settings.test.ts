@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.23.0');
-    expect(memoryMap.version).toBe('1.9.0');
+    expect(version).toBe('1.24.0');
+    expect(memoryMap.version).toBe('1.10.0');
   });
 
   it('names each menu setting with the radio category and group', () => {
@@ -148,6 +148,7 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(500)).toBe('APRS / Basic Settings');
     expect(seen.get(502)).toBe('APRS / Basic Settings');
     expect(seen.get(503)).toBe('APRS / Basic Settings');
+    expect(seen.get(504)).toBe('APRS / Basic Settings');
     expect(seen.get(510)).toBe('APRS / Beacon TX Control');
     expect(seen.get(516)).toBe('APRS / Beacon TX Control');
     expect(seen.get(520)).toBe('APRS / QSY Information');
@@ -158,8 +159,7 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(610)).toBe('Digital / TX/RX');
     expect(seen.get(903)).toBe('Configuration / Display');
     expect(seen.has(104)).toBe(false);
-    expect(seen.has(504)).toBe(false);
-    expect(seen.size).toBe(62);
+    expect(seen.size).toBe(63);
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {
@@ -1050,6 +1050,185 @@ describe('TH-D74 menu settings', () => {
     expect(edited.contents.subarray(0x1230, 0x125b)).toEqual(contents.subarray(0x1230, 0x125b));
   });
 
+  it('groups menu 504 packet paths for the settings layout', () => {
+    const tabs = [
+      { id: 'aprsPacketPathNewN', seek: '0x1376', index: 1, label: 'New-N', fields: [['wide11', 50401, 'WIDE1-1'], ['totalHops', 50402, 'Total Hops']] },
+      { id: 'aprsPacketPathRelay', seek: '0x1378', index: 2, label: 'Relay', fields: [['relay', 50401, 'RELAY'], ['totalHops', 50402, 'Total Hops']] },
+      { id: 'aprsPacketPathRegion', seek: '0x137A', index: 3, label: 'Region', fields: [['abbr', 50401, 'ABBR'], ['totalHops', 50402, 'Total Hops']] },
+      { id: 'aprsPacketPathOthers1', seek: '0x1380', index: 4, label: 'Others1', fields: [['path', 50401, 'Path']] },
+      { id: 'aprsPacketPathOthers2', seek: '0x13CF', index: 5, label: 'Others2', fields: [['path', 50401, 'Path']] },
+      { id: 'aprsPacketPathOthers3', seek: '0x1400', index: 6, label: 'Others3', fields: [['path', 50401, 'Path']] },
+    ];
+
+    for (const tab of tabs) {
+      const struct = memoryMap.structs.find((entry) => entry.id === tab.id);
+      expect(struct?.seek).toBe(tab.seek);
+      expect(struct?.count).toBeUndefined();
+
+      const visible = (struct?.fields ?? []).filter((field) => field.ui);
+      const byOrder = [...visible].sort((left, right) => (left.ui?.order ?? 0) - (right.ui?.order ?? 0));
+      expect(byOrder.map((field) => [field.id, field.ui?.order, field.ui?.label])).toEqual(tab.fields);
+
+      for (const field of visible) {
+        expect(field.ui?.record).toEqual({ id: 'aprs-packet-path', index: tab.index, label: tab.label });
+        expect(field.ui?.menu).toEqual({ number: 504, code: 'Packet Path' });
+        expect(field.ui?.subgroup).toBe('basic-settings');
+        expect(field.ui?.section).toBe('APRS');
+      }
+    }
+
+    const selected = memoryMap.structs.find((entry) => entry.id === 'aprsPacketPath');
+    expect(selected?.seek).toBe('0x1375');
+    expect(selected?.fields[0]?.ui?.label).toBe('Packet Path');
+    expect(selected?.fields[0]?.ui?.order).toBe(50400);
+    expect(selected?.fields[0]?.ui?.record).toBeUndefined();
+    expect(selected?.fields[0]?.ui?.menu).toEqual({ number: 504, code: 'Packet Path' });
+
+    const others1 = memoryMap.structs.find((entry) => entry.id === 'aprsPacketPathOthers1');
+    const others2 = memoryMap.structs.find((entry) => entry.id === 'aprsPacketPathOthers2');
+    const others3 = memoryMap.structs.find((entry) => entry.id === 'aprsPacketPathOthers3');
+    expect(others1?.fields[0]?.value).toMatchObject({ kind: 'ascii', length: 79, pad: 0 });
+    expect(others2?.fields[0]?.value).toMatchObject({ kind: 'ascii', length: 29, pad: 0 });
+    expect(others3?.fields[0]?.value).toMatchObject({ kind: 'ascii', length: 29, pad: 0 });
+    expect(memoryMap.structs.find((entry) => entry.id === 'aprsPacketPathRelay')?.fields[0]?.value).toEqual({ kind: 'enum', values: ['On', 'Off'] });
+  });
+
+  it('encodes and decodes measured APRS menu 504, including inverted RELAY', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1222, 0x122f, 0x125a, 0x128a, 0x12ba, 0x12ea, 0x132a, 0x1361, 0x1362, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
+      contents[offset] = 0;
+    }
+    contents.fill(0, 0x1367, 0x1369);
+    contents.fill(0, 0x183b, 0x183b + 35);
+    contents.fill(0, 0x1900, 0x19c0);
+    for (const base of [0x1900, 0x1940, 0x1980]) {
+      contents[base + 0x08] = 0x0b;
+      contents[base + 0x13] = 0x01;
+      contents[base + 0x14] = '/'.charCodeAt(0);
+      contents[base + 0x15] = 'E'.charCodeAt(0);
+    }
+    contents[0x038c] = 0x5a;
+    contents[0x1374] = 0x44;
+    contents.fill(0xff, 0x13ec, 0x1400);
+    contents[0x141d] = 0xff;
+    contents[0x1420] = 0xff;
+
+    const types = ['New-N', 'Relay', 'Region', 'Others1', 'Others2', 'Others3'];
+    for (const [raw, expected] of types.entries()) {
+      contents[0x1375] = raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsPacketPath).type).toBe(expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x1375]).toBe(raw);
+      expect(encoded.contents[0x1374]).toBe(0x44);
+      expect(encoded.contents[0x038c]).toBe(0x5a);
+    }
+
+    for (const [raw, expected] of [[0, false], [1, true]] as const) {
+      contents[0x1376] = raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsPacketPathNewN).wide11).toBe(expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x1376]).toBe(raw);
+    }
+
+    const relay = [
+      { raw: 0, expected: 'On' },
+      { raw: 1, expected: 'Off' },
+    ];
+    for (const sample of relay) {
+      contents[0x1378] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsPacketPathRelay).relay).toBe(sample.expected);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x1378]).toBe(sample.raw);
+    }
+
+    for (const hops of [0, 1, 2, 3, 4, 5, 6, 7]) {
+      contents[0x1377] = hops;
+      contents[0x1379] = hops;
+      contents[0x137f] = hops;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      expect(asRecord(asRecord(decoded.settings).aprsPacketPathNewN).totalHops).toBe(hops);
+      expect(asRecord(asRecord(decoded.settings).aprsPacketPathRelay).totalHops).toBe(hops);
+      expect(asRecord(asRecord(decoded.settings).aprsPacketPathRegion).totalHops).toBe(hops);
+      const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+      expect(encoded.contents[0x1377]).toBe(hops);
+      expect(encoded.contents[0x1379]).toBe(hops);
+      expect(encoded.contents[0x137f]).toBe(hops);
+    }
+
+    contents[0x1375] = 2;
+    contents[0x1376] = 1;
+    contents[0x1377] = 3;
+    contents[0x1378] = 1;
+    contents[0x1379] = 5;
+    contents[0x137f] = 6;
+    Buffer.from('TSTRG', 'ascii').copy(contents, 0x137a);
+    Buffer.from('TSTP1', 'ascii').copy(contents, 0x1380);
+    contents.fill(0, 0x1385, 0x13cf);
+    Buffer.from('TSTP2', 'ascii').copy(contents, 0x13cf);
+    contents.fill(0, 0x13d4, 0x13ec);
+    Buffer.from('TSTP3', 'ascii').copy(contents, 0x1400);
+    contents.fill(0, 0x1405, 0x141d);
+
+    const measured = codec.decode({ contents, radioModel: modelId });
+    const measuredSettings = asRecord(measured.settings);
+    expect(asRecord(measuredSettings.aprsPacketPath).type).toBe('Region');
+    expect(asRecord(measuredSettings.aprsPacketPathNewN)).toMatchObject({ wide11: true, totalHops: 3 });
+    expect(asRecord(measuredSettings.aprsPacketPathRelay)).toMatchObject({ relay: 'Off', totalHops: 5 });
+    expect(asRecord(measuredSettings.aprsPacketPathRegion)).toMatchObject({ abbr: 'TSTRG', totalHops: 6 });
+    expect(asRecord(measuredSettings.aprsPacketPathOthers1).path).toBe('TSTP1');
+    expect(asRecord(measuredSettings.aprsPacketPathOthers2).path).toBe('TSTP2');
+    expect(asRecord(measuredSettings.aprsPacketPathOthers3).path).toBe('TSTP3');
+
+    const unchanged = codec.encode(measured, { contents: Uint8Array.from(contents), radioModel: modelId });
+    expect(unchanged.contents.subarray(0x1374, 0x1421)).toEqual(contents.subarray(0x1374, 0x1421));
+    expect(unchanged.contents[0x038c]).toBe(0x5a);
+
+    const longOthers1 = 'A'.repeat(79);
+    const longOthers2 = 'B'.repeat(29);
+    const edited = codec.encode(
+      {
+        ...measured,
+        settings: {
+          ...measured.settings,
+          aprsPacketPath: { type: 'New-N' },
+          aprsPacketPathNewN: { wide11: false, totalHops: 2 },
+          aprsPacketPathRelay: { relay: 'On', totalHops: 2 },
+          aprsPacketPathRegion: { abbr: 'RG', totalHops: 2 },
+          aprsPacketPathOthers1: { path: longOthers1 },
+          aprsPacketPathOthers2: { path: longOthers2 },
+          aprsPacketPathOthers3: { path: '' },
+        },
+      },
+      { contents: Uint8Array.from(contents), radioModel: modelId },
+    );
+    expect(edited.contents[0x1374]).toBe(0x44);
+    expect(edited.contents[0x1375]).toBe(0);
+    expect(edited.contents[0x1376]).toBe(0);
+    expect(edited.contents[0x1377]).toBe(2);
+    expect(edited.contents[0x1378]).toBe(0);
+    expect(edited.contents[0x1379]).toBe(2);
+    expect(Buffer.from(edited.contents.subarray(0x137a, 0x137c)).toString('ascii')).toBe('RG');
+    expect([...edited.contents.subarray(0x137c, 0x137f)].every((byte) => byte === 0x00)).toBe(true);
+    expect(edited.contents[0x137f]).toBe(2);
+    expect(Buffer.from(edited.contents.subarray(0x1380, 0x13cf)).toString('ascii')).toBe(longOthers1);
+    expect(Buffer.from(edited.contents.subarray(0x13cf, 0x13ec)).toString('ascii')).toBe(longOthers2);
+    expect([...edited.contents.subarray(0x13ec, 0x1400)].every((byte) => byte === 0xff)).toBe(true);
+    expect([...edited.contents.subarray(0x1400, 0x141d)].every((byte) => byte === 0x00)).toBe(true);
+    expect(edited.contents[0x141d]).toBe(0xff);
+    expect(edited.contents[0x1420]).toBe(0xff);
+    expect(edited.contents[0x038c]).toBe(0x5a);
+  });
+
   it('keeps mixed text padding byte-identical when the text is not edited', () => {
     const codec = createMemoryMapCodec({
       radioModel: modelId,
@@ -1060,7 +1239,7 @@ describe('TH-D74 menu settings', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
     // Scalar menus must already be legal values. 0xFF decodes as the first option and would be rewritten.
-    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1222, 0x122f, 0x125a, 0x128a, 0x12ba, 0x12ea, 0x132a, 0x1361, 0x1362, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d]) {
+    for (const offset of [0x1000, 0x1001, 0x1003, 0x1006, 0x1008, 0x1009, 0x100a, 0x100c, 0x100d, 0x1012, 0x1018, 0x1019, 0x101a, 0x101b, 0x101c, 0x101d, 0x101e, 0x101f, 0x1020, 0x1021, 0x1024, 0x1026, 0x1027, 0x1030, 0x1032, 0x1060, 0x1062, 0x1071, 0x1076, 0x1077, 0x107f, 0x1085, 0x1088, 0x120b, 0x120c, 0x120d, 0x120f, 0x1213, 0x1220, 0x1221, 0x1222, 0x122f, 0x125a, 0x128a, 0x12ba, 0x12ea, 0x132a, 0x1361, 0x1362, 0x1363, 0x1364, 0x1365, 0x136a, 0x136b, 0x136c, 0x136d, 0x1375, 0x1376, 0x1378]) {
       contents[offset] = 0;
     }
     contents.fill(0, 0x1367, 0x1369);

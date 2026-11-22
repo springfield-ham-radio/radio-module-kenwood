@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -75,7 +75,7 @@
         {
           "id": "basic-settings",
           "label": "Basic Settings",
-          "description": "Menu 500 stores the callsign and SSID as separate text. The callsign is 6 bytes at 0x1200, NUL-padded. The SSID is the literal suffix, including the hyphen (for example -7), in 3 NUL-padded bytes at 0x1206. It is not a 0-15 index. A shorter callsign does not shift the SSID. Menu 502 is the position comment at 0x1222. Menu 503 is the in-use status text at 0x122F and five text records. Text 5 starts at 0x1300 and skips the 0x12F0 filler row. Bytes after each TX Rate stay unchanged."
+          "description": "Menu 500 stores the callsign and SSID as separate text. The callsign is 6 bytes at 0x1200, NUL-padded. The SSID is the literal suffix, including the hyphen (for example -7), in 3 NUL-padded bytes at 0x1206. It is not a 0-15 index. A shorter callsign does not shift the SSID. Menu 502 is the position comment at 0x1222. Menu 503 is the in-use status text at 0x122F and five text records. Text 5 starts at 0x1300 and skips the 0x12F0 filler row. Bytes after each TX Rate stay unchanged. Menu 504 is the in-use packet path at 0x1375 and six path records. Others2 stops at 0x13EB and Others3 stops at 0x141C so the 0xFF filler stays unchanged."
         },
         {
           "id": "beacon-tx",
@@ -2426,6 +2426,329 @@
               "id": "aprs-status-text",
               "index": 5,
               "label": "Status Text 5"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPath",
+      "seek": "0x1375",
+      "fields": [
+        {
+          "id": "type",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "New-N",
+              "Relay",
+              "Region",
+              "Others1",
+              "Others2",
+              "Others3"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Packet Path",
+            "widget": "select",
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Which packet path is in use. Measured on the radio: 0 is New-N and 2 is Region. Relay, Others1, Others2, and Others3 follow the manual order and were not measured.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 50400
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPathNewN",
+      "seek": "0x1376",
+      "fields": [
+        {
+          "id": "wide11",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "WIDE1-1",
+            "widget": "switch",
+            "order": 50401,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "New-N WIDE1-1 at 0x1376. Measured on the radio: 1 is On and 0 is Off.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 1,
+              "label": "New-N"
+            }
+          }
+        },
+        {
+          "id": "totalHops",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 7
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Total Hops",
+            "widget": "integer",
+            "order": 50402,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "New-N total hops at 0x1377. The byte is the hop count, 0 through 7. Measured on the radio: 2 and 3.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 1,
+              "label": "New-N"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPathRelay",
+      "seek": "0x1378",
+      "fields": [
+        {
+          "id": "relay",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "On",
+              "Off"
+            ]
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "RELAY",
+            "widget": "select",
+            "order": 50401,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Relay RELAY at 0x1378. The stored byte is inverted: 0 is On and 1 is Off. Measured on the radio: Off is 1 and On is 0.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 2,
+              "label": "Relay"
+            }
+          }
+        },
+        {
+          "id": "totalHops",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 7
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Total Hops",
+            "widget": "integer",
+            "order": 50402,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Relay total hops at 0x1379. The byte is the hop count, 0 through 7. Measured on the radio: 2 and 5.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 2,
+              "label": "Relay"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPathRegion",
+      "seek": "0x137A",
+      "fields": [
+        {
+          "id": "abbr",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 5,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "ABBR",
+            "widget": "text",
+            "order": 50401,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Region abbreviation at 0x137A. Up to 5 ASCII characters. Edited text is zero-padded. Measured TSTRG is stored here.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 3,
+              "label": "Region"
+            }
+          }
+        },
+        {
+          "id": "totalHops",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 0,
+            "max": 7
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Total Hops",
+            "widget": "integer",
+            "order": 50402,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Region total hops at 0x137F. The byte is the hop count, 0 through 7. Measured on the radio: 2 and 6.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 3,
+              "label": "Region"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPathOthers1",
+      "seek": "0x1380",
+      "fields": [
+        {
+          "id": "path",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 79,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Path",
+            "widget": "text",
+            "order": 50401,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Others1 path at 0x1380. Up to 79 ASCII characters, through 0x13CE. Edited text is zero-padded. Measured TSTP1 is stored here.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 4,
+              "label": "Others1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPathOthers2",
+      "seek": "0x13CF",
+      "fields": [
+        {
+          "id": "path",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 29,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Path",
+            "widget": "text",
+            "order": 50401,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Others2 path at 0x13CF. Mapped length is 29 bytes, the zero-padded region through 0x13EB. The manual allows 79 characters. Bytes after 29 were not measured, and 0x13EC through 0x13FF is 0xFF filler that stays unmapped. Measured TSTP2 is stored here.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 5,
+              "label": "Others2"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsPacketPathOthers3",
+      "seek": "0x1400",
+      "fields": [
+        {
+          "id": "path",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 29,
+            "pad": 0
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "basic-settings",
+            "label": "Path",
+            "widget": "text",
+            "order": 50401,
+            "menu": {
+              "number": 504,
+              "code": "Packet Path"
+            },
+            "description": "Others3 path at 0x1400. Mapped length is 29 bytes, the zero-padded region through 0x141C. The manual allows 79 characters. Bytes after 29 were not measured, and 0x141D onward is 0xFF filler that stays unmapped. Measured TSTP3 is stored here.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "record": {
+              "id": "aprs-packet-path",
+              "index": 6,
+              "label": "Others3"
             }
           }
         }
