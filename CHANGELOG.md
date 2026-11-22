@@ -1,3 +1,9 @@
+## [2.17.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.16.0...v2.17.0) (2026-11-22)
+
+### Features
+
+* **th-d74:** map APRS Menu 504 packet path ([#57](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/57)) ([925f5e9](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/925f5e9be4f15e543fe6c32922a99975e581cccd))
+
 ## [2.16.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.15.0...v2.16.0) (2026-11-22)
 
 ### Features
