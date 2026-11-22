@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.22.0');
+    expect(radioConfig.version).toBe('1.23.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -274,6 +274,15 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x120f] = 5;
     contents[0x1220] = 1;
     contents[0x1221] = 0;
+    contents[0x1222] = 2;
+    contents[0x122f] = 1;
+    contents[0x125a] = 0;
+    contents[0x128a] = 2;
+    contents[0x12ba] = 0;
+    contents[0x12ea] = 0;
+    contents[0x132a] = 4;
+    writeAscii(contents, 0x1260, 'ABCD', 42, 0);
+    writeAscii(contents, 0x1300, 'TEST5', 42, 0);
     contents[0x136a] = 1;
     contents[0x136b] = 2;
     contents[0x136c] = 1;
@@ -340,6 +349,10 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.aprsProportionalPathing).enabled).toBe(false);
     expect(asRecord(settings.aprsBeaconSpeed).enabled).toBe(true);
     expect(asRecord(settings.aprsBeaconAltitude).enabled).toBe(false);
+    expect(asRecord(settings.aprsPositionComment).comment).toBe('In Service');
+    expect(asRecord(settings.aprsStatusText).selected).toBe('Text 2');
+    expect(asRecord(settings.aprsStatusText2)).toMatchObject({ text: 'ABCD', txRate: '1/2' });
+    expect(asRecord(settings.aprsStatusText5)).toMatchObject({ text: 'TEST5', txRate: '1/4' });
     const factoryObject = {
       latitudeDegrees: 0,
       latitudeMinutes: 0,
@@ -407,7 +420,13 @@ describe('Kenwood TH-D74 module', () => {
       [0x120a, 4],
       [0x120f, 1],
       [0x1213, 1],
-      [0x1220, 2],
+      [0x1220, 3],
+      [0x122f, 1],
+      [0x1230, 43],
+      [0x1260, 43],
+      [0x1290, 43],
+      [0x12c0, 43],
+      [0x1300, 43],
       [0x1361, 8],
       [0x136a, 4],
       [0x1900, 8],
@@ -432,6 +451,8 @@ describe('Kenwood TH-D74 module', () => {
     expect(changedOutsideMap).toEqual([]);
     expect(encoded.contents[0x01ea]).toBe(0x01);
     expect(encoded.contents[0x038c]).toBe(0x5a);
+    expect(encoded.contents[0x12f0]).toBe(0xff);
+    expect(encoded.contents[0x128b]).toBe(0xff);
     expect(encoded.contents[0x1908]).toBe(0xa5);
     expect(encoded.contents[0x1948]).toBe(0x0b);
     expect(encoded.contents[0x1988]).toBe(0x0b);
