@@ -43,7 +43,7 @@ This module maps regular memories **0–999**.
 
 ## Menu settings (absolute image offsets)
 
-These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. `0x1002`, the byte between TX Inhibit and the time-out timer, is also unmapped. Menu 104 is not mapped because the radio does not persist it.
+These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. Menu 104 is not mapped because the radio does not persist it.
 
 Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is the radio's top-level menu category (`TX/RX`, `Memory`, `Audio File`, `APRS`, `Digital`, `Configuration`). `sectionOrder` is that category's hundred (1 for the 100s, 5 for APRS, 9 for Configuration). `subgroup` is the id of the radio group inside that category (`rx`, `beacon-tx`, `display`). The declared `groups` array uses the same ids, with `label` set to the name the radio shows (`RX`, `Beacon TX Control`, `Display`) and nested groups listed in menu order. The table below still shows the full `Category - Group` path. Memory group names have no menu number and no subgroup. Their section is `Memory` with order 2, so they sit at the top of that page. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
@@ -52,6 +52,8 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 610 D-STAR My Callsign | Digital - TX/RX | `0x2B1` | 8 ASCII, space-padded |
 | 610 callsign memo | Digital - TX/RX | `0x2B9` | 4 ASCII. Edited text is space-padded. A clone image stored NUL at `0x2BC`; an unchanged write keeps that byte. The radio shows `CALL/MEMO` |
 | 101 Beat Shift | TX/RX - RX | `0x1000` | index `0..7` = Type 1 through Type 8 |
+| 102 Detect Out Select | TX/RX - RX | `0x1002` | `0` Off (AF), `1` IF, `2` Detect. `0` and `2` measured; `1` follows manual order. IF and Detect are only selectable and functional in Single Band mode with Band B as the operating band |
+| 105 WX Alert | TX/RX - RX | `0x1007` | `0` Off, `1` On. TH-D74A only (USA/Canada). Measured on hardware |
 | 110 TX Inhibit | TX/RX - TX | `0x1001` | `0` Off, `1` On |
 | 111 Time-Out Timer | TX/RX - TX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
 | 112 Mic Sensitivity | TX/RX - TX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |

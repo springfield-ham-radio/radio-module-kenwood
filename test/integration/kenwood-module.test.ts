@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.25.0');
+    expect(radioConfig.version).toBe('1.26.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -214,12 +214,11 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x01ea] = 0x01;
     // Volatile radio state. Do not map it.
     contents[0x038c] = 0x5a;
-    // Gap between TX Inhibit and the time-out timer.
-    contents[0x1002] = 0x22;
-
     contents[0x1000] = 7;
     contents[0x1001] = 1;
+    contents[0x1002] = 0;
     contents[0x1003] = 0x09;
+    contents[0x1007] = 1;
     contents[0x1006] = 0x01;
     contents[0x1008] = 0x04;
     contents[0x1009] = 0x04;
@@ -314,6 +313,8 @@ describe('Kenwood TH-D74 module', () => {
     const settings = asRecord(decoded.settings);
 
     expect(asRecord(settings.beatShift).type).toBe('Type 8');
+    expect(asRecord(settings.detectOutSelect).output).toBe('Off (AF)');
+    expect(asRecord(settings.wxAlert).enabled).toBe(true);
     expect(asRecord(settings.txInhibit).txInhibit).toBe(true);
     expect(asRecord(settings.timeoutTimer).timeout).toBe('5.0min');
     expect(asRecord(settings.micSensitivity).sensitivity).toBe('Medium');
@@ -418,7 +419,9 @@ describe('Kenwood TH-D74 module', () => {
       [0x02b1, 12],
       [0x1000, 1],
       [0x1001, 1],
+      [0x1002, 1],
       [0x1003, 1],
+      [0x1007, 1],
       [0x1006, 1],
       [0x1008, 1],
       [0x1009, 1],
@@ -490,7 +493,6 @@ describe('Kenwood TH-D74 module', () => {
     expect(encoded.contents[0x1948]).toBe(0x0b);
     expect(encoded.contents[0x1988]).toBe(0x0b);
     expect(encoded.contents[0x19c0]).toBe(0xff);
-    expect(encoded.contents[0x1002]).toBe(0x22);
     expect(encoded.contents).toEqual(original);
 
     const confirmed: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [

@@ -1,5 +1,5 @@
 {
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -822,6 +822,65 @@
             "section": "TX/RX",
             "sectionOrder": 1,
             "order": 10100
+          }
+        }
+      ]
+    },
+    {
+      "id": "detectOutSelect",
+      "seek": "0x1002",
+      "fields": [
+        {
+          "id": "output",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off (AF)",
+              "IF",
+              "Detect"
+            ]
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "rx",
+            "label": "Detect Out Select",
+            "widget": "select",
+            "menu": {
+              "number": 102,
+              "code": "Detect Out Select"
+            },
+            "description": "Chooses whether the clone/CAT AF/IF output carries audio frequency (AF), intermediate frequency (IF), or the detected signal. Measured 0 is Off (AF) and 2 is Detect; 1 is IF per the manual order. IF and Detect are selectable and functional only in Single Band mode with Band B as the operating band.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 10200
+          }
+        }
+      ]
+    },
+    {
+      "id": "wxAlert",
+      "seek": "0x1007",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "rx",
+            "label": "WX Alert",
+            "widget": "switch",
+            "menu": {
+              "number": 105,
+              "code": "WX Alert"
+            },
+            "description": "Turns NOAA weather alert reception on or off. Measured 0 is Off and 1 is On. TH-D74A only (USA/Canada).",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 10500
           }
         }
       ]
