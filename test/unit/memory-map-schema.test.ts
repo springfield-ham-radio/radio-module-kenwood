@@ -9,7 +9,7 @@ const rootDirectory = join(dirname(fileURLToPath(import.meta.url)), '../..');
 
 /**
  * The published memory-map schema rejects unknown `ui` keys.
- * Menu 516 uses `ui.record` and `ui.composite`, which ham-radio-ui is adding.
+ * Menu 516 uses `ui.record` and `ui.composite` (including `part: hemisphere`), which ham-radio-ui is adding.
  * Validate against that schema plus those two keys so the rest of the map still has to match.
  */
 function schemaWithLayoutKeys(): AnySchema {
@@ -43,7 +43,7 @@ function schemaWithLayoutKeys(): AnySchema {
       id: { type: 'string', minLength: 1 },
       kind: { const: 'coordinate' },
       axis: { enum: ['lat', 'lon'] },
-      part: { enum: ['degrees', 'minutes', 'fraction'] },
+      part: { enum: ['degrees', 'minutes', 'fraction', 'hemisphere'] },
       fractionScale: { type: 'integer', minimum: 1 },
       label: { type: 'string', minLength: 1 },
     },

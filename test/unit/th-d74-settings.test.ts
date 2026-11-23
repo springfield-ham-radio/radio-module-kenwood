@@ -32,8 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.24.0');
-    expect(memoryMap.version).toBe('1.10.0');
+    expect(version).toBe('1.25.0');
+    expect(memoryMap.version).toBe('1.11.0');
   });
 
   it('names each menu setting with the radio category and group', () => {
@@ -662,18 +662,21 @@ describe('TH-D74 menu settings', () => {
       ['latitudeDegrees', 51604],
       ['latitudeMinutes', 51605],
       ['latitudeFraction', 51606],
-      ['longitudeDegrees', 51607],
-      ['longitudeMinutes', 51608],
-      ['longitudeFraction', 51609],
-      ['icon', 51610],
-      ['comment', 51611],
+      ['latitudeHemisphere', 51607],
+      ['longitudeDegrees', 51608],
+      ['longitudeMinutes', 51609],
+      ['longitudeFraction', 51610],
+      ['longitudeHemisphere', 51611],
+      ['icon', 51612],
+      ['comment', 51613],
     ] as const;
 
     for (const index of [1, 2, 3]) {
       const struct = memoryMap.structs.find((entry) => entry.id === `aprsObject${index}`);
       expect(struct?.seek).toBe(`0x${(0x1900 + (index - 1) * 0x40).toString(16).toUpperCase()}`);
       expect(struct?.count).toBeUndefined();
-      expect(struct?.fields.some((field) => field.id === '_hemisphere' && field.reserved === true)).toBe(true);
+      expect(struct?.fields.some((field) => field.id === '_hemisphereHi' && field.value?.kind === 'integer')).toBe(true);
+      expect(struct?.fields.some((field) => field.id === '_hemisphereLo' && field.value?.kind === 'integer')).toBe(true);
 
       const visible = (struct?.fields ?? []).filter((field) => field.ui);
       const byOrder = [...visible].sort((left, right) => (left.ui?.order ?? 0) - (right.ui?.order ?? 0));
@@ -685,9 +688,11 @@ describe('TH-D74 menu settings', () => {
         'Latitude Degrees',
         'Latitude Minutes',
         'Latitude Fraction',
+        'Latitude Hemisphere',
         'Longitude Degrees',
         'Longitude Minutes',
         'Longitude Fraction',
+        'Longitude Hemisphere',
         'Icon',
         'Comment',
       ]);
@@ -712,8 +717,86 @@ describe('TH-D74 menu settings', () => {
         fractionScale: 10000,
         label: 'Longitude',
       });
+      expect(visible.find((field) => field.id === 'latitudeHemisphere')?.ui?.composite).toEqual({
+        id: `obj${index}-lat`,
+        kind: 'coordinate',
+        axis: 'lat',
+        part: 'hemisphere',
+        fractionScale: 10000,
+        label: 'Latitude',
+      });
+      expect(visible.find((field) => field.id === 'longitudeHemisphere')?.ui?.composite).toEqual({
+        id: `obj${index}-lon`,
+        kind: 'coordinate',
+        axis: 'lon',
+        part: 'hemisphere',
+        fractionScale: 10000,
+        label: 'Longitude',
+      });
       expect(visible.find((field) => field.id === 'name')?.ui?.composite).toBeUndefined();
     }
+  });
+
+  it('decodes and encodes APRS menu 516 object hemisphere bits', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    for (const sample of [
+      { raw: 0x0b, latitudeHemisphere: 'N', longitudeHemisphere: 'W' },
+      { raw: 0x0f, latitudeHemisphere: 'S', longitudeHemisphere: 'W' },
+      { raw: 0x07, latitudeHemisphere: 'S', longitudeHemisphere: 'E' },
+    ]) {
+      contents[0x1908] = sample.raw;
+      const decoded = codec.decode({ contents, radioModel: modelId });
+      const object1 = asRecord(asRecord(decoded.settings).aprsObject1);
+      expect(object1.latitudeHemisphere).toBe(sample.latitudeHemisphere);
+      expect(object1.longitudeHemisphere).toBe(sample.longitudeHemisphere);
+    }
+
+    const measured = new Uint8Array(500480).fill(0xff);
+    measured[0x1908] = 0x0b;
+    const decodedMeasured = codec.decode({ contents: measured, radioModel: modelId });
+    const south = codec.encode(
+      {
+        ...decodedMeasured,
+        settings: {
+          ...decodedMeasured.settings,
+          aprsObject1: {
+            ...asRecord(decodedMeasured.settings.aprsObject1),
+            latitudeHemisphere: 'S',
+          },
+        },
+      },
+      { contents: Uint8Array.from(measured), radioModel: modelId },
+    );
+    expect(south.contents[0x1908]).toBe(0x0f);
+
+    const east = codec.encode(
+      {
+        ...decodedMeasured,
+        settings: {
+          ...decodedMeasured.settings,
+          aprsObject1: {
+            ...asRecord(decodedMeasured.settings.aprsObject1),
+            latitudeHemisphere: 'S',
+            longitudeHemisphere: 'E',
+          },
+        },
+      },
+      { contents: Uint8Array.from(measured), radioModel: modelId },
+    );
+    expect(east.contents[0x1908]).toBe(0x07);
+    expect(east.contents[0x1908] & 0x03).toBe(0x03);
+    expect(east.contents[0x1908] & 0xf0).toBe(0x00);
+
+    measured[0x1908] = 0xa5;
+    const decodedHi = codec.decode({ contents: measured, radioModel: modelId });
+    const roundTrip = codec.encode(decodedHi, { contents: Uint8Array.from(measured), radioModel: modelId });
+    expect(roundTrip.contents[0x1908]).toBe(0xa5);
   });
 
   it('encodes and decodes measured APRS menu 516 object bytes', () => {
@@ -754,9 +837,11 @@ describe('TH-D74 menu settings', () => {
       latitudeDegrees: 0,
       latitudeMinutes: 0,
       latitudeFraction: 0,
+      latitudeHemisphere: 'N',
       longitudeDegrees: 0,
       longitudeMinutes: 0,
       longitudeFraction: 0,
+      longitudeHemisphere: 'W',
       name: '',
       type: 'Live Object',
       method: 'Temp.',
@@ -766,7 +851,7 @@ describe('TH-D74 menu settings', () => {
     const oldObject = codec.decode({ contents, radioModel: modelId });
     const oldSettings = asRecord(oldObject.settings);
     const oldObjects = [1, 2, 3].map((index) => asRecord(oldSettings[`aprsObject${index}`]));
-    expect(oldObjects[0]).toMatchObject(factoryObject);
+    expect(oldObjects[0]).toMatchObject({ ...factoryObject, latitudeHemisphere: 'S', longitudeHemisphere: 'E' });
     expect(oldObjects[1]).toMatchObject(factoryObject);
     expect(oldObjects[2]).toMatchObject(factoryObject);
     const encodedOld = codec.encode(oldObject, { contents: Uint8Array.from(contents), radioModel: modelId });
@@ -797,9 +882,11 @@ describe('TH-D74 menu settings', () => {
       latitudeDegrees: 30,
       latitudeMinutes: 12,
       latitudeFraction: 3400,
+      latitudeHemisphere: 'N',
       longitudeDegrees: 97,
       longitudeMinutes: 45,
       longitudeFraction: 6700,
+      longitudeHemisphere: 'E',
       name: 'TESTOBJ1',
       type: 'Killed Object',
       method: 'Off',
@@ -821,6 +908,7 @@ describe('TH-D74 menu settings', () => {
         settings: {
           ...oldObject.settings,
           aprsObject1: {
+            ...oldObjects[0],
             latitudeDegrees: 30,
             latitudeMinutes: 12,
             latitudeFraction: 3400,
@@ -835,7 +923,7 @@ describe('TH-D74 menu settings', () => {
           },
           aprsObject2: oldObjects[1],
           aprsObject3: {
-            ...factoryObject,
+            ...oldObjects[2],
             name: 'OBJ2',
           },
         },

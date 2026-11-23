@@ -104,7 +104,7 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 513 Prop. Pathing | APRS - Beacon TX Control | `0x136D` | `0` Off, `1` On |
 | 514 Speed | APRS - Beacon TX Control | `0x1220` | `0` Off, `1` On. Includes speed in the beacon |
 | 515 Altitude | APRS - Beacon TX Control | `0x1221` | `0` Off, `1` On. Includes altitude in the beacon |
-| 516 Object | APRS - Beacon TX Control | `0x1900` | Three 64-byte records at `0x1900`, `0x1940`, and `0x1980`. Same layout in each. `base+0x08` and `0x19C0` are not mapped. See below |
+| 516 Object | APRS - Beacon TX Control | `0x1900` | Three 64-byte records at `0x1900`, `0x1940`, and `0x1980`. Same layout in each. `0x19C0` is not mapped. See below |
 | 520 QSY Info. in Status | APRS - QSY Information | `0x1361` | `0` Off, `1` On. Measured by switching the menu from Off to On |
 | 521 Tone/Narrow | APRS - QSY Information | `0x1362` | `0` Off, `1` On. Measured by switching the menu from Off to On |
 | 522 Shift/Offset | APRS - QSY Information | `0x1363` | `0` Off, `1` On |
@@ -123,9 +123,33 @@ Menu 503 Status Text is the in-use slot at `0x122F` plus five records. `0` is Te
 
 Menu 504 Packet Path is the in-use type at `0x1375` plus the fields for each path. `0` is New-N and `2` is Region, both measured. `1` Relay, `3` Others1, `4` Others2, and `5` Others3 follow the manual order and were not measured. New-N WIDE1-1 is `0x1376`: `1` On and `0` Off, both measured. New-N Total Hops is `0x1377`, the hop count 0 through 7. `2` and `3` were measured. Relay RELAY is `0x1378` and the byte is inverted: `0` is On and `1` is Off, both measured. Relay Total Hops is `0x1379`, 0 through 7. `2` and `5` were measured. Region ABBR is 5 ASCII at `0x137A`, zero-padded. Measured TSTRG is stored there. Region Total Hops is `0x137F`, 0 through 7. `2` and `6` were measured. Others1 path is 79 ASCII at `0x1380`, through `0x13CE`, zero-padded. Measured TSTP1 is stored there. Others2 path is at `0x13CF` and Others3 path is at `0x1400`. The manual allows 79 characters. The measured images are zero through `0x13EB` and `0x141C`, then `0xFF` filler (`0x13EC` and `0x141D`). Others2 and Others3 are mapped as 29 bytes, only that zero region. A 79-character path for Others2 or Others3 was not measured, and those fields do not extend into the filler. Each path is its own struct. Every field except the in-use type sets `ui.record` to `{id: "aprs-packet-path", index, label}` with labels New-N, Relay, Region, Others1, Others2, and Others3. The in-use type stays outside the tabs. `0x038C` stays unmapped.
 
-Menu 516 Object is three records of 64 bytes. Object 1 is at `0x1900`. Object 2 is at `0x1940` and object 3 is at `0x1980`. Those two offsets come from the same stride in a hardware dump: the records match, and objects 2 and 3 hold the factory pattern. Object 1 was verified by a clone diff. Offsets below are relative to each record. Latitude is degrees at `+0x00`, whole minutes at `+0x01`, and fractional minutes at `+0x02`–`+0x03`. Longitude is degrees at `+0x04`, whole minutes at `+0x05`, and fractional minutes at `+0x06`–`+0x07`. Each fraction is a little-endian uint16 in units of 1/10000 minute. Measured object 1 latitude 30° 12.34' is `1E 0C 48 0D` (`0x0D48` = 3400). Measured longitude 97° 45.67' is `61 2D 2C 1A` (`0x1A2C` = 6700). The name is 9 ASCII at `+0x09`, NUL-padded. Empty is 9 zero bytes. Type at `+0x12` is `0` Live Object and `1` Killed Object, both measured. `2` Live Item and `3` Killed Item follow the manual order and were not measured. Method at `+0x13` is `0` Off and `1` Temp., both measured. `2` Auto (15 min), `3` Auto (30 min), and `4` Auto (60 min) follow the manual order and were not measured. The icon is 2 ASCII at `+0x14`, table character then symbol code, the same list as menu 501. Measured `/E` is Eyeball and `\S` is Satellite. The comment is 42 ASCII at `+0x16`, through `+0x3F`, NUL-padded. Empty is 42 zero bytes. Objects 2 and 3 in the dump are all-zero position, empty name, type Live Object, method Temp., icon `/E`, and an empty comment. Each object is its own struct at that address, with the same field order. Every field sets `ui.record` to `{id: "aprs-object", index, label: "Object N"}`. The six position fields also set `ui.composite` (`objN-lat` / `objN-lon`, kind `coordinate`, fraction scale 10000). Display order inside an object is Name, Type, Method, latitude, longitude, Icon, Comment.
+Menu 516 Object is three records of 64 bytes. Object 1 is at `0x1900`. Object 2 is at `0x1940` and object 3 is at `0x1980`. Those two offsets come from the same stride in a hardware dump: the records match, and objects 2 and 3 hold the factory pattern. Object 1 was verified by a clone diff. Offsets below are relative to each record. Latitude is degrees at `+0x00`, whole minutes at `+0x01`, and fractional minutes at `+0x02`–`+0x03`. Longitude is degrees at `+0x04`, whole minutes at `+0x05`, and fractional minutes at `+0x06`–`+0x07`. Each fraction is a little-endian uint16 in units of 1/10000 minute. Measured object 1 latitude 30° 12.34' is `1E 0C 48 0D` (`0x0D48` = 3400). Measured longitude 97° 45.67' is `61 2D 2C 1A` (`0x1A2C` = 6700). The hemisphere byte is at `+0x08`, between the longitude fraction and the name. See the bit table below. The name is 9 ASCII at `+0x09`, NUL-padded. Empty is 9 zero bytes. Type at `+0x12` is `0` Live Object and `1` Killed Object, both measured. `2` Live Item and `3` Killed Item follow the manual order and were not measured. Method at `+0x13` is `0` Off and `1` Temp., both measured. `2` Auto (15 min), `3` Auto (30 min), and `4` Auto (60 min) follow the manual order and were not measured. The icon is 2 ASCII at `+0x14`, table character then symbol code, the same list as menu 501. Measured `/E` is Eyeball and `\S` is Satellite. The comment is 42 ASCII at `+0x16`, through `+0x3F`, NUL-padded. Empty is 42 zero bytes. Objects 2 and 3 in the dump are all-zero position, N/W hemispheres (`0x0B` at `+0x08`), empty name, type Live Object, method Temp., icon `/E`, and an empty comment. Each object is its own struct at that address, with the same field order. Every field sets `ui.record` to `{id: "aprs-object", index, label: "Object N"}`. The six position fields and the two hemisphere selects also set `ui.composite` (`objN-lat` / `objN-lon`, kind `coordinate`, fraction scale 10000). Display order inside an object is Name, Type, Method, latitude, longitude, Icon, Comment.
 
-`+0x08`, the byte between the longitude fraction and the name, stays unmapped on every object. The dump stores `0x0B` there in all three records. An earlier object 1 read stored `0` for an N/W position. It is probably the N/S and E/W flags, and that was not verified. Writes leave that byte as it was. `0x19C0`, the byte after object 3, stays unmapped.
+Menu 516 object `+0x08` bits. Object 1 was measured on Nov 22, 2026 by diffing clone reads while changing hemispheres. Objects 2 and 3 use the same layout at `+0x08`. Bits `0x03` and `0xF0` were not measured on their own and stay as they were.
+
+| Mask | Hemisphere |
+| --- | --- |
+| `0x04` | Latitude (0 = N, 1 = S) |
+| `0x08` | Longitude (0 = E, 1 = W) |
+| `0x03` | Unknown. Left unchanged |
+| `0xF0` | Unknown. Left unchanged |
+
+Measured samples on object 1: `0x0B` is N/W, `0x0F` is S/W, and `0x07` is S/E. `0x19C0`, the byte after object 3, stays unmapped.
+
+#### HamBench coordinate row
+
+EEPROM field order stays position bytes, then `+0x08`, then name and the rest. HamBench tab order follows `ui.order`: Name, Type, Method, then latitude and longitude coordinates, then Icon and Comment (menu 516).
+
+The driver maps hemispheres on `latitudeHemisphere` and `longitudeHemisphere` with `ui.composite.part: "hemisphere"` on `objN-lat` / `objN-lon`. **ham-radio-ui** (as of Nov 2026) only folds `degrees`, `minutes`, and `fraction` into one row (`app/utils/settings-coordinate.ts`). Parts whose `part` is not in that set are left as separate fields, so N/S and E/W show as full-width selects until UI support lands.
+
+Required **ham-radio-ui** work (not this module):
+
+1. Extend `SettingsCoordinatePart` / `PARTS` with `hemisphere`.
+2. Teach `fieldComposite()` to accept `part: "hemisphere"`.
+3. In `settings-layout.ts`, include hemisphere parts in `SettingsCoordinateCell.parts` so their paths are consumed and they do not render as plain fields.
+4. In `SettingsFieldGrid.vue`, add a `USelect` after the minutes input (reuse `DmsCoordinateInput` hemisphere items: lat `N`/`S`, lon `E`/`W`), and wire `editCoordinate` / path updates for the hemisphere enum field (`widget: "select"`).
+
+Until that ships, clone encode/decode and bit preservation in this driver are still correct; only the form layout is cluttered.
 
 Menu 509 bits. Each checkbox was measured on its own. Bits 3–7 are left unchanged.
 
