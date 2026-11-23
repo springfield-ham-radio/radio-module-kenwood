@@ -43,7 +43,7 @@ This module maps regular memories **0–999**.
 
 ## Menu settings (absolute image offsets)
 
-These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. Menu 104 is not mapped because the radio does not persist it.
+These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x38C` changes on every menu edit and looks like a change counter, so it stays unmapped. The operating-state region `0x0300`–`0x03FF` stays unmapped. Menu 103 FM Narrow does not persist across restart or clone read; it appears only live in Band A operating state at `0x0309`, so it is not mapped here. Menu 104 is not mapped because the radio does not persist it. Menu 134 Priority Scan is not mapped: the radio requires a Band B RX frequency registered in `[Pri]` before the menu can be set (manual p. 9-4).
 
 Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is the radio's top-level menu category (`TX/RX`, `Memory`, `Audio File`, `APRS`, `Digital`, `Configuration`). `sectionOrder` is that category's hundred (1 for the 100s, 5 for APRS, 9 for Configuration). `subgroup` is the id of the radio group inside that category (`rx`, `beacon-tx`, `display`). The declared `groups` array uses the same ids, with `label` set to the name the radio shows (`RX`, `Beacon TX Control`, `Display`) and nested groups listed in menu order. The table below still shows the full `Category - Group` path. Memory group names have no menu number and no subgroup. Their section is `Memory` with order 2, so they sit at the top of that page. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
@@ -54,7 +54,7 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 101 Beat Shift | TX/RX - RX | `0x1000` | index `0..7` = Type 1 through Type 8 |
 | 102 Detect Out Select | TX/RX - RX | `0x1002` | `0` Off (AF), `1` IF, `2` Detect. `0` and `2` measured; `1` follows manual order. IF and Detect are only selectable and functional in Single Band mode with Band B as the operating band |
 | 105 WX Alert | TX/RX - RX | `0x1007` | `0` Off, `1` On. TH-D74A only (USA/Canada). Measured on hardware |
-| 110 TX Inhibit | TX/RX - TX | `0x1001` | `0` Off, `1` On |
+| 110 TX Inhibit | TX/RX - TX | `0x1001` | `0` Off, `1` On. Read+write confirmed on hardware (Nov 23, 2026) |
 | 111 Time-Out Timer | TX/RX - TX | `0x1003` | index `0..9` = 0.5–5.0 min in 0.5 min steps, `0x0A` = 10 min. Clone images confirm `0x09` = 5 min and `0x0A` = 10 min |
 | 112 Mic Sensitivity | TX/RX - TX | `0x1006` | `0x00` High, `0x01` Medium, `0x02` Low |
 | 120 SSB High Cut | TX/RX - RX Filter | `0x1008` | `0x00` 2.2 kHz, `0x01` 2.4 kHz, `0x02` 2.6 kHz, `0x03` 2.8 kHz, `0x04` 3.0 kHz |
@@ -65,6 +65,7 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 132 Time Restart | TX/RX - Scan | `0x100E` | Raw seconds, 1–10 |
 | 133 Carrier Restart | TX/RX - Scan | `0x100F` | Raw seconds, 1–10 |
 | 135 Scan Auto Backlight | TX/RX - Scan | `0x1012` | `0` Off, `1` On |
+| 136 Auto Weather Scan | TX/RX - Scan | `0x1013` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min. TH-D74A only (USA/Canada). Hardware read diff on K5FAR's TH-D74A (Nov 23, 2026): `0x00` → `0x02` when set from Off to 30 min. Manual p. 24-1 matches the radio; the p. 6-2 menu table erroneously lists Off/On |
 | 141 Auto Offset | TX/RX - Repeater | `0x1018` | `0` Off, `1` On. Measured by switching the menu from On to Off |
 | 142 CALL Key | TX/RX - Repeater | `0x1019` | `0` CALL, `1` 1750 Hz |
 | 143 1750Hz TX Hold | TX/RX - Repeater | `0x101A` | `0` Off, `1` On |

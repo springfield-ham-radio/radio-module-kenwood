@@ -1235,6 +1235,39 @@
       ]
     },
     {
+      "id": "autoWeatherScan",
+      "seek": "0x1013",
+      "fields": [
+        {
+          "id": "interval",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "15 min",
+              "30 min",
+              "60 min"
+            ]
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "scan",
+            "label": "Auto Weather Scan",
+            "widget": "select",
+            "menu": {
+              "number": 136,
+              "code": "Auto Weather Scan"
+            },
+            "description": "How often the radio scans NOAA weather channels while receiving. Measured 0 is Off and 2 is 30 min on K5FAR's TH-D74A (Nov 23, 2026); 1 and 3 follow the same list. Manual p. 24-1 matches the radio; the p. 6-2 menu table wrongly lists Off/On. TH-D74A only (USA/Canada).",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13600
+          }
+        }
+      ]
+    },
+    {
       "id": "autoOffset",
       "seek": "0x1018",
       "fields": [
