@@ -136,6 +136,21 @@ Menu 516 object `+0x08` bits. Object 1 was measured on Nov 22, 2026 by diffing c
 
 Measured samples on object 1: `0x0B` is N/W, `0x0F` is S/W, and `0x07` is S/E. `0x19C0`, the byte after object 3, stays unmapped.
 
+#### HamBench coordinate row
+
+EEPROM field order stays position bytes, then `+0x08`, then name and the rest. HamBench tab order follows `ui.order`: Name, Type, Method, then latitude and longitude coordinates, then Icon and Comment (menu 516).
+
+The driver maps hemispheres on `latitudeHemisphere` and `longitudeHemisphere` with `ui.composite.part: "hemisphere"` on `objN-lat` / `objN-lon`. **ham-radio-ui** (as of Nov 2026) only folds `degrees`, `minutes`, and `fraction` into one row (`app/utils/settings-coordinate.ts`). Parts whose `part` is not in that set are left as separate fields, so N/S and E/W show as full-width selects until UI support lands.
+
+Required **ham-radio-ui** work (not this module):
+
+1. Extend `SettingsCoordinatePart` / `PARTS` with `hemisphere`.
+2. Teach `fieldComposite()` to accept `part: "hemisphere"`.
+3. In `settings-layout.ts`, include hemisphere parts in `SettingsCoordinateCell.parts` so their paths are consumed and they do not render as plain fields.
+4. In `SettingsFieldGrid.vue`, add a `USelect` after the minutes input (reuse `DmsCoordinateInput` hemisphere items: lat `N`/`S`, lon `E`/`W`), and wire `editCoordinate` / path updates for the hemisphere enum field (`widget: "select"`).
+
+Until that ships, clone encode/decode and bit preservation in this driver are still correct; only the form layout is cluttered.
+
 Menu 509 bits. Each checkbox was measured on its own. Bits 3–7 are left unchanged.
 
 | Bit | Mask | Lock |
