@@ -1,3 +1,9 @@
+## [2.18.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.17.0...v2.18.0) (2026-11-23)
+
+### Features
+
+* **th-d74:** map Menu 516 object hemispheres ([#58](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/58)) ([37e766c](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/37e766c596250b71fee10215aee194960501018f))
+
 ## [2.17.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.16.0...v2.17.0) (2026-11-22)
 
 ### Features
