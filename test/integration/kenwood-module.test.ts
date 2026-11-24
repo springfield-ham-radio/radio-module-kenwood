@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.25.0');
+    expect(radioConfig.version).toBe('1.26.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -214,12 +214,11 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x01ea] = 0x01;
     // Volatile radio state. Do not map it.
     contents[0x038c] = 0x5a;
-    // Gap between TX Inhibit and the time-out timer.
-    contents[0x1002] = 0x22;
-
     contents[0x1000] = 7;
     contents[0x1001] = 1;
+    contents[0x1002] = 0;
     contents[0x1003] = 0x09;
+    contents[0x1007] = 1;
     contents[0x1006] = 0x01;
     contents[0x1008] = 0x04;
     contents[0x1009] = 0x04;
@@ -229,6 +228,7 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x100e] = 5;
     contents[0x100f] = 2;
     contents[0x1012] = 1;
+    contents[0x1013] = 2;
     contents[0x1018] = 1;
     contents[0x1019] = 1;
     contents[0x101a] = 1;
@@ -242,6 +242,7 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1024] = 0x06;
     contents[0x1026] = 1;
     contents[0x1027] = 1;
+    contents[0x1028] = 1;
     contents[0x1213] = 2;
     contents[0x1361] = 1;
     contents[0x1362] = 1;
@@ -314,6 +315,8 @@ describe('Kenwood TH-D74 module', () => {
     const settings = asRecord(decoded.settings);
 
     expect(asRecord(settings.beatShift).type).toBe('Type 8');
+    expect(asRecord(settings.detectOutSelect).output).toBe('Off (AF)');
+    expect(asRecord(settings.wxAlert).enabled).toBe(true);
     expect(asRecord(settings.txInhibit).txInhibit).toBe(true);
     expect(asRecord(settings.timeoutTimer).timeout).toBe('5.0min');
     expect(asRecord(settings.micSensitivity).sensitivity).toBe('Medium');
@@ -325,6 +328,7 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.timeRestart).seconds).toBe(5);
     expect(asRecord(settings.carrierRestart).seconds).toBe(2);
     expect(asRecord(settings.scanAutoBacklight).enabled).toBe(true);
+    expect(asRecord(settings.autoWeatherScan).interval).toBe('30 min');
     expect(asRecord(settings.autoOffset).enabled).toBe(true);
     expect(asRecord(settings.callKey).mode).toBe('1750Hz');
     expect(asRecord(settings.tone1750Hold).enabled).toBe(true);
@@ -337,6 +341,7 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.dtmfHold).enabled).toBe(false);
     expect(asRecord(settings.cwReverse).mode).toBe('Reverse');
     expect(asRecord(settings.qsoLog).enabled).toBe(true);
+    expect(asRecord(settings.ledControl)).toMatchObject({ rx: true, fmRadio: false });
     expect(asRecord(settings.cwPitch).pitch).toBe('1000Hz');
     expect(asRecord(settings.recallMethod).method).toBe('All Bands');
     expect(asRecord(settings.txMonitor).monitor).toBe(true);
@@ -418,17 +423,20 @@ describe('Kenwood TH-D74 module', () => {
       [0x02b1, 12],
       [0x1000, 1],
       [0x1001, 1],
+      [0x1002, 1],
       [0x1003, 1],
+      [0x1007, 1],
       [0x1006, 1],
       [0x1008, 1],
       [0x1009, 1],
       [0x100a, 1],
       [0x100c, 1],
       [0x100d, 3],
-      [0x1012, 1],
+      [0x1012, 2],
       [0x1018, 1],
       [0x1019, 9],
       [0x1026, 2],
+      [0x1028, 1],
       [0x1024, 1],
       [0x1030, 1],
       [0x1032, 1],
@@ -490,7 +498,6 @@ describe('Kenwood TH-D74 module', () => {
     expect(encoded.contents[0x1948]).toBe(0x0b);
     expect(encoded.contents[0x1988]).toBe(0x0b);
     expect(encoded.contents[0x19c0]).toBe(0xff);
-    expect(encoded.contents[0x1002]).toBe(0x22);
     expect(encoded.contents).toEqual(original);
 
     const confirmed: Array<{ offset: number; raw: number; structId: string; field: string; expected: string }> = [

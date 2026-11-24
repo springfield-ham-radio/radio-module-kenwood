@@ -1,5 +1,5 @@
 {
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -827,6 +827,65 @@
       ]
     },
     {
+      "id": "detectOutSelect",
+      "seek": "0x1002",
+      "fields": [
+        {
+          "id": "output",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off (AF)",
+              "IF",
+              "Detect"
+            ]
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "rx",
+            "label": "Detect Out Select",
+            "widget": "select",
+            "menu": {
+              "number": 102,
+              "code": "Detect Out Select"
+            },
+            "description": "Chooses whether the clone/CAT AF/IF output carries audio frequency (AF), intermediate frequency (IF), or the detected signal. Measured 0 is Off (AF) and 2 is Detect; 1 is IF per the manual order. IF and Detect are selectable and functional only in Single Band mode with Band B as the operating band.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 10200
+          }
+        }
+      ]
+    },
+    {
+      "id": "wxAlert",
+      "seek": "0x1007",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "rx",
+            "label": "WX Alert",
+            "widget": "switch",
+            "menu": {
+              "number": 105,
+              "code": "WX Alert"
+            },
+            "description": "Turns NOAA weather alert reception on or off. Measured 0 is Off and 1 is On. TH-D74A only (USA/Canada).",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 10500
+          }
+        }
+      ]
+    },
+    {
       "id": "txInhibit",
       "seek": "0x1001",
       "fields": [
@@ -1171,6 +1230,39 @@
             "section": "TX/RX",
             "sectionOrder": 1,
             "order": 13500
+          }
+        }
+      ]
+    },
+    {
+      "id": "autoWeatherScan",
+      "seek": "0x1013",
+      "fields": [
+        {
+          "id": "interval",
+          "type": "u8",
+          "value": {
+            "kind": "enum",
+            "values": [
+              "Off",
+              "15 min",
+              "30 min",
+              "60 min"
+            ]
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "scan",
+            "label": "Auto Weather Scan",
+            "widget": "select",
+            "menu": {
+              "number": 136,
+              "code": "Auto Weather Scan"
+            },
+            "description": "How often the radio scans NOAA weather channels while receiving. Measured 0 is Off and 2 is 30 min on K5FAR's TH-D74A (Nov 23, 2026); 1 and 3 follow the same list. Manual p. 24-1 matches the radio; the p. 6-2 menu table wrongly lists Off/On. TH-D74A only (USA/Canada).",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13600
           }
         }
       ]
@@ -1564,6 +1656,62 @@
             "section": "TX/RX",
             "sectionOrder": 1,
             "order": 18000
+          }
+        }
+      ]
+    },
+    {
+      "id": "ledControl",
+      "seek": "0x1028",
+      "fields": [
+        {
+          "id": "_unused",
+          "type": "bits",
+          "width": 6,
+          "reserved": true
+        },
+        {
+          "id": "fmRadio",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "others",
+            "label": "FM Radio",
+            "widget": "switch",
+            "order": 18102,
+            "menu": {
+              "number": 181,
+              "code": "LED Control"
+            },
+            "description": "Lights the BUSY LED in FM radio mode. Bit 1 (0x02). Bits 2-7 stay as they were.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        },
+        {
+          "id": "rx",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "others",
+            "label": "RX",
+            "widget": "switch",
+            "order": 18101,
+            "menu": {
+              "number": 181,
+              "code": "LED Control"
+            },
+            "description": "Lights the BUSY LED when receiving on band A or B. Bit 0 (0x01). Measured on K5FAR's TH-D74A (Nov 24, 2026): default 0x01 is RX on and FM Radio off. Bits 2-7 stay as they were.",
+            "section": "TX/RX",
+            "sectionOrder": 1
           }
         }
       ]
