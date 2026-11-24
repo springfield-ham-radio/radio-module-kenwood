@@ -52,6 +52,8 @@ type KenwoodConfig = {
 
 const aprsReceiveSchema = JSON.parse(readFileSync(join(rootDirectory, 'src/shared/schemas/aprs-receive-v1.json'), 'utf8')) as object;
 const aprsReceiveValidator = new Ajv({ allErrors: true, strict: true }).compile(aprsReceiveSchema);
+const captureSchema = JSON.parse(readFileSync(join(rootDirectory, 'src/shared/schemas/capture-v1.json'), 'utf8')) as object;
+const captureValidator = new Ajv({ allErrors: true, strict: true }).compile(captureSchema);
 
 function loadConfig(fileName: string): KenwoodConfig {
   return JSON.parse(readFileSync(join(rootDirectory, 'configs', fileName), 'utf8')) as KenwoodConfig;
@@ -108,6 +110,22 @@ describe('Kenwood radio configs (schema)', () => {
     expect(tmD710a.onError).toEqual({
       readMemory: [{ send: ['E'] }],
       writeMemory: [{ send: ['E'] }],
+    });
+  });
+
+  it('declares menu-capture ignore ranges for TH-D74 volatile bytes', () => {
+    const thD74 = loadConfig('kenwood-th-d74.json') as KenwoodConfig & {
+      capture?: { ignore: Array<{ address: string; length: number; reason: string }> };
+    };
+    expect(captureValidator(thD74.capture), JSON.stringify(captureValidator.errors)).toBe(true);
+    expect(thD74.capture).toEqual({
+      ignore: [
+        {
+          address: '0x038C',
+          length: 1,
+          reason: 'Read/change counter, changes on every clone read',
+        },
+      ],
     });
   });
 
