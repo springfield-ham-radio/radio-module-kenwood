@@ -164,5 +164,14 @@
       { "setBaudRate": 57600 },
       { "send": ["E"] }
     ]
+  },
+  "capture": {
+    "ignore": [
+      {
+        "address": "0x038C",
+        "length": 1,
+        "reason": "Read/change counter, changes on every clone read"
+      }
+    ]
   }
 }
