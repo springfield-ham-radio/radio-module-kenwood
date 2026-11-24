@@ -71,6 +71,32 @@ describe('Kenwood radio configs (schema)', () => {
     }
   });
 
+  it('publishes the TH-D74 band-indexed CAT profile from firmware 1.05 probe', () => {
+    const thD74 = loadConfig('kenwood-th-d74.json') as KenwoodConfig & {
+      cat?: {
+        frequencyCommands?: string[];
+        frequencyWidth?: number;
+        modes?: string[];
+        bandModes?: string[][];
+        bandIndexed?: boolean;
+        vfoModeCommand?: string;
+        vfoModes?: string[];
+      };
+    };
+
+    expect(thD74.cat?.frequencyCommands).toEqual(['FQ']);
+    expect(thD74.cat?.frequencyWidth).toBe(10);
+    expect(thD74.cat?.modes?.[1]).toBe('DV');
+    expect(thD74.cat?.modes?.[7]).toBe('DR');
+    expect(thD74.cat?.bandIndexed).toBe(true);
+    expect(thD74.cat?.vfoModeCommand).toBe('VM');
+    expect(thD74.cat?.vfoModes).toEqual(['VFO', 'Memory', 'Call', 'DV']);
+    expect(thD74.cat?.bandModes).toEqual([
+      ['FM', 'DV', 'AM', 'NFM', 'DR', 'WFM'],
+      ['FM', 'DV', 'AM', 'LSB', 'USB', 'CW', 'NFM', 'DR', 'WFM', 'R-CW'],
+    ]);
+  });
+
   it('declares onError cleanup for clone-mode Kenwood models', () => {
     const thD74 = loadConfig('kenwood-th-d74.json');
     expect(thD74.minApiVersion).toBe('18.3.0');

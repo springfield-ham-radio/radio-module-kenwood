@@ -2,7 +2,9 @@
 
 Re-expressed from observed Kenwood MCP-D74 / clone-mode behavior. Not a copy of CHIRP source.
 
-Outside clone mode, the PC port speaks Kenwood CAT. The config sets `capabilities.liveControl` and a Kenwood `cat` profile (`FQ`/`FO`, `MD`, two VFOs).
+Outside clone mode, the PC port speaks Kenwood CAT. The config sets `capabilities.liveControl` and a band-indexed Kenwood `cat` profile (`FQ` with band prefix, `BC`, `MD`, `PC`, `VM`, two VFOs). That profile was measured on a TH-D74 at firmware 1.05 (`ID TH-D74`, bare `FQ`/`MD`/`PC` return `?`).
+
+HamBench live CAT does **not** yet use the new `bandIndexed`, `bandModes`, `vfoModeCommand`, and `vfoModes` keys. **ham-radio-ui** needs matching session support in a separate PR before band-aware frequency, mode, power, and VFO/memory state work end-to-end. Older HamBench builds ignore unknown `cat` keys, so installing this driver is safe before the UI lands. Clone read/write is unaffected.
 
 ## Radio setup
 

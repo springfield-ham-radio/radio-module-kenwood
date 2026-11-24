@@ -5,7 +5,7 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.26.0",
+  "version": "1.27.0",
   "minApiVersion": "18.3.0",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "readMessage": {
@@ -29,13 +29,20 @@
   "cat": {
     "protocol": "kenwood",
     "vfoCount": 2,
-    "frequencyCommands": ["FQ", "FO"],
-    "frequencyWidth": 11,
-    "modes": ["FM", "NFM", "AM", "DV"],
+    "frequencyCommands": ["FQ"],
+    "frequencyWidth": 10,
+    "modes": ["FM", "DV", "AM", "LSB", "USB", "CW", "NFM", "DR", "WFM", "R-CW"],
+    "bandModes": [
+      ["FM", "DV", "AM", "NFM", "DR", "WFM"],
+      ["FM", "DV", "AM", "LSB", "USB", "CW", "NFM", "DR", "WFM", "R-CW"]
+    ],
     "powers": ["H", "M", "L", "EL"],
     "modeCommand": "MD",
     "bandControl": true,
-    "powerBandIndex": true
+    "bandIndexed": true,
+    "powerBandIndex": true,
+    "vfoModeCommand": "VM",
+    "vfoModes": ["VFO", "Memory", "Call", "DV"]
   },
   "metadata": {
     "author": "Springfield Ham Radio",
