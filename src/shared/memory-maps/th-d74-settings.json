@@ -1661,6 +1661,62 @@
       ]
     },
     {
+      "id": "ledControl",
+      "seek": "0x1028",
+      "fields": [
+        {
+          "id": "_unused",
+          "type": "bits",
+          "width": 6,
+          "reserved": true
+        },
+        {
+          "id": "fmRadio",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "others",
+            "label": "FM Radio",
+            "widget": "switch",
+            "order": 18102,
+            "menu": {
+              "number": 181,
+              "code": "LED Control"
+            },
+            "description": "Lights the BUSY LED in FM radio mode. Bit 1 (0x02). Bits 2-7 stay as they were.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        },
+        {
+          "id": "rx",
+          "type": "bits",
+          "width": 1,
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "others",
+            "label": "RX",
+            "widget": "switch",
+            "order": 18101,
+            "menu": {
+              "number": 181,
+              "code": "LED Control"
+            },
+            "description": "Lights the BUSY LED when receiving on band A or B. Bit 0 (0x01). Measured on K5FAR's TH-D74A (Nov 24, 2026): default 0x01 is RX on and FM Radio off. Bits 2-7 stay as they were.",
+            "section": "TX/RX",
+            "sectionOrder": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "groupNames",
       "seek": "0x14800",
       "count": 30,

@@ -79,6 +79,7 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 170 CW Pitch | TX/RX - CW | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
 | 171 CW Reverse | TX/RX - CW | `0x1026` | `0` Normal, `1` Reverse |
 | 180 QSO Log | TX/RX - Others | `0x1027` | `0` Off, `1` On |
+| 181 LED Control | TX/RX - Others | `0x1028` | Bitfield. Bit 0 (0x01) RX, bit 1 (0x02) FM Radio. Measured on K5FAR's TH-D74A (Nov 24, 2026): `0x01` default (RX on), `0x03` both on, `0x02` FM Radio only. Bits 2–7 unknown; left unchanged on write |
 | 202 Recall Method | Memory - Memory Channel | `0x1030` | `0` All Bands, `1` Current Band |
 | 311 TX Monitor | Audio File - Voice Message | `0x1032` | `1` On, `0` Off |
 | 900 Backlight Control | Configuration - Display | `0x1060` | `0` Manual, `1` On, `2` Auto, `3` Auto (DC-IN). Manual menu order is Auto / Auto (DC-IN) / Manual / On; only `0` and `3` were measured |

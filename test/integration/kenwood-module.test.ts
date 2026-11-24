@@ -242,6 +242,7 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1024] = 0x06;
     contents[0x1026] = 1;
     contents[0x1027] = 1;
+    contents[0x1028] = 1;
     contents[0x1213] = 2;
     contents[0x1361] = 1;
     contents[0x1362] = 1;
@@ -340,6 +341,7 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.dtmfHold).enabled).toBe(false);
     expect(asRecord(settings.cwReverse).mode).toBe('Reverse');
     expect(asRecord(settings.qsoLog).enabled).toBe(true);
+    expect(asRecord(settings.ledControl)).toMatchObject({ rx: true, fmRadio: false });
     expect(asRecord(settings.cwPitch).pitch).toBe('1000Hz');
     expect(asRecord(settings.recallMethod).method).toBe('All Bands');
     expect(asRecord(settings.txMonitor).monitor).toBe(true);
@@ -434,6 +436,7 @@ describe('Kenwood TH-D74 module', () => {
       [0x1018, 1],
       [0x1019, 9],
       [0x1026, 2],
+      [0x1028, 1],
       [0x1024, 1],
       [0x1030, 1],
       [0x1032, 1],
