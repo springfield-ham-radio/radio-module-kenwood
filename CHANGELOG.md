@@ -1,3 +1,9 @@
+## [2.20.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.19.0...v2.20.0) (2026-11-24)
+
+### Features
+
+* **th-d74:** band-indexed CAT profile from firmware 1.05 probe ([#62](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/62)) ([ed756ab](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/ed756ab8a94ad5cda1b8a2e4765987e75bb911aa))
+
 ## [2.19.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.18.0...v2.19.0) (2026-11-24)
 
 ### Features
