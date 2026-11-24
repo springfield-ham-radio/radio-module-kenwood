@@ -32,12 +32,8 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.26.0');
-<<<<<<< HEAD
-    expect(memoryMap.version).toBe('1.11.0');
-=======
+    expect(version).toBe('1.27.0');
     expect(memoryMap.version).toBe('1.12.0');
->>>>>>> origin/main
   });
 
   it('names each menu setting with the radio category and group', () => {
