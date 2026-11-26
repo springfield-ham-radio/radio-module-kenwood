@@ -261,6 +261,10 @@ describe('Kenwood radio configs (schema)', () => {
     kissWithUnknownHostKey.host.interrupt = [3, 3, 3];
     expect(aprsReceiveValidator(kissWithUnknownHostKey)).toBe(false);
 
+    const kissWithSoftwareFlow = structuredClone(thD74.aprs) as { host: { flowControl: string } };
+    kissWithSoftwareFlow.host.flowControl = 'software';
+    expect(aprsReceiveValidator(kissWithSoftwareFlow), JSON.stringify(aprsReceiveValidator.errors)).toBe(false);
+
     const monitorWithEntryKey = structuredClone(loadConfig('kenwood-tm-d710a.json').aprs) as { host: Record<string, unknown> };
     monitorWithEntryKey.host.entry = 'manual';
     expect(aprsReceiveValidator(monitorWithEntryKey)).toBe(false);

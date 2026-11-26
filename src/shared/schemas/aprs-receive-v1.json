@@ -11,6 +11,10 @@
     "flowControlEnum": {
       "enum": ["hardware", "software", "none"]
     },
+    "kissFlowControlEnum": {
+      "description": "Manual KISS entry allows only none or hardware. HamBench PR 241 rejects software on kiss-only hosts.",
+      "enum": ["hardware", "none"]
+    },
     "setupRecoveryStrings": {
       "type": "array",
       "minItems": 1,
@@ -101,7 +105,7 @@
         },
         "flowControl": {
           "description": "Serial flow control HamBench applies for KISS on this port.",
-          "$ref": "#/definitions/flowControlEnum"
+          "$ref": "#/definitions/kissFlowControlEnum"
         },
         "dtr": {
           "description": "DTR line while KISS is connected. asserted matches HamBench PR 241; low deasserts.",
