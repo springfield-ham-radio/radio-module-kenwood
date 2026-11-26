@@ -1,5 +1,5 @@
 {
-  "version": "1.12.0",
+  "version": "1.13.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -33,7 +33,8 @@
         },
         {
           "id": "dtmf",
-          "label": "DTMF"
+          "label": "DTMF",
+          "description": "Menus 160 through 164. DTMF memory (menu 163) and EchoLink memory (menu 164) use radio channels 0–9. HamBench labels each row 1–10; row 1 is channel 0. Channels 1–9 use the stride inferred from the block size; only channel 0 was written on hardware captures."
         },
         {
           "id": "cw",
@@ -1562,6 +1563,130 @@
             "section": "TX/RX",
             "sectionOrder": 1,
             "order": 16200
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfMemoryCodes",
+      "seek": "0x0040",
+      "count": 10,
+      "stride": 16,
+      "fields": [
+        {
+          "id": "code",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 16,
+            "pad": 0
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "dtmf",
+            "label": "DTMF memory code",
+            "widget": "text",
+            "menu": {
+              "number": 163,
+              "code": "DTMF Memory"
+            },
+            "description": "Menu 163 DTMF memory code for radio channels 0–9. Up to 16 ASCII characters: 0–9, A–D, *, #, and space for a pause. Empty storage is 16 zero bytes. Edited text is NUL-padded. HamBench labels these rows 1–10; row 1 is channel 0. Channel 0 was verified on hardware (code 123 at 0x0040). Channels 1–9 use the same 16-byte stride inferred from the block.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16300
+          }
+        }
+      ]
+    },
+    {
+      "id": "dtmfMemoryNames",
+      "seek": "0x0100",
+      "count": 10,
+      "stride": 16,
+      "fields": [
+        {
+          "id": "name",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 16,
+            "pad": 0
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "dtmf",
+            "label": "DTMF memory name",
+            "widget": "text",
+            "menu": {
+              "number": 163,
+              "code": "DTMF Memory"
+            },
+            "description": "Menu 163 DTMF memory name for radio channels 0–9. Up to 16 ASCII characters. Empty storage is 16 zero bytes. Edited text is NUL-padded. HamBench labels these rows 1–10; row 1 is channel 0. Channel 0 was verified on hardware (name TEST at 0x0100). Channels 1–9 use the same 16-byte stride inferred from the block.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16310
+          }
+        }
+      ]
+    },
+    {
+      "id": "echoLinkMemoryCodes",
+      "seek": "0x0200",
+      "count": 10,
+      "stride": 8,
+      "fields": [
+        {
+          "id": "code",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 0
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "dtmf",
+            "label": "EchoLink memory code",
+            "widget": "text",
+            "menu": {
+              "number": 164,
+              "code": "EchoLink Memory"
+            },
+            "description": "Menu 164 EchoLink memory code for radio channels 0–9. Up to 8 ASCII characters (manual: up to 8 digits). Empty storage is 8 zero bytes. Edited text is NUL-padded. HamBench labels these rows 1–10; row 1 is channel 0. Channel 0 was verified on hardware (code 999999 at 0x0200). Channels 1–9 use the same 8-byte stride inferred from the block.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16400
+          }
+        }
+      ]
+    },
+    {
+      "id": "echoLinkMemoryNames",
+      "seek": "0x0250",
+      "count": 10,
+      "stride": 8,
+      "fields": [
+        {
+          "id": "name",
+          "type": "u8",
+          "value": {
+            "kind": "ascii",
+            "length": 8,
+            "pad": 0
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "dtmf",
+            "label": "EchoLink memory name",
+            "widget": "text",
+            "menu": {
+              "number": 164,
+              "code": "EchoLink Memory"
+            },
+            "description": "Menu 164 EchoLink memory name for radio channels 0–9. Up to 8 ASCII characters. Empty storage is 8 zero bytes. Edited text is NUL-padded. HamBench labels these rows 1–10; row 1 is channel 0. Channel 0 was verified on hardware (name HBEL164 at 0x0250). Channels 1–9 use the same 8-byte stride inferred from the block.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 16410
           }
         }
       ]

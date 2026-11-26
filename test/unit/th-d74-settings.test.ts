@@ -28,12 +28,32 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 }
 
+function asList(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function writeAscii(contents: Uint8Array, offset: number, text: string, length: number, pad: number): void {
+  const bytes = Buffer.from(text, 'ascii');
+
+  for (let index = 0; index < length; index += 1) {
+    contents[offset + index] = index < bytes.length ? bytes[index]! : pad;
+  }
+}
+
+function parseSeek(seek: string | number): number {
+  if (typeof seek === 'number') {
+    return seek;
+  }
+
+  return Number.parseInt(seek, seek.trim().toLowerCase().startsWith('0x') ? 16 : 10);
+}
+
 describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.28.0');
-    expect(memoryMap.version).toBe('1.12.0');
+    expect(version).toBe('1.29.0');
+    expect(memoryMap.version).toBe('1.13.0');
   });
 
   it('names each menu setting with the radio category and group', () => {
@@ -163,7 +183,116 @@ describe('TH-D74 menu settings', () => {
     expect(seen.get(105)).toBe('TX/RX / RX');
     expect(seen.get(136)).toBe('TX/RX / Scan');
     expect(seen.get(181)).toBe('TX/RX / Others');
-    expect(seen.size).toBe(67);
+    expect(seen.get(163)).toBe('TX/RX / DTMF');
+    expect(seen.get(164)).toBe('TX/RX / DTMF');
+    expect(seen.size).toBe(69);
+  });
+
+  it('decodes and encodes hardware-captured DTMF and EchoLink memory bytes at menu 163 and 164', () => {
+    const codec = createMemoryMapCodec({
+      radioModel: modelId,
+      memoryMap,
+      memoryConfig,
+      logger: new MockLogLayer(),
+    });
+    const contents = new Uint8Array(500480).fill(0xff);
+    contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+
+    writeAscii(contents, 0x0040, '123', 16, 0);
+    contents.fill(0x00, 0x0050, 0x00e0);
+    writeAscii(contents, 0x0100, 'TEST', 16, 0);
+    contents.fill(0x00, 0x0110, 0x01a0);
+    writeAscii(contents, 0x0200, '999999', 8, 0);
+    contents.fill(0x00, 0x0208, 0x0250);
+    writeAscii(contents, 0x0250, 'HBEL164', 8, 0);
+    contents.fill(0x00, 0x0258, 0x02a0);
+    contents[0x01ea] = 0x01;
+    contents[0x02b0] = 0xa5;
+
+    const decoded = codec.decode({ contents, radioModel: modelId });
+    const settings = asRecord(decoded.settings);
+
+    expect(asRecord(asList(settings.dtmfMemoryCodes)[0]).code).toBe('123');
+    expect(asRecord(asList(settings.dtmfMemoryNames)[0]).name).toBe('TEST');
+    expect(asRecord(asList(settings.echoLinkMemoryCodes)[0]).code).toBe('999999');
+    expect(asRecord(asList(settings.echoLinkMemoryNames)[0]).name).toBe('HBEL164');
+
+    for (let index = 1; index < 10; index += 1) {
+      expect(asRecord(asList(settings.dtmfMemoryCodes)[index]).code).toBe('');
+      expect(asRecord(asList(settings.dtmfMemoryNames)[index]).name).toBe('');
+      expect(asRecord(asList(settings.echoLinkMemoryCodes)[index]).code).toBe('');
+      expect(asRecord(asList(settings.echoLinkMemoryNames)[index]).name).toBe('');
+    }
+
+    const original = Uint8Array.from(contents);
+    const roundTrip = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
+    const memoryRegions: Array<[number, number]> = [
+      [0x0040, 0x00e0],
+      [0x0100, 0x01a0],
+      [0x0200, 0x02b1],
+    ];
+
+    for (const [start, end] of memoryRegions) {
+      expect(roundTrip.contents.subarray(start, end)).toEqual(original.subarray(start, end));
+    }
+
+    expect(roundTrip.contents[0x01ea]).toBe(0x01);
+    expect(roundTrip.contents[0x02b0]).toBe(0xa5);
+
+    const edited = codec.encode(
+      {
+        ...decoded,
+        settings: {
+          ...decoded.settings,
+          dtmfMemoryCodes: [{ code: '12 3*#A' }, ...asList(settings.dtmfMemoryCodes).slice(1)],
+          dtmfMemoryNames: [{ name: 'CQ' }, ...asList(settings.dtmfMemoryNames).slice(1)],
+        },
+      },
+      { contents: Uint8Array.from(original), radioModel: modelId },
+    );
+
+    expect(Buffer.from(edited.contents.subarray(0x0040, 0x0047)).toString('ascii')).toBe('12 3*#A');
+    expect([...edited.contents.subarray(0x0047, 0x0050)].every((byte) => byte === 0x00)).toBe(true);
+    expect(Buffer.from(edited.contents.subarray(0x0100, 0x0102)).toString('ascii')).toBe('CQ');
+    expect([...edited.contents.subarray(0x0102, 0x0110)].every((byte) => byte === 0x00)).toBe(true);
+
+    const longCode = codec.encode(
+      {
+        ...decoded,
+        settings: {
+          ...decoded.settings,
+          dtmfMemoryCodes: [{ code: '12345678901234567' }, ...asList(settings.dtmfMemoryCodes).slice(1)],
+        },
+      },
+      { contents: Uint8Array.from(original), radioModel: modelId },
+    );
+    expect(Buffer.from(longCode.contents.subarray(0x0040, 0x0050)).toString('ascii')).toBe('1234567890123456');
+
+    const gaps: Array<[number, number]> = [
+      [0x00e0, 0x0100],
+      [0x01a0, 0x01ea],
+      [0x01eb, 0x0200],
+      [0x02a0, 0x02b0],
+    ];
+
+    for (const [start, end] of gaps) {
+      expect([...edited.contents.subarray(start, end)].every((byte) => byte === 0xff)).toBe(true);
+    }
+
+    expect(edited.contents[0x01ea]).toBe(0x01);
+    expect(edited.contents[0x02b0]).toBe(0xa5);
+    expect(edited.contents[0x02b1]).toBe(0xff);
+    expect([...edited.contents.subarray(0x0050, 0x00e0)].every((byte) => byte === 0x00)).toBe(true);
+
+    const lowStructs = memoryMap.structs.filter((struct) => parseSeek(struct.seek) < 0x1000);
+    expect(lowStructs.map((struct) => struct.id).sort()).toEqual([
+      'dstarMyCall',
+      'dtmfMemoryCodes',
+      'dtmfMemoryNames',
+      'echoLinkMemoryCodes',
+      'echoLinkMemoryNames',
+    ]);
+    expect(lowStructs.find((struct) => struct.id === 'dstarMyCall')?.seek).toBe('0x02B1');
   });
 
   it('decodes confirmed menu bytes, including CW pitch steps on the confirmed 100 Hz pattern', () => {

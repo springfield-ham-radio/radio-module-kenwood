@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.28.0');
+    expect(radioConfig.version).toBe('1.29.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -420,6 +420,10 @@ describe('Kenwood TH-D74 module', () => {
 
     const encoded = codec.encode(decoded, { contents: Uint8Array.from(contents), radioModel: modelId });
     const mappedRanges: Array<[number, number]> = [
+      [0x0040, 0xa0],
+      [0x0100, 0xa0],
+      [0x0200, 0x50],
+      [0x0250, 0x50],
       [0x02b1, 12],
       [0x1000, 1],
       [0x1001, 1],
