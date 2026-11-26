@@ -5,17 +5,17 @@
     "name": "Kenwood TH-D74",
     "manufacturer": "Kenwood"
   },
-  "version": "1.27.0",
+  "version": "1.28.0",
   "minApiVersion": "18.3.0",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "readMessage": {
     "title": "Use the micro-USB port",
-    "body": "Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\nDo not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\nMenu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.",
+    "body": "Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\nDo not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\nMenu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.\n\nTurn KISS off before CAT or clone ([F], [LIST]). KISS on blocks PC commands. If CAT or Read fails, turn KISS off.",
     "severity": "warning"
   },
   "writeMessage": {
     "title": "Use the micro-USB port",
-    "body": "Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\nDo not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\nMenu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.",
+    "body": "Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\nDo not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\nMenu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.\n\nTurn KISS off before CAT or clone ([F], [LIST]). KISS on blocks PC commands. If CAT or Write fails, turn KISS off.",
     "severity": "warning"
   },
   "capabilities": {
@@ -23,7 +23,8 @@
     "memoryWrite": true,
     "channelProgramming": true,
     "settingsProgramming": true,
-    "liveControl": true
+    "liveControl": true,
+    "aprsReceive": true
   },
   "bands": ["2m", "70cm"],
   "cat": {
@@ -74,6 +75,27 @@
     "rtscts": true,
     "dtr": true,
     "rts": true
+  },
+  "aprs": {
+    "mode": "kiss",
+    "baudRate": 9600,
+    "baudRates": [9600],
+    "help": "Same USB port as clone and CAT. Menu 983 PC Input/Output (KISS) = USB. Press [F], then [LIST] until the display shows KISS ON. Connect writes nothing. Disconnect sends the KISS exit so CAT and Read work again.",
+    "monitorNote": "This radio has no passive monitor. KISS frames only.",
+    "host": {
+      "entry": "manual",
+      "kissExit": [192, 255, 192],
+      "enter": [],
+      "flowControl": "none",
+      "dtr": "asserted",
+      "rts": "asserted",
+      "flows": ["none"],
+      "defaultFlow": "none",
+      "flowHelp": "KISS is binary. Flow control is off. DTR and RTS stay asserted.",
+      "entryHint": "Turn KISS on at the radio ([F], then [LIST] until KISS ON), then Connect. HamBench writes nothing until Disconnect.",
+      "setup": ["Menu 980 USB Function = COM + AF/IF Output.", "Menu 983 PC Input/Output (KISS) = USB.", "Menu 506 Data Band = the band tuned to 144.390 (A or B). Menu 505 Data Speed = 1200 for APRS.", "Press [F], then [LIST] until the display shows KISS ON."],
+      "recovery": ["Disconnect sends the KISS exit once and releases the port.", "CAT and Read do not work while KISS is on. If they time out, turn KISS off on the radio ([F], [LIST])."]
+    }
   },
   "memoryConfig": {
     "chunkSize": 256,

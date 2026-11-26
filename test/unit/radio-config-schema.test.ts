@@ -135,7 +135,7 @@ describe('Kenwood radio configs (schema)', () => {
     expect(thF6.onError).toBeUndefined();
   });
 
-  it('publishes the tested TM-D710A APRS host procedure and leaves other models without it', () => {
+  it('publishes the tested TM-D710A APRS host procedure and leaves TH-F6 without it', () => {
     const tmD710a = loadConfig('kenwood-tm-d710a.json');
     expect(tmD710a.version).toBe('1.16.0');
     expect(tmD710a.capabilities?.aprsReceive).toBe(true);
@@ -206,10 +206,67 @@ describe('Kenwood radio configs (schema)', () => {
     }
     expect(aprsReceiveValidator(invalidFlow)).toBe(false);
 
-    for (const fileName of ['kenwood-th-d74.json', 'kenwood-th-f6.json']) {
-      const config = loadConfig(fileName);
-      expect(config.capabilities?.aprsReceive, fileName).toBeUndefined();
-      expect(config.aprs, fileName).toBeUndefined();
-    }
+    const thF6 = loadConfig('kenwood-th-f6.json');
+    expect(thF6.capabilities?.aprsReceive).toBeUndefined();
+    expect(thF6.aprs).toBeUndefined();
+  });
+
+  it('publishes the TH-D74 kiss-only APRS block on the USB port', () => {
+    const thD74 = loadConfig('kenwood-th-d74.json');
+    expect(thD74.version).toBe('1.28.0');
+    expect(thD74.capabilities?.aprsReceive).toBe(true);
+    expect(aprsReceiveValidator(thD74.aprs), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
+    expect(thD74.aprs).toEqual({
+      mode: 'kiss',
+      baudRate: 9600,
+      baudRates: [9600],
+      help: 'Same USB port as clone and CAT. Menu 983 PC Input/Output (KISS) = USB. Press [F], then [LIST] until the display shows KISS ON. Connect writes nothing. Disconnect sends the KISS exit so CAT and Read work again.',
+      monitorNote: 'This radio has no passive monitor. KISS frames only.',
+      host: {
+        entry: 'manual',
+        kissExit: [192, 255, 192],
+        enter: [],
+        flowControl: 'none',
+        dtr: 'asserted',
+        rts: 'asserted',
+        flows: ['none'],
+        defaultFlow: 'none',
+        flowHelp: 'KISS is binary. Flow control is off. DTR and RTS stay asserted.',
+        entryHint:
+          'Turn KISS on at the radio ([F], then [LIST] until KISS ON), then Connect. HamBench writes nothing until Disconnect.',
+        setup: [
+          'Menu 980 USB Function = COM + AF/IF Output.',
+          'Menu 983 PC Input/Output (KISS) = USB.',
+          'Menu 506 Data Band = the band tuned to 144.390 (A or B). Menu 505 Data Speed = 1200 for APRS.',
+          'Press [F], then [LIST] until the display shows KISS ON.',
+        ],
+        recovery: [
+          'Disconnect sends the KISS exit once and releases the port.',
+          'CAT and Read do not work while KISS is on. If they time out, turn KISS off on the radio ([F], [LIST]).',
+        ],
+      },
+    });
+    expect(thD74.aprs?.host.kissExit).toEqual([0xc0, 0xff, 0xc0]);
+    expect(thD74.aprs?.host.enter).toEqual([]);
+
+    const kissWithCommandEnter = structuredClone(thD74.aprs) as { host: { enter: Array<{ text: string; label: string }> } };
+    kissWithCommandEnter.host.enter = [{ text: 'KISS ON\r', label: 'KISS ON' }];
+    expect(aprsReceiveValidator(kissWithCommandEnter)).toBe(false);
+
+    const kissWithoutExit = structuredClone(thD74.aprs) as { host: Record<string, unknown> };
+    delete kissWithoutExit.host.kissExit;
+    expect(aprsReceiveValidator(kissWithoutExit)).toBe(false);
+
+    const kissWithUnknownHostKey = structuredClone(thD74.aprs) as { host: Record<string, unknown> };
+    kissWithUnknownHostKey.host.interrupt = [3, 3, 3];
+    expect(aprsReceiveValidator(kissWithUnknownHostKey)).toBe(false);
+
+    const kissWithSoftwareFlow = structuredClone(thD74.aprs) as { host: { flowControl: string } };
+    kissWithSoftwareFlow.host.flowControl = 'software';
+    expect(aprsReceiveValidator(kissWithSoftwareFlow), JSON.stringify(aprsReceiveValidator.errors)).toBe(false);
+
+    const monitorWithEntryKey = structuredClone(loadConfig('kenwood-tm-d710a.json').aprs) as { host: Record<string, unknown> };
+    monitorWithEntryKey.host.entry = 'manual';
+    expect(aprsReceiveValidator(monitorWithEntryKey)).toBe(false);
   });
 });

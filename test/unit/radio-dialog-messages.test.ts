@@ -16,12 +16,20 @@ const TH_F6_MESSAGE = {
   severity: 'info',
 } as const;
 
+const TH_D74_USB_BODY =
+  'Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\n' +
+  'Do not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\n' +
+  "Menu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.";
+
 const TH_D74_MESSAGE = {
   title: 'Use the micro-USB port',
-  body:
-    'Connect a data-capable USB-A to micro-USB cable to the micro-USB connector on the side of the radio. A charge-only cable will not show a COM port.\n\n' +
-    'Do not use the two-plug speaker/mic programming cable (K-type) that other Kenwood handhelds use. This radio is not programmed from the SP/MIC jacks.\n\n' +
-    "Menu 980 (USB Function) must be COM + AF/IF Output, not Mass Storage. Install Kenwood's virtual COM port driver before the first USB connection.",
+  body: `${TH_D74_USB_BODY}\n\nTurn KISS off before CAT or clone ([F], [LIST]). KISS on blocks PC commands. If CAT or Read fails, turn KISS off.`,
+  severity: 'warning',
+} as const;
+
+const TH_D74_WRITE_MESSAGE = {
+  title: 'Use the micro-USB port',
+  body: `${TH_D74_USB_BODY}\n\nTurn KISS off before CAT or clone ([F], [LIST]). KISS on blocks PC commands. If CAT or Write fails, turn KISS off.`,
   severity: 'warning',
 } as const;
 
@@ -82,7 +90,7 @@ describe('Kenwood radio dialog messages', () => {
     expect(thF6.readMessage).toEqual(TH_F6_MESSAGE);
     expect(thF6.writeMessage).toEqual(TH_F6_MESSAGE);
     expect(thD74.readMessage).toEqual(TH_D74_MESSAGE);
-    expect(thD74.writeMessage).toEqual(TH_D74_MESSAGE);
+    expect(thD74.writeMessage).toEqual(TH_D74_WRITE_MESSAGE);
     expect(tmD710a.readMessage).toBeUndefined();
     expect(tmD710a.writeMessage).toBeUndefined();
   });

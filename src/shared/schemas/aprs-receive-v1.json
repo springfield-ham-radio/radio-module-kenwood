@@ -3,24 +3,25 @@
   "$id": "https://springfield-ham-radio.com/schemas/aprs-receive-v1.json",
   "title": "APRS receive block",
   "description": "Shape HamBench reads from an installed module when capabilities.aprsReceive is true. This file is the module contract check. radio-config-v1 does not define aprs; the protocol schema leaves the key through as an additional property. flowControl is the serial mode HamBench applies for host/KISS. flows and defaultFlow remain the older choice list.",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["mode", "baudRate", "baudRates", "help", "monitorNote", "host"],
-  "properties": {
-    "mode": { "const": "monitor" },
-    "baudRate": { "enum": [9600, 19200, 38400, 57600] },
-    "baudRates": {
+  "oneOf": [
+    { "$ref": "#/definitions/monitorMode" },
+    { "$ref": "#/definitions/kissMode" }
+  ],
+  "definitions": {
+    "flowControlEnum": {
+      "enum": ["hardware", "software", "none"]
+    },
+    "kissFlowControlEnum": {
+      "description": "Manual KISS entry allows only none or hardware. HamBench PR 241 rejects software on kiss-only hosts.",
+      "enum": ["hardware", "none"]
+    },
+    "setupRecoveryStrings": {
       "type": "array",
       "minItems": 1,
-      "uniqueItems": true,
-      "items": { "enum": [9600, 19200, 38400, 57600] }
+      "maxItems": 8,
+      "items": { "type": "string", "minLength": 1, "maxLength": 700 }
     },
-    "help": { "type": "string", "minLength": 1, "maxLength": 700 },
-    "monitorNote": { "type": "string", "minLength": 1, "maxLength": 700 },
-    "host": { "$ref": "#/definitions/host" }
-  },
-  "definitions": {
-    "host": {
+    "monitorHost": {
       "type": "object",
       "additionalProperties": false,
       "required": ["interrupt", "prompt", "errorReply", "waitMs", "enter", "flows", "defaultFlow", "flowHelp", "setup", "recovery"],
@@ -70,28 +71,97 @@
         },
         "flowControl": {
           "description": "Serial flow control HamBench applies for host/KISS on this TNC port. hardware is RTS/CTS, software is XON/XOFF, and none leaves both off. Omit when that port's flow control is not known. This key is separate from flows and defaultFlow.",
-          "enum": ["hardware", "software", "none"]
+          "$ref": "#/definitions/flowControlEnum"
         },
         "flows": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["software", "none", "hardware"] }
+          "items": { "$ref": "#/definitions/flowControlEnum" }
         },
-        "defaultFlow": { "enum": ["software", "none", "hardware"] },
+        "defaultFlow": { "$ref": "#/definitions/flowControlEnum" },
         "flowHelp": { "type": "string", "minLength": 1, "maxLength": 700 },
-        "setup": {
+        "setup": { "$ref": "#/definitions/setupRecoveryStrings" },
+        "recovery": { "$ref": "#/definitions/setupRecoveryStrings" }
+      }
+    },
+    "kissHost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry", "kissExit", "enter", "flowControl", "dtr", "rts", "flows", "defaultFlow", "flowHelp", "entryHint", "setup", "recovery"],
+      "properties": {
+        "entry": { "const": "manual" },
+        "kissExit": {
+          "description": "Bytes sent once on Disconnect. The TH-D74 manual documents the KISS return frame 0xC0 0xFF 0xC0.",
           "type": "array",
           "minItems": 1,
-          "maxItems": 8,
-          "items": { "type": "string", "minLength": 1, "maxLength": 700 }
+          "maxItems": 16,
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 }
         },
-        "recovery": {
+        "enter": {
+          "type": "array",
+          "maxItems": 0,
+          "items": false
+        },
+        "flowControl": {
+          "description": "Serial flow control HamBench applies for KISS on this port.",
+          "$ref": "#/definitions/kissFlowControlEnum"
+        },
+        "dtr": {
+          "description": "DTR line while KISS is connected. asserted matches HamBench PR 241; low deasserts.",
+          "enum": ["asserted", "low"]
+        },
+        "rts": {
+          "description": "RTS line while KISS is connected. asserted matches HamBench PR 241; low deasserts.",
+          "enum": ["asserted", "low"]
+        },
+        "flows": {
           "type": "array",
           "minItems": 1,
-          "maxItems": 8,
-          "items": { "type": "string", "minLength": 1, "maxLength": 700 }
-        }
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/flowControlEnum" }
+        },
+        "defaultFlow": { "$ref": "#/definitions/flowControlEnum" },
+        "flowHelp": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "entryHint": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "setup": { "$ref": "#/definitions/setupRecoveryStrings" },
+        "recovery": { "$ref": "#/definitions/setupRecoveryStrings" }
+      }
+    },
+    "monitorMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "baudRate", "baudRates", "help", "monitorNote", "host"],
+      "properties": {
+        "mode": { "const": "monitor" },
+        "baudRate": { "enum": [9600, 19200, 38400, 57600] },
+        "baudRates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": [9600, 19200, 38400, 57600] }
+        },
+        "help": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "monitorNote": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "host": { "$ref": "#/definitions/monitorHost" }
+      }
+    },
+    "kissMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "baudRate", "baudRates", "help", "monitorNote", "host"],
+      "properties": {
+        "mode": { "const": "kiss" },
+        "baudRate": { "enum": [9600, 19200, 38400, 57600] },
+        "baudRates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": [9600, 19200, 38400, 57600] }
+        },
+        "help": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "monitorNote": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "host": { "$ref": "#/definitions/kissHost" }
       }
     }
   }
