@@ -63,6 +63,11 @@ describe('pack:beta Kenwood configs', () => {
         expect(packedConfig.capabilities?.aprsReceive).toBe(true);
         expect(packedConfig.aprs?.host?.enter?.map((step) => step.text)).toEqual(['KISS ON\r', 'RESTART\r']);
         expect(packedConfig.aprs?.host?.flowControl).toBe('hardware');
+      } else if (modelId === 'kenwood-th-d74') {
+        expect(packedConfig.capabilities?.aprsReceive).toBe(true);
+        expect(packedConfig.aprs?.mode).toBe('kiss');
+        expect(packedConfig.aprs?.host?.enter).toEqual([]);
+        expect(packedConfig.aprs?.host?.flowControl).toBe('none');
       } else {
         expect(packedConfig.capabilities?.aprsReceive).toBeUndefined();
         expect(packedConfig.aprs).toBeUndefined();

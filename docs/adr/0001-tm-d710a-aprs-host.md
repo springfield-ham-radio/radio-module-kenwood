@@ -8,7 +8,7 @@
 
 HamBench reads `capabilities.aprsReceive` and `aprs.host` from the installed module JSON. When `aprsReceive` is true, it does not inject the TM-D710 compatibility sequence. `@springfield/ham-radio-utils` `radio-protocol-schema.json` (package 4.19.0) does not list `aprs` or `capabilities`, and the root object does not set `additionalProperties: false`, so `SchemaValidator.validateRadioProtocol` accepts the block. `@springfield/ham-radio-registry` 2.1.0 `RadioCapabilities` still has no `aprsReceive` field. Hydration keeps unknown keys. Catalog metadata copies only the five existing capability flags, so the running app must keep reading the installed config.
 
-This repository ships one TM-D710 config, `configs/kenwood-tm-d710a.json`. It does not ship G, GA, GE, or GS variants. TH-D74 and TH-F6 are not given this capability.
+This repository ships one TM-D710 config, `configs/kenwood-tm-d710a.json`. It does not ship G, GA, GE, or GS variants. TH-F6 is not given this capability. TH-D74 KISS APRS is [ADR 0002](./0002-th-d74-aprs-kiss.md).
 
 ## Decision
 
@@ -17,7 +17,7 @@ This repository ships one TM-D710 config, `configs/kenwood-tm-d710a.json`. It do
 - `aprs.host.flowControl` is `hardware`. That value is RTS/CTS. The owner verified host/KISS receive on the head COM jack only with Hardware RTS/CTS after `XFLOW OFF`. HamBench applies this value and does not ask. `flows`, `defaultFlow`, and `flowHelp` stay so a HamBench build that still reads the dropdown keeps parsing. `defaultFlow` stays `software`. That is the dropdown fallback, and it is not the verified host setting. The driver uses RTS/CTS and does not force RTS low. `serialConfig` remains the body PC port and stays `rtscts: false`.
 - Menu numbers in the text are the tested A radio: menu 528 COM baud, menu 529 PACKET data band B for 144.390 on the host path, menu 604 OUTPUT for the passive monitor only.
 - Recovery text records the A/E power-cycle sentence and the G `RESTART` sentence. It does not say those editions prove an alternating toggle. It records the 11 Nov 2026 observation that KISS did not persist across an overnight power-off: the TNC came up in command mode and replied `KISS was OFF`. `kissExit` is not described as a manual-verified exit.
-- TH-D74 and TH-F6 omit `aprsReceive` and `aprs`.
+- TH-F6 omits `aprsReceive` and `aprs`. TH-D74 is documented in ADR 0002.
 
 ## Consequences
 

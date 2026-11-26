@@ -9,7 +9,17 @@ HamBench live CAT does **not** yet use the new `bandIndexed`, `bandModes`, `vfoM
 ## Radio setup
 
 - Menu **980** = **COM** + **AF/IF Output** (clone/CAT on the USB CDC port). Power-cycle the radio after changing this menu.
-- Turn **KISS** off: press **F**, then **LIST**, and disable KISS if it is on.
+- Turn **KISS** off before clone or CAT: press **F**, then **LIST**, and disable KISS if it is on. The radio ignores PC commands while KISS is on.
+
+## APRS and Packet (KISS)
+
+Same micro-USB port as clone and CAT. HamBench reads `capabilities.aprsReceive` and the `aprs` block from the installed driver ([ADR 0002](adr/0002-th-d74-aprs-kiss.md); HamBench [ADR 0025](https://github.com/springfield-ham-radio/ham-radio-ui/pull/241)).
+
+- Menu **980** = COM + AF/IF Output (not Mass Storage).
+- Menu **983** PC Input/Output (KISS) = USB. The KISS chapter in manual B5A-1253-00 says “Menu 903”; on the radio the menu is **983**.
+- Menu **506** Data Band = the band tuned to 144.390 (A or B). Menu **505** Data Speed = **1200** for on-air APRS (not the USB baud; KISS uses 9600 on USB).
+- Menu **580** Raw Packets output produced no bytes in passive testing (25 Nov 2026). There is no monitor-only path; use KISS ON on the front panel ([F], then [LIST] until KISS ON).
+- Connect writes nothing. Disconnect sends KISS exit `C0 FF C0` once (manual-verified on TH-D74A/E). DTR and RTS stay asserted with flow control off for KISS.
 
 ## Serial
 

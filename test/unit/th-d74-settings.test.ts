@@ -32,7 +32,7 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.27.0');
+    expect(version).toBe('1.28.0');
     expect(memoryMap.version).toBe('1.12.0');
   });
 
