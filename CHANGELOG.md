@@ -1,3 +1,9 @@
+## [2.21.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.20.0...v2.21.0) (2026-11-26)
+
+### Features
+
+* **th-d74:** declare KISS APRS on the USB port ([821a3e3](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/821a3e37a9ea90535c73a13359aeca1b7c6f8bbe))
+
 ## [2.20.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.19.0...v2.20.0) (2026-11-24)
 
 ### Features
