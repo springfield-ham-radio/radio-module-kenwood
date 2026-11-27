@@ -99,7 +99,7 @@ describe('Kenwood radio configs (schema)', () => {
 
   it('declares onError cleanup for clone-mode Kenwood models', () => {
     const thD74 = loadConfig('kenwood-th-d74.json');
-    expect(thD74.minApiVersion).toBe('18.3.0');
+    expect(thD74.minApiVersion).toBe('18.5.1');
     expect(thD74.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
       writeMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -213,7 +213,7 @@ describe('Kenwood radio configs (schema)', () => {
 
   it('publishes the TH-D74 kiss-only APRS block on the USB port', () => {
     const thD74 = loadConfig('kenwood-th-d74.json');
-    expect(thD74.version).toBe('1.31.0');
+    expect(thD74.version).toBe('1.32.0');
     expect(thD74.capabilities?.aprsReceive).toBe(true);
     expect(aprsReceiveValidator(thD74.aprs), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
     expect(thD74.aprs).toEqual({

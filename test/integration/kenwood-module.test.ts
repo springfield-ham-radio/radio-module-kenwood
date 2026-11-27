@@ -95,8 +95,8 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.31.0');
-    expect(radioConfig.minApiVersion).toBe('18.3.0');
+    expect(radioConfig.version).toBe('1.32.0');
+    expect(radioConfig.minApiVersion).toBe('18.5.1');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
       writeMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],

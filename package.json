@@ -65,9 +65,9 @@
     "@semantic-release/git": "11.0.1",
     "@semantic-release/github": "12.0.11",
     "@semantic-release/npm": "13.2.0",
-    "@springfield/ham-radio-api": "18.5.0",
+    "@springfield/ham-radio-api": "github:springfield-ham-radio/ham-radio-api#c503915f7ae791e836ababe06ca1ca0d4fc3adb8",
     "@springfield/ham-radio-registry": "^2.1.1",
-    "@springfield/ham-radio-utils": "^4.19.0",
+    "@springfield/ham-radio-utils": "github:springfield-ham-radio/ham-radio-utils#09edd512de3d16b2167bab99e6bf72ca26fcc8ea",
     "@types/node": "26.6.6",
     "ajv": "8.20.0",
     "husky": "9.1.7",
@@ -80,6 +80,7 @@
     "vitest": "^5.1.1"
   },
   "resolutions": {
+    "@springfield/ham-radio-api": "github:springfield-ham-radio/ham-radio-api#c503915f7ae791e836ababe06ca1ca0d4fc3adb8",
     "conventional-changelog-conventionalcommits": "10.4.1",
     "loglayer": "9.4.0"
   },
