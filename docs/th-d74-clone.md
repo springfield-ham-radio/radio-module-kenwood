@@ -88,6 +88,8 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 160 DTMF Encode Speed | TX/RX - DTMF | `0x101F` | `0` 50 ms, `1` 100 ms, `2` 150 ms |
 | 161 Pause Time | TX/RX - DTMF | `0x1020` | index `0..6` = 100, 250, 500, 750, 1000, 1500, 2000 ms |
 | 162 DTMF TX Hold | TX/RX - DTMF | `0x1021` | `0` Off, `1` On |
+| 163 DTMF Memory | TX/RX - DTMF | `0x0040` / `0x0100` | 10 channels 0–9. Codes at `0x0040`–`0x00DF`, 10 × 16-byte ASCII NUL-padded (0–9, A–D, `*`, `#`, space pause). Names at `0x0100`–`0x019F`, 10 × 16-byte ASCII NUL-padded. Empty is all `0x00`. `0x00E0`–`0x00FF` is `0xFF` filler and is not mapped. Channel 0 verified (code `123`, name `TEST`). Channels 1–9 use the 16-byte stride inferred from the block |
+| 164 EchoLink Memory | TX/RX - DTMF | `0x0200` / `0x0250` | 10 channels 0–9. Codes at `0x0200`–`0x024F`, 8-byte ASCII NUL-padded. Names at `0x0250`–`0x029F`, 8-byte ASCII NUL-padded. Empty is all `0x00`. `0x01A0`–`0x01FF` and `0x02A0`–`0x02B0` are not mapped (`0x01EA` holds a clone framing byte in test images). Channel 0 verified (code `999999`, name `HBEL164`). Channels 1–9 use the 8-byte stride inferred from the block |
 | 170 CW Pitch | TX/RX - CW | `0x1024` | `0x01` 500 Hz, `0x04` 800 Hz, and `0x06` 1000 Hz measured. That confirms 100 Hz steps from 400 Hz (`0x00`). The remaining steps follow that confirmed pattern |
 | 171 CW Reverse | TX/RX - CW | `0x1026` | `0` Normal, `1` Reverse |
 | 180 QSO Log | TX/RX - Others | `0x1027` | `0` Off, `1` On |
