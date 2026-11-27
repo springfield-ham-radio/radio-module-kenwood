@@ -78,7 +78,7 @@ describe('pack-release-zip', () => {
     const configs = listConfigDescriptors(rootDirectory);
 
     expect(configs.map((config) => config.modelId)).toEqual(['kenwood-th-d74', 'kenwood-th-f6', 'kenwood-tm-d710a']);
-    expect(configs.find((config) => config.modelId === 'kenwood-th-d74')?.minApiVersion).toBe('18.5.1');
+    expect(configs.find((config) => config.modelId === 'kenwood-th-d74')?.minApiVersion).toBe('18.6.0');
     expect(configs.find((config) => config.modelId === 'kenwood-tm-d710a')?.minApiVersion).toBe('18.3.0');
     expect(configs.find((config) => config.modelId === 'kenwood-th-f6')?.minApiVersion).toBe('18.0.1');
   });

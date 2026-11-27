@@ -6,7 +6,7 @@
     "manufacturer": "Kenwood"
   },
   "version": "1.32.0",
-  "minApiVersion": "18.5.1",
+  "minApiVersion": "18.6.0",
   "description": "TH-D74 clone-mode programming (256-byte blocks after 0M PROGRAM)",
   "readMessage": {
     "title": "Use the micro-USB port",

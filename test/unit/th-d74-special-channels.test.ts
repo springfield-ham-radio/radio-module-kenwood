@@ -84,7 +84,7 @@ describe('TH-D74 special channels', () => {
 
   it('bumps the map and driver for special channel metadata', () => {
     expect(version).toBe('1.32.0');
-    expect(minApiVersion).toBe('18.5.1');
+    expect(minApiVersion).toBe('18.6.0');
     expect(memoryMap.version).toBe('1.16.0');
   });
 

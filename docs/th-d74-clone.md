@@ -55,7 +55,7 @@ This module maps regular memories **0–999** plus **101 special channel slots**
 
 ### Special channels (indices 1000–1100)
 
-Scan-edge memories and the priority (Pri) channel use the same 40-byte record, 4-byte flags, and 16-byte name layout as programmed memories 0–999. HamBench labels them via `channelBindings.specials` (`start: 1000`, labels `L0`, `U0`, … `L49`, `U49`, `Pri`). See [ham-radio-docs ADR 0013](https://github.com/springfield-ham-radio/ham-radio-docs/blob/cursor/adr-0013-special-channels-bc29/docs/developer/adr/0013-memory-map-special-channels.md).
+Scan-edge memories and the priority (Pri) channel use the same 40-byte record, 4-byte flags, and 16-byte name layout as programmed memories 0–999. HamBench labels them via `channelBindings.specials` (`start: 1000`, labels `L0`, `U0`, … `L49`, `U49`, `Pri`). See [ham-radio-docs ADR 0013](https://github.com/springfield-ham-radio/ham-radio-docs/blob/main/docs/developer/adr/0013-memory-map-special-channels.md).
 
 | Label | Index | Record | Flags | Name |
 | --- | --- | --- | --- | --- |
@@ -66,7 +66,7 @@ Scan-edge memories and the priority (Pri) channel use the same 40-byte record, 4
 
 Memory `n` is still at group `n / 6`, slot `n % 6` within the 256-byte block. Bytes `0xE6F0`–`0xE6FF` (pad after U0 in the first special group) stay unmapped. WX (`EXTD_NUMBERS` 1101+) begins after Pri and is not included in this driver.
 
-Installing this driver requires HamBench with bundled `@springfield/ham-radio-api` **≥ 18.5.1** (`minApiVersion`). The labeled **Special channels** section in the channels UI needs a HamBench build that includes [ADR 0030](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259) ([UI PR 259](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259)); an app that only satisfies the API floor can load the map without that section until that UI lands.
+Installing this driver requires HamBench with bundled `@springfield/ham-radio-api` **≥ 18.6.0** (`minApiVersion`). The labeled **Special channels** section in the channels UI needs a HamBench build that includes [ADR 0030](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259) ([UI PR 259](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259)); an app that only satisfies the API floor can load the map without that section until that UI lands.
 
 ## Menu settings (absolute image offsets)
 

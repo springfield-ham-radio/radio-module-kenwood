@@ -99,7 +99,7 @@ describe('Kenwood radio configs (schema)', () => {
 
   it('declares onError cleanup for clone-mode Kenwood models', () => {
     const thD74 = loadConfig('kenwood-th-d74.json');
-    expect(thD74.minApiVersion).toBe('18.5.1');
+    expect(thD74.minApiVersion).toBe('18.6.0');
     expect(thD74.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
       writeMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
