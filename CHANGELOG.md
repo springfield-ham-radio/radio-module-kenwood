@@ -1,3 +1,9 @@
+## [2.24.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.23.0...v2.24.0) (2026-11-27)
+
+### Features
+
+* **th-d74:** map Menu 134 Priority Scan ([#67](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/67)) ([1eadaab](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/1eadaabe375b6d92cf48f76c77da410dc2a96805))
+
 ## [2.23.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.22.0...v2.23.0) (2026-11-27)
 
 ### Features
