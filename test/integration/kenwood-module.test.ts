@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.30.1');
+    expect(radioConfig.version).toBe('1.31.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -227,6 +227,7 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x100d] = 2;
     contents[0x100e] = 5;
     contents[0x100f] = 2;
+    contents[0x1011] = 1;
     contents[0x1012] = 1;
     contents[0x1013] = 2;
     contents[0x1018] = 1;
@@ -333,6 +334,7 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.digitalScanResume).resume).toBe('Seek');
     expect(asRecord(settings.timeRestart).seconds).toBe(5);
     expect(asRecord(settings.carrierRestart).seconds).toBe(2);
+    expect(asRecord(settings.priorityScan).enabled).toBe(true);
     expect(asRecord(settings.scanAutoBacklight).enabled).toBe(true);
     expect(asRecord(settings.autoWeatherScan).interval).toBe('30 min');
     expect(asRecord(settings.autoOffset).enabled).toBe(true);
@@ -448,6 +450,7 @@ describe('Kenwood TH-D74 module', () => {
       [0x100a, 1],
       [0x100c, 1],
       [0x100d, 3],
+      [0x1011, 1],
       [0x1012, 2],
       [0x1018, 1],
       [0x1019, 9],

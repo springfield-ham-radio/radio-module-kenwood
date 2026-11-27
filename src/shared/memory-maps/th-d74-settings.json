@@ -1,5 +1,5 @@
 {
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -1205,6 +1205,33 @@
             "section": "TX/RX",
             "sectionOrder": 1,
             "order": 13300
+          }
+        }
+      ]
+    },
+    {
+      "id": "priorityScan",
+      "seek": "0x1011",
+      "fields": [
+        {
+          "id": "enabled",
+          "type": "u8",
+          "value": {
+            "kind": "boolean"
+          },
+          "ui": {
+            "group": "tx-rx",
+            "subgroup": "scan",
+            "label": "Priority Scan",
+            "widget": "switch",
+            "menu": {
+              "number": 134,
+              "code": "Priority Scan"
+            },
+            "description": "Turns priority scan on. 0 is Off and 1 is On. Measured on K5FAR's TH-D74A (Nov 27, 2026): 0x00 became 0x01. The radio only allows On when the Pri priority memory holds a Band B RX frequency (manual p. 9-4). Not selectable in Single band A, with FM radio mode (Menu 700) On, or with WX alert (Menu 105) On.",
+            "section": "TX/RX",
+            "sectionOrder": 1,
+            "order": 13400
           }
         }
       ]

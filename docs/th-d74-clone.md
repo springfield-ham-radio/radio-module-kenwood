@@ -55,7 +55,7 @@ This module maps regular memories **0–999**.
 
 ## Menu settings (absolute image offsets)
 
-These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x038C` is a read/change counter: it advances on every clone read (TH-D74A diffs Nov 23–24, 2026 saw `0x06` → `0x10` → `0x23`) and on menu edits, so it stays unmapped. The driver config `capture.ignore` lists `0x038C` for HamBench's menu-capture wizard so diffs skip that byte. The operating-state region `0x0300`–`0x03FF` stays unmapped. Menu 103 FM Narrow does not persist across restart or clone read; it appears only live in Band A operating state at `0x0309`, so it is not mapped here. Menu 104 is not mapped because the radio does not persist it. Menu 134 Priority Scan is not mapped: the radio requires a Band B RX frequency registered in `[Pri]` before the menu can be set (manual p. 9-4).
+These are the first radio-wide settings. Bytes outside the fields below are not part of the map. `0x038C` is a read/change counter: it advances on every clone read (TH-D74A diffs Nov 23–24, 2026 saw `0x06` → `0x10` → `0x23`) and on menu edits, so it stays unmapped. The driver config `capture.ignore` lists `0x038C` for HamBench's menu-capture wizard so diffs skip that byte. The operating-state region `0x0300`–`0x03FF` stays unmapped. Menu 103 FM Narrow does not persist across restart or clone read; it appears only live in Band A operating state at `0x0309`, so it is not mapped here. Menu 104 is not mapped because the radio does not persist it. The byte at `0x1010` stays unmapped (it held `0x01` in the Nov 27, 2026 Priority Scan menu capture and is not this menu).
 
 Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is the radio's top-level menu category (`TX/RX`, `Memory`, `Audio File`, `APRS`, `Digital`, `Configuration`). `sectionOrder` is that category's hundred (1 for the 100s, 5 for APRS, 9 for Configuration). `subgroup` is the id of the radio group inside that category (`rx`, `beacon-tx`, `display`). The declared `groups` array uses the same ids, with `label` set to the name the radio shows (`RX`, `Beacon TX Control`, `Display`) and nested groups listed in menu order. The table below still shows the full `Category - Group` path. Memory group names have no menu number and no subgroup. Their section is `Memory` with order 2, so they sit at the top of that page. APRS My Callsign is menu 500 (verified on the radio, October 31, 2026).
 
@@ -76,6 +76,7 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 131 Resume (Digital) | TX/RX - Scan | `0x100D` | `0` Time, `1` Carrier, `2` Seek |
 | 132 Time Restart | TX/RX - Scan | `0x100E` | Raw seconds, 1–10 |
 | 133 Carrier Restart | TX/RX - Scan | `0x100F` | Raw seconds, 1–10 |
+| 134 Priority Scan | TX/RX - Scan | `0x1011` | `0` Off, `1` On. Measured on K5FAR's TH-D74A (Nov 27, 2026): `0x00` → `0x01`. Restore verified. The radio only allows On when Pri holds a Band B RX frequency (manual p. 9-4); not selectable in Single band A, with FM radio mode (Menu 700) On, or with WX alert (Menu 105) On |
 | 135 Scan Auto Backlight | TX/RX - Scan | `0x1012` | `0` Off, `1` On |
 | 136 Auto Weather Scan | TX/RX - Scan | `0x1013` | `0` Off, `1` 15 min, `2` 30 min, `3` 60 min. TH-D74A only (USA/Canada). Hardware read diff on K5FAR's TH-D74A (Nov 23, 2026): `0x00` → `0x02` when set from Off to 30 min. Manual p. 24-1 matches the radio; the p. 6-2 menu table erroneously lists Off/On |
 | 141 Auto Offset | TX/RX - Repeater | `0x1018` | `0` Off, `1` On. Measured by switching the menu from On to Off |
@@ -140,6 +141,8 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 585 Bulletin Group Code | APRS - Others | `0x183B` | 35 ASCII, NUL-padded. Empty is 35 zero bytes. Up to 6 codes of 5 characters, separated by commas |
 
 `0x120E`, the byte between DCD Sense (`0x120D`) and TX Delay (`0x120F`), stays unmapped.
+
+Pri priority memory is not mapped in this module. For a possible follow-up, the special index 1100 record sits at `0xF750`, its flags at `0x3130`, and its name at `0x144C0` (outside regular memories 0–999).
 
 Menu 502 Position Comment is one byte at `0x1222`. `2` In Service and `4` Committed were measured. The other values follow the manual list and were not measured on their own: `0` Off Duty, `1` Enroute, `3` Returning, `5` Special, `6` Priority, `7` through `13` Custom 0 through Custom 6, and `14` Emergency.
 
