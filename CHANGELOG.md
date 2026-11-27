@@ -1,3 +1,9 @@
+## [2.22.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.21.0...v2.22.0) (2026-11-27)
+
+### Features
+
+* **th-d74:** map DTMF and EchoLink memory (Menus 163-164) ([#65](https://github.com/springfield-ham-radio/radio-module-kenwood/issues/65)) ([93eebd5](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/93eebd5fc096bfebdd93235bab6fd51b0100a5cc))
+
 ## [2.21.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.20.0...v2.21.0) (2026-11-26)
 
 ### Features
