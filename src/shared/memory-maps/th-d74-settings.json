@@ -1,5 +1,5 @@
 {
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Kenwood TH-D74 clone image: 1000 memories in 6-per-256-byte groups, flags, names, and menu settings",
   "groups": [
     {
@@ -89,7 +89,8 @@
         },
         {
           "id": "smartbeaconing",
-          "label": "SmartBeaconing"
+          "label": "SmartBeaconing",
+          "description": "Menus 530 through 535. Speed thresholds, beacon rates, and turn parameters are single raw bytes. The speed fields follow Menu 970 Speed/Distance (mi/h, km/h, or knots). Fast Rate and Turn Angle were measured on hardware; the other bytes match manual defaults and menu order but were not edited on their own in menu capture."
         },
         {
           "id": "waypoint",
@@ -5983,6 +5984,64 @@
       ]
     },
     {
+      "id": "aprsLowSpeed",
+      "seek": "0x136E",
+      "fields": [
+        {
+          "id": "speed",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 2,
+            "max": 30
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "smartbeaconing",
+            "label": "Low Speed",
+            "widget": "integer",
+            "menu": {
+              "number": 530,
+              "code": "Low/High Speed"
+            },
+            "description": "SmartBeaconing low-speed threshold. The byte is the raw speed count. The manual range is 2 to 30 and the default is 5. The displayed unit is mile/h, km/h, or knots from Menu 970. Baseline matches the default; this byte was not measured on its own.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53000
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsHighSpeed",
+      "seek": "0x136F",
+      "fields": [
+        {
+          "id": "speed",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 2,
+            "max": 90
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "smartbeaconing",
+            "label": "High Speed",
+            "widget": "integer",
+            "menu": {
+              "number": 530,
+              "code": "Low/High Speed"
+            },
+            "description": "SmartBeaconing high-speed threshold. The byte is the raw speed count. The manual range is 2 to 90 and the default is 70. The displayed unit is mile/h, km/h, or knots from Menu 970. Baseline matches the default; this byte was not measured on its own.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53010
+          }
+        }
+      ]
+    },
+    {
       "id": "aprsSlowRate",
       "seek": "0x1370",
       "fields": [
@@ -6007,6 +6066,122 @@
             "section": "APRS",
             "sectionOrder": 5,
             "order": 53100
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsFastRate",
+      "seek": "0x1371",
+      "fields": [
+        {
+          "id": "seconds",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 10,
+            "max": 180
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "smartbeaconing",
+            "label": "Fast Rate",
+            "widget": "integer",
+            "menu": {
+              "number": 532,
+              "code": "Fast Rate"
+            },
+            "description": "SmartBeaconing transmit interval at high speed, in seconds. The manual range is 10 to 180 and the default is 120. The byte is the number of seconds. Measured on K5FAR's TH-D74A (Nov 27, 2026): 0x78 (120) changed to 0x6E (110).",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53200
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsTurnAngle",
+      "seek": "0x1372",
+      "fields": [
+        {
+          "id": "degrees",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 5,
+            "max": 90
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "smartbeaconing",
+            "label": "Turn Angle",
+            "widget": "integer",
+            "menu": {
+              "number": 533,
+              "code": "Turn Angle"
+            },
+            "description": "SmartBeaconing turn angle, in degrees. The manual range is 5 to 90 and the default is 28. The byte is the number of degrees. Measured on K5FAR's TH-D74A (Nov 27, 2026): 0x1C (28) changed to 0x28 (40).",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53300
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsTurnSlope",
+      "seek": "0x1373",
+      "fields": [
+        {
+          "id": "slope",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 1,
+            "max": 255
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "smartbeaconing",
+            "label": "Turn Slope",
+            "widget": "integer",
+            "menu": {
+              "number": 534,
+              "code": "Turn Slope"
+            },
+            "description": "SmartBeaconing turn slope. The manual range is 1 to 255 in units of 10 degrees per speed unit and the default is 26. The byte is that count, not a scaled value. Baseline matches the default; this byte was not measured on its own.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53400
+          }
+        }
+      ]
+    },
+    {
+      "id": "aprsTurnTime",
+      "seek": "0x1374",
+      "fields": [
+        {
+          "id": "seconds",
+          "type": "u8",
+          "value": {
+            "kind": "integer",
+            "min": 5,
+            "max": 180
+          },
+          "ui": {
+            "group": "aprs",
+            "subgroup": "smartbeaconing",
+            "label": "Turn Time",
+            "widget": "integer",
+            "menu": {
+              "number": 535,
+              "code": "Turn Time"
+            },
+            "description": "SmartBeaconing turn time, in seconds. The manual range is 5 to 180 and the default is 60. The byte is the number of seconds. Baseline matches the default; this byte was not measured on its own.",
+            "section": "APRS",
+            "sectionOrder": 5,
+            "order": 53500
           }
         }
       ]

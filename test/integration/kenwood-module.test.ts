@@ -95,7 +95,7 @@ describe('Kenwood TH-D74 module', () => {
       };
     };
 
-    expect(radioConfig.version).toBe('1.29.0');
+    expect(radioConfig.version).toBe('1.30.0');
     expect(radioConfig.minApiVersion).toBe('18.3.0');
     expect(radioConfig.onError).toEqual({
       readMemory: [{ setBaudRate: 57600 }, { send: ['E'] }],
@@ -252,7 +252,13 @@ describe('Kenwood TH-D74 module', () => {
     contents[0x1366] = 0x7f;
     contents[0x1367] = '/'.charCodeAt(0);
     contents[0x1368] = 'R'.charCodeAt(0);
+    contents[0x136e] = 5;
+    contents[0x136f] = 0x46;
     contents[0x1370] = 30;
+    contents[0x1371] = 0x78;
+    contents[0x1372] = 0x1c;
+    contents[0x1373] = 0x1a;
+    contents[0x1374] = 0x3c;
     contents[0x1375] = 2;
     contents[0x1376] = 1;
     contents[0x1377] = 3;
@@ -396,7 +402,13 @@ describe('Kenwood TH-D74 module', () => {
     expect(asRecord(settings.aprsToneNarrow).enabled).toBe(true);
     expect(asRecord(settings.aprsShiftOffset).enabled).toBe(true);
     expect(asRecord(settings.aprsQsyLimit).distance).toBe('2460 mi');
+    expect(asRecord(settings.aprsLowSpeed).speed).toBe(5);
+    expect(asRecord(settings.aprsHighSpeed).speed).toBe(70);
     expect(asRecord(settings.aprsSlowRate).minutes).toBe(30);
+    expect(asRecord(settings.aprsFastRate).seconds).toBe(120);
+    expect(asRecord(settings.aprsTurnAngle).degrees).toBe(28);
+    expect(asRecord(settings.aprsTurnSlope).slope).toBe(26);
+    expect(asRecord(settings.aprsTurnTime).seconds).toBe(60);
     expect(asRecord(settings.aprsPacketPath).type).toBe('Region');
     expect(asRecord(settings.aprsPacketPathNewN)).toMatchObject({ wide11: true, totalHops: 3 });
     expect(asRecord(settings.aprsPacketPathRelay)).toMatchObject({ relay: 'On', totalHops: 5 });
@@ -464,14 +476,14 @@ describe('Kenwood TH-D74 module', () => {
       [0x12c0, 43],
       [0x1300, 43],
       [0x1361, 8],
-      [0x136a, 4],
+      [0x136a, 6],
       [0x1900, 9],
       [0x1909, 55],
       [0x1940, 9],
       [0x1949, 55],
       [0x1980, 9],
       [0x1989, 55],
-      [0x1370, 1],
+      [0x1370, 5],
       [0x1375, 1],
       [0x1376, 2],
       [0x1378, 2],
