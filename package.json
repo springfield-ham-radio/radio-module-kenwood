@@ -34,6 +34,7 @@
     "lint": "oxlint test",
     "lint:fix": "oxlint --fix --fix-suggestions test",
     "release": "semantic-release",
+    "postinstall": "sh scripts/build-ham-radio-api-dep.sh && sh scripts/build-ham-radio-utils-dep.sh",
     "prepare": "husky && yarn build",
     "test": "yarn test:unit",
     "test:unit": "vitest run test/unit",
