@@ -44,9 +44,9 @@ Same micro-USB port as clone and CAT. HamBench reads `capabilities.aprsReceive` 
 
 | Region | Address | Notes |
 | --- | --- | --- |
-| Flags | `0x2000` | 1200 × 4 bytes: used, lockout, group |
-| Memories | `0x4000` | 192 groups × (6 × 40-byte records + 16 pad) = 256-byte clone blocks |
-| Names | `0x10000` | 1200 × 16 ASCII |
+| Flags | `0x2000` | Clone image region is larger; this map binds **1101** flag slots (indices **0–1100**) |
+| Memories | `0x4000` | Clone image region is larger; **1101** channel records in the usual 6-per-256-byte group layout |
+| Names | `0x10000` | Clone image region is larger; **1101** × 16-byte name slots for indices **0–1100** |
 | Group names | `0x14800` | names[1152..] — 30 groups |
 
 Memory `n` is at group `n / 6`, slot `n % 6`. Occupied flag `used`: `0xFF` empty, `0` below 150 MHz, `1` below 400 MHz, `2` otherwise.
@@ -55,7 +55,7 @@ This module maps regular memories **0–999** plus **101 special channel slots**
 
 ### Special channels (indices 1000–1100)
 
-Scan-edge memories and the priority (Pri) channel use the same 40-byte record, 4-byte flags, and 16-byte name layout as programmed memories 0–999. HamBench labels them via `channelBindings.specials` (`start: 1000`, labels `L0`, `U0`, … `L49`, `U49`, `Pri`). See [ham-radio-docs ADR 0013](https://github.com/springfield-ham-radio/ham-radio-docs/blob/main/docs/adr/0013-special-channels.md).
+Scan-edge memories and the priority (Pri) channel use the same 40-byte record, 4-byte flags, and 16-byte name layout as programmed memories 0–999. HamBench labels them via `channelBindings.specials` (`start: 1000`, labels `L0`, `U0`, … `L49`, `U49`, `Pri`). See [ham-radio-docs ADR 0013](https://github.com/springfield-ham-radio/ham-radio-docs/blob/cursor/adr-0013-special-channels-bc29/docs/developer/adr/0013-memory-map-special-channels.md).
 
 | Label | Index | Record | Flags | Name |
 | --- | --- | --- | --- | --- |
@@ -66,7 +66,7 @@ Scan-edge memories and the priority (Pri) channel use the same 40-byte record, 4
 
 Memory `n` is still at group `n / 6`, slot `n % 6` within the 256-byte block. Bytes `0xE6F0`–`0xE6FF` (pad after U0 in the first special group) stay unmapped. WX (`EXTD_NUMBERS` 1101+) begins after Pri and is not included in this driver.
 
-HamBench **3.25.0+** (after [UI PR 259](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259) / ADR 0030) shows a **Special channels** section for these slots. Older HamBench builds cannot install this driver once `minApiVersion` is raised.
+Installing this driver requires HamBench with bundled `@springfield/ham-radio-api` **≥ 18.5.1** (`minApiVersion`). The labeled **Special channels** section in the channels UI needs a HamBench build that includes [ADR 0030](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259) ([UI PR 259](https://github.com/springfield-ham-radio/ham-radio-ui/pull/259)); an app that only satisfies the API floor can load the map without that section until that UI lands.
 
 ## Menu settings (absolute image offsets)
 

@@ -53,6 +53,32 @@ function writeLittleEndian32(contents: Uint8Array, offset: number, hz: number): 
   contents[offset + 3] = (hz >> 24) & 0xff;
 }
 
+const WX_INDEX = 1101;
+const WX_RECORD_OFFSET = 0xf778;
+const WX_FLAGS_OFFSET = 0x3134;
+const WX_NAME_OFFSET = 0x144d0;
+
+function seedUnmappedWxSentinel(contents: Uint8Array): void {
+  contents.fill(0x3c, WX_RECORD_OFFSET, WX_RECORD_OFFSET + 40);
+  contents[WX_FLAGS_OFFSET] = 0x5a;
+  contents[WX_FLAGS_OFFSET + 1] = 0xa5;
+  contents.fill(0x7e, WX_NAME_OFFSET, WX_NAME_OFFSET + 16);
+}
+
+function snapshotUnmappedWx(contents: Uint8Array) {
+  return {
+    record: Uint8Array.from(contents.subarray(WX_RECORD_OFFSET, WX_RECORD_OFFSET + 40)),
+    flags: Uint8Array.from(contents.subarray(WX_FLAGS_OFFSET, WX_FLAGS_OFFSET + 4)),
+    name: Uint8Array.from(contents.subarray(WX_NAME_OFFSET, WX_NAME_OFFSET + 16)),
+  };
+}
+
+function expectUnmappedWxUnchanged(contents: Uint8Array, expected: ReturnType<typeof snapshotUnmappedWx>): void {
+  expect(contents.subarray(WX_RECORD_OFFSET, WX_RECORD_OFFSET + 40)).toEqual(expected.record);
+  expect(contents.subarray(WX_FLAGS_OFFSET, WX_FLAGS_OFFSET + 4)).toEqual(expected.flags);
+  expect(contents.subarray(WX_NAME_OFFSET, WX_NAME_OFFSET + 16)).toEqual(expected.name);
+}
+
 describe('TH-D74 special channels', () => {
   const { memoryMap, memoryConfig, modelId, version, minApiVersion } = loadThD74();
 
@@ -70,6 +96,14 @@ describe('TH-D74 special channels', () => {
   });
 
   it('maps L0, U49, and Pri labels to the CHIRP indices', () => {
+    const labels = memoryMap.channelBindings!.specials!.labels;
+
+    for (let n = 0; n < 50; n += 1) {
+      expect(labels[2 * n]).toBe(`L${n}`);
+      expect(labels[2 * n + 1]).toBe(`U${n}`);
+    }
+    expect(labels[100]).toBe('Pri');
+
     expect(memoryMapSpecialChannelLabel(memoryMap, 1000)).toBe('L0');
     expect(memoryMapSpecialChannelLabel(memoryMap, 1099)).toBe('U49');
     expect(memoryMapSpecialChannelLabel(memoryMap, 1100)).toBe('Pri');
@@ -87,7 +121,7 @@ describe('TH-D74 special channels', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
 
-  const priHz = 146_520_000;
+    const priHz = 146_520_000;
     const l0Hz = 146_520_000;
     const u0Hz = 146_540_000;
 
@@ -106,22 +140,13 @@ describe('TH-D74 special channels', () => {
     const decoded = codec.decode({ contents, radioModel: modelId });
     const byNumber = new Map(decoded.channels.map((entry) => [entry.channelNumber, entry]));
 
-    const pri = byNumber.get(1100)?.radioChannel;
-    expect(typeof pri).toBe('object');
-    if (pri && typeof pri === 'object') {
-      expect(pri.receiveFrequency).toBe(priHz);
-      expect(pri.transmitFrequency).toBe(priHz);
-      expect(pri.name).toBe('Pri');
-    }
-
-    const l0 = byNumber.get(1000)?.radioChannel;
-    const u0 = byNumber.get(1001)?.radioChannel;
-    if (l0 && typeof l0 === 'object') {
-      expect(l0.receiveFrequency).toBe(l0Hz);
-    }
-    if (u0 && typeof u0 === 'object') {
-      expect(u0.receiveFrequency).toBe(u0Hz);
-    }
+    expect(byNumber.get(1100)?.radioChannel).toMatchObject({
+      receiveFrequency: priHz,
+      transmitFrequency: priHz,
+      name: 'Pri',
+    });
+    expect(byNumber.get(1000)?.radioChannel).toMatchObject({ receiveFrequency: l0Hz });
+    expect(byNumber.get(1001)?.radioChannel).toMatchObject({ receiveFrequency: u0Hz });
   });
 
   it('round-trips encode without altering channel 999 or the unmapped WX index 1101 bytes', () => {
@@ -134,8 +159,8 @@ describe('TH-D74 special channels', () => {
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
 
-    const offset1101 = channelRecordOffset(1101);
-    contents.fill(0x3c, offset1101, offset1101 + 40);
+    seedUnmappedWxSentinel(contents);
+    const wxBeforeEncode = snapshotUnmappedWx(contents);
 
     const channel999 = {
       channelNumber: 999,
@@ -157,22 +182,20 @@ describe('TH-D74 special channels', () => {
     const snapshot999 = Uint8Array.from(with999.contents.subarray(offset999, offset999 + 40));
     const snapshot999Flags = Uint8Array.from(with999.contents.subarray(0x2000 + 999 * 4, 0x2000 + 999 * 4 + 4));
     const snapshot999Name = Uint8Array.from(with999.contents.subarray(0x10000 + 999 * 16, 0x10000 + 999 * 16 + 16));
-    const snapshot1101 = Uint8Array.from(with999.contents.subarray(offset1101, offset1101 + 40));
-
     const decoded = codec.decode(with999);
+    expectUnmappedWxUnchanged(with999.contents, wxBeforeEncode);
     const roundTrip = codec.encode(decoded, { contents: Uint8Array.from(with999.contents), radioModel: modelId });
 
-    const ch999 = decoded.channels.find((entry) => entry.channelNumber === 999)?.radioChannel;
-    if (typeof ch999 === 'object' && ch999 !== undefined) {
-      expect(ch999.receiveFrequency).toBe(146_520_000);
-      expect(ch999.name).toBe('CH999');
-    }
+    expect(decoded.channels.find((entry) => entry.channelNumber === 999)?.radioChannel).toMatchObject({
+      receiveFrequency: 146_520_000,
+      name: 'CH999',
+    });
 
     expect(roundTrip.contents.subarray(offset999, offset999 + 40)).toEqual(snapshot999);
     expect(roundTrip.contents.subarray(0x2000 + 999 * 4, 0x2000 + 999 * 4 + 4)).toEqual(snapshot999Flags);
     expect(roundTrip.contents.subarray(0x10000 + 999 * 16, 0x10000 + 999 * 16 + 16)).toEqual(snapshot999Name);
-    expect(roundTrip.contents.subarray(offset1101, offset1101 + 40)).toEqual(snapshot1101);
-    expect(decoded.channels.some((entry) => entry.channelNumber === 1101)).toBe(false);
+    expectUnmappedWxUnchanged(roundTrip.contents, wxBeforeEncode);
+    expect(decoded.channels.some((entry) => entry.channelNumber === WX_INDEX)).toBe(false);
   });
 
   it('round-trips Pri frequency edits through encode', () => {
@@ -184,6 +207,8 @@ describe('TH-D74 special channels', () => {
     });
     const contents = new Uint8Array(500480).fill(0xff);
     contents.fill(0x20, 0x14800, 0x14800 + 30 * 16);
+    seedUnmappedWxSentinel(contents);
+    const wxBeforeEncode = snapshotUnmappedWx(contents);
 
     const decoded = codec.decode({ contents, radioModel: modelId });
     const edited = codec.encode(
@@ -209,6 +234,7 @@ describe('TH-D74 special channels', () => {
     expect(edited.contents.subarray(channelRecordOffset(1100), channelRecordOffset(1100) + 4)).toEqual(
       writeAndReadFreq(146_520_000),
     );
+    expectUnmappedWxUnchanged(edited.contents, wxBeforeEncode);
   });
 });
 
