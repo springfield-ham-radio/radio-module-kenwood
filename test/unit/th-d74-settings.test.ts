@@ -52,7 +52,7 @@ describe('TH-D74 menu settings', () => {
   const { memoryMap, memoryConfig, modelId, version } = loadThD74();
 
   it('bumps the driver config for the added menus', () => {
-    expect(version).toBe('1.30.0');
+    expect(version).toBe('1.30.1');
     expect(memoryMap.version).toBe('1.14.0');
   });
 
@@ -932,6 +932,8 @@ describe('TH-D74 menu settings', () => {
     expect(edited.contents[0x1372]).toBe(40);
     expect(edited.contents[0x038c]).toBe(0x5a);
     expect(edited.contents[0x136d]).toBe(1);
+    expect(edited.contents[0x136e]).toBe(5);
+    expect(edited.contents[0x136f]).toBe(0x46);
     expect(edited.contents[0x1370]).toBe(30);
     expect(edited.contents[0x1373]).toBe(0x1a);
     expect(edited.contents[0x1374]).toBe(0x3c);

@@ -90,7 +90,7 @@
         {
           "id": "smartbeaconing",
           "label": "SmartBeaconing",
-          "description": "Menus 530 through 535. Speed thresholds, beacon rates, and turn parameters are single raw bytes. The speed fields follow Menu 970 Speed/Distance (mi/h, km/h, or knots). Fast Rate and Turn Angle were measured on hardware; the other bytes match manual defaults and menu order but were not edited on their own in menu capture."
+          "description": "Menus 530 through 535. Speed thresholds, beacon rates, and turn parameters are single raw bytes. The speed fields follow Menu 970 Speed/Distance (mi/h, km/h, or knots). Fast Rate and Turn Angle were measured on hardware; Low Speed, High Speed, Turn Slope, and Turn Time match manual defaults and menu order but were not edited on their own in menu capture."
         },
         {
           "id": "waypoint",

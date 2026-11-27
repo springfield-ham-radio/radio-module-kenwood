@@ -213,7 +213,7 @@ describe('Kenwood radio configs (schema)', () => {
 
   it('publishes the TH-D74 kiss-only APRS block on the USB port', () => {
     const thD74 = loadConfig('kenwood-th-d74.json');
-    expect(thD74.version).toBe('1.30.0');
+    expect(thD74.version).toBe('1.30.1');
     expect(thD74.capabilities?.aprsReceive).toBe(true);
     expect(aprsReceiveValidator(thD74.aprs), JSON.stringify(aprsReceiveValidator.errors)).toBe(true);
     expect(thD74.aprs).toEqual({
