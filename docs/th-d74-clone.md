@@ -127,7 +127,13 @@ Each settings field has `section`, `sectionOrder`, and `subgroup`. `section` is 
 | 521 Tone/Narrow | APRS - QSY Information | `0x1362` | `0` Off, `1` On. Measured by switching the menu from Off to On |
 | 522 Shift/Offset | APRS - QSY Information | `0x1363` | `0` Off, `1` On |
 | 523 QSY Limit Distance | APRS - QSY Information | `0x1364` | Tens of miles. `0` Off, `246` = 2460 mi. Manual steps Off, then 10 through 2500 |
+| 530 Low Speed | APRS - SmartBeaconing | `0x136E` | Raw speed, manual range 2–30 (default 5). The unit is mile/h, km/h, or knots from Menu 970. Baseline `0x05` matches the default. This byte was not measured |
+| 530 High Speed | APRS - SmartBeaconing | `0x136F` | Raw speed, manual range 2–90 (default 70). Same unit as Low Speed. Baseline `0x46` matches the default. This byte was not measured |
 | 531 Slow Rate | APRS - SmartBeaconing | `0x1370` | Raw minutes, manual range 1–100 (default 30) |
+| 532 Fast Rate | APRS - SmartBeaconing | `0x1371` | Raw seconds, manual range 10–180 (default 120). Measured on K5FAR's TH-D74A (Nov 27, 2026): `0x78` (120) changed to `0x6E` (110) |
+| 533 Turn Angle | APRS - SmartBeaconing | `0x1372` | Raw degrees, manual range 5–90 (default 28). Measured on K5FAR's TH-D74A (Nov 27, 2026): `0x1C` (28) changed to `0x28` (40) |
+| 534 Turn Slope | APRS - SmartBeaconing | `0x1373` | Raw count, manual range 1–255 in units of 10 degrees per speed unit (default 26). Baseline `0x1A` matches the default. This byte was not measured |
+| 535 Turn Time | APRS - SmartBeaconing | `0x1374` | Raw seconds, manual range 5–180 (default 60). Baseline `0x3C` matches the default. This byte was not measured |
 | 540 Waypoint Format | APRS - Waypoint | `0x1213` | `0` NMEA, `1` MAGELLAN, `2` KENWOOD. `0` and `2` were measured; `1` follows the manual order |
 | 550 Position Limit | APRS - Packet Filter | `0x1365` | Tens of miles. `0` Off, `248` = 2480 mi. Manual steps Off, then 10 through 2500 |
 | 551 Filter Type | APRS - Packet Filter | `0x1366` | Seven checkboxes in bits 0–6. All on is `0x7F`. Bit 7 is unused. See the bit table below |
