@@ -1,3 +1,9 @@
+## [2.25.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.24.0...v2.25.0) (2026-11-28)
+
+### Features
+
+* **th-d74:** model scan-edge and Pri special channels ([d5aef85](https://github.com/springfield-ham-radio/radio-module-kenwood/commit/d5aef85f3bc65e90efd9e9b0d1e3b9c841e8d658))
+
 ## [2.24.0](https://github.com/springfield-ham-radio/radio-module-kenwood/compare/v2.23.0...v2.24.0) (2026-11-27)
 
 ### Features
